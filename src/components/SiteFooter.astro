@@ -1,0 +1,174 @@
+---
+import { siteConfig } from "../data/site";
+import {
+  routeFor,
+  withBase,
+} from "../lib/urls";
+
+type FooterLink = {
+  readonly label: string;
+  readonly href?: string;
+};
+
+type FooterLinkGroup = {
+  readonly label: string;
+  readonly links:
+    readonly FooterLink[];
+};
+
+const footerLinks:
+  readonly FooterLinkGroup[] =
+    siteConfig.footerLinks;
+
+const hrefForDisplay = (
+  href: string,
+): string =>
+  href.startsWith("/")
+    ? withBase(href)
+    : href;
+---
+
+<footer
+  id="site-footer"
+  class="site-footer"
+>
+  <nav
+    class="site-footer__utility"
+    aria-label="Page navigation"
+  >
+    <a href="#top">
+      ↑ Top
+    </a>
+
+    <a
+      href={withBase("/")}
+      data-previous-page
+    >
+      ← Previous page
+    </a>
+  </nav>
+
+  <div class="site-footer__identity">
+    <p class="site-footer__name">
+      <a
+        class="site-footer__name-link"
+        href={withBase(
+          routeFor(
+            "fieldNotes",
+            "aggiungi-titolo",
+          ),
+        )}
+        title='Leggi "Aggiungi titolo"'
+      >
+        {siteConfig.name}
+      </a>
+    </p>
+
+    <nav
+      class="site-footer__links"
+      aria-label="About Fabrizio and external profiles"
+    >
+      {
+        footerLinks.map((group) => (
+          <p class="site-footer__line">
+            <span class="site-footer__label">
+              {group.label}
+            </span>
+
+            <span class="site-footer__value">
+              <span aria-hidden="true">[ </span>
+
+              {
+                group.links.map((link, index) => (
+                  <span class="site-footer__item">
+                    {
+                      index > 0 && (
+                        <span aria-hidden="true">
+                          {", "}
+                        </span>
+                      )
+                    }
+
+                    {
+                      link.href ? (
+                        <a
+                          href={hrefForDisplay(
+                            link.href,
+                          )}
+                        >
+                          {link.label}
+                        </a>
+                      ) : (
+                        <span class="pending">
+                          {link.label}
+                        </span>
+                      )
+                    }
+                  </span>
+                ))
+              }
+
+              <span aria-hidden="true"> ]</span>
+            </span>
+          </p>
+        ))
+      }
+    </nav>
+  </div>
+</footer>
+
+<script>
+  const initializePreviousPageLinks = () => {
+    const links =
+      document.querySelectorAll<HTMLAnchorElement>(
+        "[data-previous-page]",
+      );
+
+    links.forEach((link) => {
+      if (
+        link.dataset.previousPageInitialized ===
+        "true"
+      ) {
+        return;
+      }
+
+      link.dataset.previousPageInitialized =
+        "true";
+
+      link.addEventListener("click", (event) => {
+        /*
+         * Manteniamo il normale comportamento
+         * del collegamento quando si usa un
+         * clic modificato o un tasto diverso.
+         */
+        if (
+          event.button !== 0 ||
+          event.ctrlKey ||
+          event.metaKey ||
+          event.shiftKey ||
+          event.altKey
+        ) {
+          return;
+        }
+
+        /*
+         * Se esiste una pagina precedente,
+         * usiamo la cronologia del browser.
+         * Altrimenti resta valido l'href verso
+         * HomeLog scritto nel markup.
+         */
+        if (window.history.length > 1) {
+          event.preventDefault();
+          window.history.back();
+        }
+      });
+    });
+  };
+
+  initializePreviousPageLinks();
+
+  document.addEventListener(
+    "astro:page-load",
+    initializePreviousPageLinks,
+  );
+</script>

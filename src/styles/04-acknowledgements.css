@@ -1,0 +1,94 @@
+/*
+ * Acknowledgements, disclaimer,
+ * privacy and licensing.
+ */
+
+.acknowledgements-page {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap:
+    clamp(1rem, 2.5vw, 1.5rem);
+
+  max-width: 70rem;
+  margin-inline: auto;
+}
+
+.acknowledgements-page__section {
+  min-width: 0;
+  padding:
+    clamp(1rem, 2.5vw, 1.5rem);
+
+  border:
+    1px solid var(--rule-strong);
+
+  background: var(--paper-raised);
+
+  box-shadow:
+    inset 0 0 0 1px
+    color-mix(
+      in srgb,
+      var(--rule-strong) 16%,
+      transparent
+    );
+}
+
+.acknowledgements-page__section--wide {
+  grid-column: 1 / -1;
+}
+
+.acknowledgements-page h2 {
+  margin: 0 0 0.8rem;
+
+  font-family: var(--font-display);
+  font-size:
+    clamp(1.35rem, 2.5vw, 1.75rem);
+
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.acknowledgements-page h3 {
+  margin: 1.4rem 0 0.55rem;
+
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.acknowledgements-page p {
+  margin: 0;
+  line-height: 1.62;
+}
+
+.acknowledgements-page p + p {
+  margin-top: 0.85rem;
+}
+
+.acknowledgements-page ul {
+  margin: 0;
+  padding-left: 1.3rem;
+}
+
+.acknowledgements-page li {
+  line-height: 1.55;
+}
+
+.acknowledgements-page li + li {
+  margin-top: 0.55rem;
+}
+
+@media (max-width: 760px) {
+  .acknowledgements-page {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .acknowledgements-page__section--wide {
+    grid-column: auto;
+  }
+}
+

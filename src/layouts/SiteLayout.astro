@@ -1,0 +1,91 @@
+---
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+
+import { siteConfig, type SiteSection } from "../data/site";
+
+/*
+ * Testo corrente:
+ * tutti i pesi di Alegreya,
+ * normale e corsivo.
+ */
+import "@fontsource-variable/alegreya/wght.css";
+import "@fontsource-variable/alegreya/wght-italic.css";
+
+import "@fontsource-variable/vollkorn/wght.css";
+
+import "@fontsource/gfs-neohellenic/700.css";
+import "@fontsource/kaisei-decol/700.css";
+import "@fontsource-variable/brygada-1918/wght.css";
+
+import "@fontsource/zcool-xiaowei/400.css";
+import "@fontsource-variable/reem-kufi-fun/wght.css";
+import "@fontsource/song-myung/400.css";
+
+/*
+ * Titoli normali del sito.
+ */
+import "@fontsource/spectral/400.css";
+import "@fontsource/spectral/400-italic.css";
+import "@fontsource/spectral/500.css";
+
+/*
+ * Metadati, Log e numerazioni.
+ * full.css comprende anche gli assi
+ * MONO e CASL.
+ */
+import "@fontsource-variable/recursive/full.css";
+
+import "../styles/global.css";
+import siteDecorationUrl from
+  "../assets/backgrounds/decorazione-angolare-web.svg?url";
+import { ClientRouter } from "astro:transitions";
+
+interface Props {
+  title?: string;
+  description?: string;
+  currentSection?: SiteSection;
+  lang?: string;
+  contentClass?: string;
+}
+
+const {
+  title,
+  description = siteConfig.description,
+  currentSection,
+  lang = "en",
+  contentClass = "",
+} = Astro.props;
+
+const fullTitle = title ? `${title} — ${siteConfig.name}` : siteConfig.name;
+---
+
+<!doctype html>
+<html
+  lang={lang}
+  transition:animate="none"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#f3f0e8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b2135" media="(prefers-color-scheme: dark)" />
+    <title>{fullTitle}</title>
+    <script is:inline>document.documentElement.classList.add("has-js");</script>
+    <ClientRouter fallback="swap" />
+  </head>
+<body
+  data-section={currentSection}
+  style={`--site-decoration-image: url("${siteDecorationUrl}")`}
+>
+    <div id="top" class="site-shell">
+      <SiteHeader currentSection={currentSection} />
+      <main id="main-content" class:list={["site-main", contentClass]}>
+        <slot />
+      </main>
+      <SiteFooter />
+    </div>
+  </body>
+</html>

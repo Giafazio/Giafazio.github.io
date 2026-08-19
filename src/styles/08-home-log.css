@@ -1,0 +1,439 @@
+.home-log-panel {
+  grid-area: log;
+  align-self: stretch;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  min-height: 0;
+
+  /*
+   * Come per Welcome, riserviamo spazio
+   * al cartellino sovrapposto.
+   */
+  margin-top: 1rem;
+  padding-top:
+    clamp(2rem, 3vw, 2.5rem);
+
+  /*
+   * Deve essere visible, altrimenti il
+   * cartellino sporgente viene tagliato.
+   * Lo scorrimento resta nel viewport.
+   */
+  overflow: visible;
+
+  border:
+    4px solid var(--log-metal-main);
+  box-shadow:
+    0 0 0 1px var(--log-metal-dark),
+    inset 0 0 0 1px var(--log-metal-highlight);
+  background: var(--paper-raised);
+
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 921px) {
+  .homelog-grid--featured-log
+  .home-log-panel {
+    align-self: stretch;
+
+    width: 100%;
+    height: auto;
+    min-height: 0;
+
+    /*
+     * Il contenuto del Log non determina
+     * l’altezza delle righe. È il blocco
+     * Welcome + Featured a determinarla.
+     */
+    contain: size;
+  }
+}
+
+.homelog-grid--top-log .home-log-panel {
+  align-self: start;
+  height: var(--home-log-top-height);
+}
+
+.home-log-panel__label {
+  position: absolute;
+  top: 0;
+  right: clamp(0.8rem, 3vw, 2rem);
+  z-index: 1;
+
+  max-width: calc(100% - 1.6rem);
+  padding: 0.42rem 0.75rem;
+
+  border:
+    3px solid var(--log-metal-main);
+  box-shadow:
+    0 0 0 1px var(--log-metal-dark),
+    inset 0 0 0 1px var(--log-metal-highlight);
+
+  background: var(--paper-raised);
+
+  box-shadow:
+    0 0 0 1px var(--log-metal-dark),
+    inset 0 0 0 1px
+      var(--log-metal-highlight);
+  transform: translateY(-50%);
+}
+
+.home-log-panel__label h2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+
+  margin: 0;
+
+  color: var(--ink);
+  font-family: "Basteleur", serif;
+  font-size:
+    clamp(0.9rem, 1.4vw, 1.08rem);
+  font-weight: normal;
+  letter-spacing: 0;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.home-log-panel__title {
+  font-size: 1.3em;
+}
+
+.home-log-panel__subtitle {
+  font-size: 0.82em;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.06em;
+}
+
+.home-log-panel__viewport {
+  flex: 1 1 auto;
+
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+}
+
+.home-log-list {
+  margin: 0;
+  padding: 0.4rem 0.9rem 0.55rem;
+  list-style: none;
+}
+
+.home-log-entry + .home-log-entry {
+  margin-top: 0.55rem;
+}
+
+.log-record__frame {
+  position: relative;
+  min-width: 0;
+  padding: 0.2rem 0.2rem 0.5rem 1.1rem;
+
+  border-left:
+    1px solid var(--rule-strong);
+
+  border-bottom:
+    1px solid var(--rule-strong);
+}
+
+.log-record__frame::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 0.65rem;
+
+  border-top:
+    1px solid var(--rule-strong);
+
+  content: "";
+}
+
+.log-record__summary,
+.log-record__headline {
+  display: grid;
+  align-items: baseline;
+  gap: 0.42rem;
+
+  margin: 0;
+
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.98rem;
+  line-height: 1.35;
+}
+
+.log-record__summary {
+  grid-template-columns:
+    max-content minmax(0, 1fr)
+    max-content;
+
+  cursor: pointer;
+  list-style: none;
+}
+
+.log-record__headline {
+  grid-template-columns:
+    max-content minmax(0, 1fr);
+}
+
+.log-record__summary::-webkit-details-marker {
+  display: none;
+}
+
+.log-record__summary::marker {
+  content: "";
+}
+
+.log-record__operation,
+.log-record-item__operation {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.log-record__headline-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.log-record__headline-label,
+.log-record__message {
+  min-width: 0;
+}
+
+.log-record__message::before {
+  content: " ";
+}
+
+.log-record__headline-text--stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.log-record__headline-text--stacked
+.log-record__headline-label {
+  font-weight: 700;
+}
+
+.log-record__headline-text--stacked
+.log-record__message {
+  padding-left: 0.75rem;
+}
+
+.log-record__headline-text--stacked
+.log-record__message::before {
+  content: "";
+}
+
+/*
+ * Nella disposizione a due righe il comando
+ * [+]/[-] si allinea alla seconda riga.
+ */
+.log-record__summary--stacked
+.log-record__toggle {
+  align-self: end;
+}
+
+.log-record__title-link,
+.log-record-item__title-link {
+  font: inherit;
+  font-weight: 600;
+}
+
+.log-record__toggle {
+  justify-self: end;
+
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.log-record__toggle-open {
+  display: none;
+}
+
+.log-record__details[open]
+.log-record__toggle-closed {
+  display: none;
+}
+
+.log-record__details[open]
+.log-record__toggle-open {
+  display: inline;
+}
+
+.log-record__details-content {
+  padding:
+    0.25rem 0 0.12rem 1.3rem;
+}
+
+.log-record__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.log-record__changes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.log-record-change {
+  display: grid;
+  grid-template-columns:
+    max-content minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.42rem;
+
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.38;
+}
+
+.log-record-change +
+.log-record-change {
+  margin-top: 0.2rem;
+}
+
+.log-record-change__operation {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.log-record-item +
+.log-record-item {
+  margin-top: 0.45rem;
+}
+
+.log-record-item__headline {
+  margin: 0;
+
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.38;
+}
+
+.log-record-item__operation {
+  display: inline-block;
+  width: 1.05rem;
+}
+
+.log-record__meta,
+.log-record-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.65rem;
+
+  margin: 0;
+  padding: 0;
+
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.035em;
+  line-height: 1.4;
+  list-style: none;
+}
+
+.log-record__meta {
+  margin-top: 0.28rem;
+}
+
+.log-record-item__meta {
+  margin-top: 0.12rem;
+  margin-left: 1.3rem;
+}
+
+.log-record__comment,
+.log-record__prose,
+.log-record__target-link,
+.log-record__details-link {
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.log-record__comment {
+  margin:
+    0.45rem 0 0 1.3rem;
+
+  color: var(--muted);
+}
+
+.log-record__details-content
+.log-record__comment {
+  margin: 0 0 0.65rem;
+}
+
+.log-record__prose {
+  margin-top: 0;
+}
+
+.log-record__items +
+.log-record__prose,
+.log-record__changes +
+.log-record__prose {
+  margin-top: 0.5rem;
+}
+
+.log-record__prose >
+:first-child {
+  margin-top: 0;
+}
+
+.log-record__prose >
+:last-child {
+  margin-bottom: 0;
+}
+
+.log-record__target-link,
+.log-record__details-link {
+  margin: 0.55rem 0 0;
+}
+
+.log-record__targets {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.4rem;
+
+  margin:
+    0.4rem 0 0 1.3rem;
+
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+}
+
+.log-record__targets ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.45rem;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.log-record__targets
+li:not(:last-child)::after {
+  content: ",";
+}
+
+.log-record__targets a {
+  font: inherit;
+}
+

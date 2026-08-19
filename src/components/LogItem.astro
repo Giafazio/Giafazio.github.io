@@ -1,0 +1,494 @@
+---
+import { render } from "astro:content";
+import type { LogItem } from "../lib/content";
+import { withBase } from "../lib/urls";
+
+interface Props {
+  item: LogItem;
+}
+
+const { item } = Astro.props;
+
+const manualEntry =
+  item.source === "manual"
+    ? item.manualEntry
+    : null;
+
+const renderedDetails =
+  manualEntry?.body?.trim()
+    ? await render(manualEntry)
+    : null;
+
+const Content =
+  renderedDetails?.Content;
+
+const hasSingleDetails =
+  item.kind === "single" &&
+  (
+    item.changes.length > 0 ||
+    Content !== undefined
+  );
+
+const hrefForDisplay = (
+  href: string,
+): string =>
+  href.startsWith("/")
+    ? withBase(href)
+    : href;
+
+const operationSymbol = (
+  operation: "add" | "update",
+): "+" | "~" =>
+  operation === "add" ? "+" : "~";
+
+const operationText = (
+  operation: "add" | "update",
+): string =>
+  operation === "add"
+    ? "Added"
+    : "Updated";
+
+const visibleTargets =
+  item.kind === "single"
+    ? item.targets.filter(
+        (target) =>
+          target.href !==
+          item.line.href,
+      )
+    : [];
+
+const [year, month, day] =
+  item.loggedOn.split("-");
+
+const formattedDate =
+  `${day}-${month}-${year}`;
+---
+
+<li
+  class="home-log-entry log-record"
+  data-log-source={item.source}
+  data-log-kind={item.kind}
+>
+  <article class="log-record__frame">
+    {
+      item.kind === "batch" ? (
+        <details class="log-record__details">
+          <summary class="log-record__summary">
+            <span
+              class="log-record__operation"
+              aria-hidden="true"
+            >
+              {operationSymbol(item.operation)}
+            </span>
+
+            <span class="visually-hidden">
+              {operationText(item.operation)}
+              {": "}
+            </span>
+
+            <span class="log-record__headline-text">
+              <span class="log-record__headline-label">
+                <span class="log-record__title">
+                  {item.title}
+                </span>
+              </span>
+            </span>
+             
+            <span
+              class="log-record__toggle"
+              aria-hidden="true"
+            >
+              <span class="log-record__toggle-closed">
+                [+]
+              </span>
+
+              <span class="log-record__toggle-open">
+                [-]
+              </span>
+            </span>
+          </summary>
+
+          <div class="log-record__details-content">
+            {
+              item.comment && (
+                <p class="log-record__comment">
+                  {item.comment}
+                </p>
+              )
+            }
+
+            <ul class="log-record__items">
+              {
+                item.items.map(
+                  (subitem) => (
+                    <li class="log-record-item">
+                      <p class="log-record-item__headline">
+                        <span
+                          class="log-record-item__operation"
+                          aria-hidden="true"
+                        >
+                          {
+                            operationSymbol(
+                              subitem.operation,
+                            )
+                          }
+                        </span>
+
+                        <span class="visually-hidden">
+                          {
+                            operationText(
+                              subitem.operation,
+                            )
+                          }
+                          {": "}
+                        </span>
+
+                        {
+                          subitem.href ? (
+                            <a
+                              class="log-record-item__title-link"
+                              href={hrefForDisplay(
+                                subitem.href,
+                              )}
+                            >
+                              {subitem.label}
+                            </a>
+                          ) : (
+                            <span class="log-record-item__title">
+                              {subitem.label}
+                            </span>
+                          )
+                        }
+
+                        {
+                          subitem.message && (
+                            <span class="log-record-item__message">
+                              {`: ${subitem.message}`}
+                            </span>
+                          )
+                        }
+                      </p>
+
+                      <ul
+                        class="log-record-item__meta"
+                        aria-label="Item metadata"
+                      >
+                        <li>
+                          {subitem.typeLabel}
+                        </li>
+
+                        {
+                          subitem.language && (
+                            <li>
+                              {subitem.language}
+                            </li>
+                          )
+                        }
+                      </ul>
+                    </li>
+                  ),
+                )
+              }
+            </ul>
+
+            {
+              Content && (
+                <div class="log-record__prose">
+                  <Content />
+                </div>
+              )
+            }
+
+            {
+              item.detailsLink && (
+                <p class="log-record__details-link">
+                  <a
+                    href={hrefForDisplay(
+                      item.detailsLink.href,
+                    )}
+                  >
+                    {item.detailsLink.label}
+                  </a>
+                </p>
+              )
+            }
+          </div>
+        </details>
+      ) : hasSingleDetails ? (
+        <details class="log-record__details">
+          <summary
+            class:list={[
+              "log-record__summary",
+              {
+                "log-record__summary--stacked":
+                  item.headlineLayout === "stacked",
+              },
+            ]}
+          >
+            <span
+              class="log-record__operation"
+              aria-hidden="true"
+            >
+              {
+                operationSymbol(
+                  item.line.operation,
+                )
+              }
+            </span>
+
+            <span class="visually-hidden">
+              {
+                operationText(
+                  item.line.operation,
+                )
+              }
+              {": "}
+            </span>
+            <span
+              class:list={[
+                "log-record__headline-text",
+                {
+                  "log-record__headline-text--stacked":
+                    item.headlineLayout === "stacked",
+                },
+              ]}
+            >
+              <span class="log-record__headline-label">
+                {item.line.label}{item.line.message && ":"}
+              </span>
+
+              {
+                item.line.message && (
+                  <span class="log-record__message">
+                    {item.line.message}
+                  </span>
+                )
+              }
+            </span>
+
+            <span
+              class="log-record__toggle"
+              aria-hidden="true"
+            >
+              <span class="log-record__toggle-closed">
+                [+]
+              </span>
+
+              <span class="log-record__toggle-open">
+                [-]
+              </span>
+            </span>
+          </summary>
+
+          <div class="log-record__details-content">
+            {
+              item.comment && (
+                <p class="log-record__comment">
+                  {item.comment}
+                </p>
+              )
+            }
+            {
+              item.changes.length > 0 && (
+                <ul class="log-record__changes">
+                  {
+                    item.changes.map(
+                      (change) => (
+                        <li class="log-record-change">
+                          <span
+                            class="log-record-change__operation"
+                            aria-hidden="true"
+                          >
+                            {
+                              operationSymbol(
+                                change.operation,
+                              )
+                            }
+                          </span>
+
+                          <span class="visually-hidden">
+                            {
+                              operationText(
+                                change.operation,
+                              )
+                            }
+                            {": "}
+                          </span>
+
+                          <span class="log-record-change__label">
+                            {change.label}
+                          </span>
+                        </li>
+                      ),
+                    )
+                  }
+                </ul>
+              )
+            }
+
+            {
+              Content && (
+                <div class="log-record__prose">
+                  <Content />
+                </div>
+              )
+            }
+
+            {
+              item.line.href && (
+                <p class="log-record__target-link">
+                  <a
+                    href={hrefForDisplay(
+                      item.line.href,
+                    )}
+                  >
+                    {item.line.label}
+                  </a>
+                </p>
+              )
+            }
+
+            {
+              item.detailsLink && (
+                <p class="log-record__details-link">
+                  <a
+                    href={hrefForDisplay(
+                      item.detailsLink.href,
+                    )}
+                  >
+                    {item.detailsLink.label}
+                  </a>
+                </p>
+              )
+            }
+          </div>
+        </details>
+      ) : (
+        <div class="log-record__headline">
+          <span
+            class="log-record__operation"
+            aria-hidden="true"
+          >
+            {
+              operationSymbol(
+                item.line.operation,
+              )
+            }
+          </span>
+
+          <span class="visually-hidden">
+            {
+              operationText(
+                item.line.operation,
+              )
+            }
+            {": "}
+          </span>
+
+          <span class="log-record__headline-text">
+            {
+              item.line.href ? (
+                <a
+                  class="log-record__title-link"
+                  href={hrefForDisplay(
+                    item.line.href,
+                  )}
+                >
+                  {item.line.label}
+                </a>
+              ) : (
+                <span class="log-record__title">
+                  {item.line.label}
+                </span>
+              )
+            }
+
+            {
+              item.line.message && (
+                <span class="log-record__message">
+                  {`: ${item.line.message}`}
+                </span>
+              )
+            }
+          </span>
+        </div>
+      )
+    }
+
+    {
+      item.kind === "single" &&
+        !hasSingleDetails &&
+        item.comment && (
+          <p class="log-record__comment">
+            {item.comment}
+          </p>
+        )
+    }
+
+    {
+      visibleTargets.length > 0 && (
+        <div class="log-record__targets">
+          <span>Related:</span>
+
+          <ul>
+            {
+              visibleTargets.map(
+                (target) => (
+                  <li>
+                    <a
+                      href={hrefForDisplay(
+                        target.href,
+                      )}
+                    >
+                      {target.title}
+                    </a>
+                  </li>
+                ),
+              )
+            }
+          </ul>
+        </div>
+      )
+    }
+
+    {
+      item.kind === "single" &&
+        !hasSingleDetails &&
+        item.detailsLink && (
+          <p class="log-record__details-link">
+            <a
+              href={hrefForDisplay(
+                item.detailsLink.href,
+              )}
+            >
+              {item.detailsLink.label}
+            </a>
+          </p>
+        )
+    }
+
+    <ul
+      class="log-record__meta"
+      aria-label="Log metadata"
+    >
+      <li>
+        <time datetime={item.loggedOn}>
+          {formattedDate}
+        </time>
+      </li>
+
+      {
+        item.kind === "single" && (
+          <li>{item.line.typeLabel}</li>
+        )
+      }
+
+      {
+        item.kind === "single" &&
+          item.line.language && (
+            <li>{item.line.language}</li>
+          )
+      }
+    </ul>
+  </article>
+</li>

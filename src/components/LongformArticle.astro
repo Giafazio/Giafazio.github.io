@@ -1,0 +1,348 @@
+---
+import type { MarkdownHeading } from "astro";
+import { publicAsset } from "../lib/urls";
+
+interface Props {
+  title: string;
+  kindLabel: string;
+  language: string;
+  stage: string;
+  authorialCredit?: string;
+  authorialDateLabel?: string;
+  pdfAsset?: string;
+  headings: MarkdownHeading[];
+  showTableOfContents: boolean;
+}
+
+const {
+  title,
+  kindLabel,
+  language,
+  stage,
+  authorialCredit,
+  authorialDateLabel,
+  pdfAsset,
+  headings,
+  showTableOfContents,
+} = Astro.props;
+
+const sectionHeadings = headings.filter(
+  ({ depth }) => depth === 2,
+);
+
+const metadata = [
+  kindLabel,
+  language.toUpperCase(),
+  stage.toUpperCase(),
+].join(" · ");
+---
+
+<article class="longform-article">
+  <header class="longform-header">
+    <div class="longform-header__topline">
+      <p class="meta">{metadata}</p>
+
+      {
+        pdfAsset && (
+          <a
+            class="pdf-action-link longform-header__pdf"
+            href={publicAsset(pdfAsset)}
+          >
+            Original PDF
+          </a>
+        )
+      }
+    </div>
+
+    <h1>{title}</h1>
+
+    {
+      (authorialCredit || authorialDateLabel) && (
+        <p class="longform-header__byline">
+          {authorialCredit && <span>{authorialCredit}</span>}
+
+          {
+            authorialCredit && authorialDateLabel && (
+              <span aria-hidden="true"> · </span>
+            )
+          }
+
+          {
+            authorialDateLabel && (
+              <span>{authorialDateLabel}</span>
+            )
+          }
+        </p>
+      )
+    }
+
+  </header>
+
+  {
+    showTableOfContents &&
+      sectionHeadings.length > 0 && (
+      <nav
+        class="longform-toc"
+        aria-labelledby="longform-toc-title"
+      >
+        <p
+          id="longform-toc-title"
+          class="longform-toc__title"
+        >
+          Indice
+        </p>
+
+        <ol>
+          {
+            sectionHeadings.map((heading) => (
+              <li>
+                <a href={`#${heading.slug}`}>
+                  {heading.text}
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+    )
+  }
+
+  <div class="longform-body">
+    <slot />
+  </div>
+</article>
+
+<style is:global>
+  .longform-article {
+    --longform-width: 66ch;
+  }
+
+  .longform-header {
+    width: min(100%, var(--article-wide));
+    margin: 0 auto clamp(1.8rem, 4vw, 2.8rem);
+    padding-bottom: clamp(1.1rem, 2.5vw, 1.7rem);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .longform-header__topline {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .longform-header__topline .meta {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
+    letter-spacing: 0.035em;
+  }
+
+  .longform-header__pdf {
+    flex: none;
+  } 
+
+  .longform-header h1 {
+    margin-block: 0.75rem 0.4rem;
+    font-size: clamp(1.85rem, 2.8vw, 2.65rem);
+    letter-spacing: -0.015em;
+  }
+
+  .longform-header__byline {
+    margin: 0;
+    color: var(--muted);
+    font-style: italic;
+    font-size: 1.08rem;
+  }
+
+  .longform-toc {
+    width: min(100%, var(--longform-width));
+    margin: 0 auto clamp(3.5rem, 7vw, 5.5rem);
+    padding-block: 1.15rem 1.35rem;
+    border-block: 1px solid var(--rule);
+  }
+
+  .longform-toc__title {
+    margin-bottom: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .longform-toc ol {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem 2rem;
+    margin: 0;
+    padding: 0;
+    counter-reset: longform-toc;
+    list-style: none;
+  }
+
+  .longform-toc li {
+    counter-increment: longform-toc;
+  }
+
+  .longform-toc a {
+    display: grid;
+    grid-template-columns: 2.3rem minmax(0, 1fr);
+    gap: 0.4rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .longform-toc a::before {
+    content: counter(longform-toc, decimal-leading-zero);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.78em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .longform-toc a:hover {
+    color: var(--link);
+    text-decoration: underline;
+  }
+
+  .longform-body {
+    width: min(100%, var(--longform-width));
+    margin-inline: auto;
+    counter-reset: longform-section;
+    font-size: clamp(1.12rem, 0.3vw + 1.05rem, 1.27rem);
+    line-height: 1.68;
+  }
+
+  .longform-body > * + * {
+    margin-top: 1.15em;
+  }
+
+  .longform-body > h2 {
+    position: relative;
+    margin-block: clamp(2.8rem, 5vw, 4rem) 0.9rem;
+    scroll-margin-top: 2rem;
+    counter-increment: longform-section;
+    font-size: clamp(1.5rem, 2.2vw, 1.95rem);
+  }
+
+  .longform-body > h2:first-child {
+    margin-top: 0;
+  }
+
+  .longform-body > h2::before {
+    position: absolute;
+    top: 0.35em;
+    right: calc(100% + 1.4rem);
+    min-width: 3rem;
+    color: var(--muted);
+    content: counter(longform-section, decimal-leading-zero);
+    font-family: var(--font-mono);
+    font-size: 0.48em;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .longform-body > h2 + * {
+    margin-top: 0;
+  }
+
+  .longform-body > p {
+    margin-bottom: 0;
+    text-wrap: pretty;
+  }
+
+  .longform-body > p + p {
+    margin-top: 0;
+    text-indent: 1.5em;
+  }
+
+.longform-body .small-caps {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.045em;
+}
+
+  .longform-body ol {
+    padding-left: 1.4rem;
+  }
+
+  .longform-body math[display="block"] {
+    display: block;
+    width: max-content;
+    margin: -0.65rem auto -0.5rem;
+    padding: 0;
+    font-size: 0.95em;
+    line-height: 0.8;
+    text-align: center;
+  }
+
+  .longform-body > math[display="block"] + p {
+    margin-top: 0;
+  }
+
+  .longform-body .probability-axiom {
+    margin-block: 0.45rem;
+    padding-block: 0.35rem;
+    border-block: 1px solid var(--line);
+    font-family: var(--font-serif);
+    font-size: clamp(1.2rem, 1.7vw, 1.5rem);
+    font-style: italic;
+    text-align: center;
+  }
+
+  .longform-body .probability-axiom p {
+    margin: 0;
+  }
+
+  .longform-body > .probability-axiom + p {
+    margin-top: 0.35rem;
+  }
+
+  .longform-body .solution-circle {
+    display: grid;
+    width: clamp(9rem, 28vw, 12rem);
+    margin: 0.35rem auto 0.65rem;
+    aspect-ratio: 1;
+    place-items: center;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    font-family: var(--font-display);
+    text-align: center;
+  }
+
+  .longform-body > .solution-circle + p {
+    margin-top: 0;
+  }
+
+  .longform-body > h2:has(+ .solution-circle) {
+    margin-bottom: 0.35rem;
+  }
+  
+  @media (max-width: 820px) {
+    .longform-header__topline {
+      align-items: flex-start;
+    }
+
+    .longform-toc ol {
+      grid-template-columns: 1fr;
+    }
+
+    .longform-body > h2::before {
+      position: static;
+      display: block;
+      min-width: 0;
+      margin-bottom: 0.4rem;
+      text-align: left;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .longform-header__topline {
+      display: grid;
+    }
+
+    .longform-header__pdf {
+      justify-self: start;
+    }
+  }
+</style>

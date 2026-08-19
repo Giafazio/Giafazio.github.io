@@ -1,0 +1,189 @@
+.site-header {
+  position: relative;
+  padding-block: clamp(1rem, 3vw, 2rem) 1.1rem;
+}
+
+.sprite-bank {
+  position: absolute;
+}
+
+.identity-line,
+.identity-line > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+}
+
+.identity-line > div {
+  flex: 1;
+}
+
+.wordmark {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(1.65rem, 3.8vw, 2.25rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  text-decoration: none;
+}
+
+.wordmark:visited {
+  color: var(--ink);
+}
+
+.identity-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+  font-style: italic;
+  text-align: right;
+}
+
+.menu-toggle {
+  display: none;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 0;
+  background: var(--paper-raised);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+}
+
+.site-navigation {
+  margin-top: 0.85rem;
+  border: 1px solid var(--rule-strong);
+  background: var(--tile);
+}
+
+.navigation-list {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navigation-item {
+  min-width: 0;
+  border-right: 1px solid var(--rule-strong);
+}
+
+.navigation-item:last-child {
+  border-right: 0;
+}
+
+.navigation-link {
+  position: relative;
+  display: flex;
+  min-height: 5.25rem;
+  padding: 0.48rem 0.55rem 1.75rem;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, transparent 0 71%, color-mix(in srgb, var(--link) 10%, transparent) 71% 100%),
+    var(--paper-raised);
+  box-shadow:
+    inset 0 0 0 2px var(--paper-raised),
+    inset 0 0 0 3px var(--rule);
+  color: var(--ink);
+  font-family: var(--font-display);
+  line-height: 1.12;
+  text-decoration: none;
+  transition: background-color 160ms ease;
+}
+
+.navigation-link:visited {
+  color: var(--ink);
+}
+
+.navigation-link:hover,
+.navigation-link[aria-current="page"] {
+  background:
+    linear-gradient(135deg, transparent 0 71%, color-mix(in srgb, var(--link) 13%, transparent) 71% 100%),
+    var(--tile-active);
+}
+
+
+.navigation-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+  gap: 0.35rem;
+}
+
+.navigation-index,
+.eyebrow,
+.meta,
+.tag,
+.atlas-type {
+  font-family: var(--font-mono);
+  font-size: 0.77rem;
+  letter-spacing: 0.035em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.navigation-index {
+  flex: 0 0 auto;
+  color: var(--muted);
+}
+
+.navigation-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.tile-resident {
+  position: absolute;
+  bottom: 0.18rem;
+  left: 0.48rem;
+  z-index: 3;
+  width: 1.5rem;
+  height: 1rem;
+  color: var(--resident);
+  pointer-events: none;
+  transition: left 280ms steps(5, end);
+}
+
+.pixel-resident {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: resident-idle var(--idle-duration, 3s) steps(2, end) var(--idle-delay, 0s) infinite;
+  shape-rendering: crispEdges;
+  transform-origin: center bottom;
+}
+
+.navigation-item:nth-child(1) .pixel-resident { --idle-duration: 2.7s; --idle-delay: -0.4s; }
+.navigation-item:nth-child(2) .pixel-resident { --idle-duration: 3.2s; --idle-delay: -1.8s; }
+.navigation-item:nth-child(3) .pixel-resident { --idle-duration: 2.4s; --idle-delay: -0.9s; }
+.navigation-item:nth-child(4) .pixel-resident { --idle-duration: 3.6s; --idle-delay: -2.1s; }
+.navigation-item:nth-child(5) .pixel-resident { --idle-duration: 3s; --idle-delay: -1.3s; }
+.navigation-item:nth-child(6) .pixel-resident { --idle-duration: 3.8s; --idle-delay: -2.7s; }
+
+.navigation-link.is-moving .tile-resident {
+  left: calc(100% - 2rem);
+}
+
+.navigation-link.is-moving .pixel-resident {
+  animation: resident-scamper 280ms steps(5, end) 1;
+}
+
+@keyframes resident-idle {
+  0%, 75%, 100% { transform: translateY(0); }
+  84% { transform: translateY(-1px); }
+  92% { transform: translateY(1px); }
+}
+
+@keyframes resident-scamper {
+  0%, 100% { transform: translateY(0); }
+  20%, 60% { transform: translateY(-4px); }
+  40%, 80% { transform: translateY(1px); }
+}
+

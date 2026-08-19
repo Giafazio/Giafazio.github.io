@@ -1,0 +1,248 @@
+registry_version: "1.2"
+updated: "2026-08-07"
+
+provenance_policy:
+  authorial_dates_are_distinct_from_file_dates: true
+  missing_metadata_must_not_be_invented: true
+  project_membership_does_not_duplicate_content: true
+
+homelog:
+  about:
+    copy_status: editorial-draft
+    links:
+      - label: Contact
+        href: "mailto:fabrizio.caragiulo@gmail.com"
+        status: verified-from-existing-public-cv
+      - label: GitHub
+        href: "https://github.com/Giafazio"
+        status: verified
+      - label: Extended CV
+        href: null
+        status: target-needed
+  project_overview:
+    - games-and-riddles
+    - agroxel
+    - quellotondo
+    - poetry-collection
+  log:
+    source_collection: fieldNotes
+    allowed_entry_kinds:
+      - site-note
+      - thought
+    order_by: sort_date-desc
+    missing_dates: after-dated-items
+    visible_fields:
+      - entry_kind
+      - title
+      - written_label
+
+projects:
+  - id: games-and-riddles
+    title: "Games & Riddles"
+    slug: games-and-riddles
+    status: active
+    stage: growing
+    draft: false
+    home_overview: true
+    projects_index_mode: expanded
+    summary_status: editorial-draft
+    summary: "Crosswords, word games and small riddles, on paper and in interactive form when useful."
+    roadmap:
+      - id: lega-i-4
+        title: "Lega i 4"
+        status: planned
+        statement: "Four words are given; the player must find their common theme."
+        interactive_version: planned
+
+  - id: agroxel
+    title: Agroxel
+    slug: agroxel
+    status: active
+    stage: growing
+    draft: false
+    home_overview: true
+    projects_index_mode: expanded
+    summary_status: editorial-draft
+    summary: "A spatial numerical modelling project for agroecological processes; the current specification concerns the climate-hydrology module 0.1a."
+    publication_note: "Project documents exist, but the subset to publish on this site has not been selected."
+
+  - id: quellotondo
+    title: QuelloTondo
+    slug: quellotondo
+    status: active
+    stage: seed
+    draft: false
+    home_overview: true
+    projects_index_mode: expanded
+    summary_status: editorial-draft
+    summary: "A digital typeface developed from handwriting, with many ligatures and an open-source production workflow."
+
+  - id: poetry-collection
+    title: "Poetry collection (untitled)"
+    working_title: true
+    slug: poetry-collection
+    status: planned
+    stage: seed
+    draft: false
+    home_overview: true
+    projects_index_mode: expanded
+    summary_status: factual-placeholder
+    summary: "A collection in formation; its name, index and public contents have not yet been established."
+
+  - id: esperimenti-di-portafoglio
+    title: "Esperimenti di portafoglio"
+    slug: esperimenti-di-portafoglio
+    status: complete
+    stage: complete
+    draft: false
+    home_overview: false
+    projects_index_mode: collapsed
+    summary_status: verified
+    summary: "A modular, reproducible Python project for exploratory portfolio analysis."
+    external_links:
+      - label: GitHub repository
+        href: "https://github.com/Giafazio/esperimenti-di-portafoglio"
+
+content:
+  - id: cruciverba-1
+    title: "Cruciverba 1"
+    collection: artifacts
+    artifact_kind: crossword
+    slug: cruciverba-1
+    canonical_url: "/finished-things/cruciverba-1/"
+    stage: complete
+    draft: false
+    language: it
+    author: "Fabrizio Caragiulo"
+    projects:
+      - id: games-and-riddles
+        highlight: true
+        order: 1
+    primary_asset: "source-content/crosswords/cruciverba-1.pdf"
+    source_files:
+      - "source-content/crosswords/cruciverba-1.pdf"
+    date:
+      written_on: null
+      written_label: null
+      sort_date: null
+      pdf_created: "2025-08-19"
+      date_evidence: pdf-metadata-only
+    needs:
+      - authorial-date
+      - approved-summary
+      - tags
+
+  - id: cruciverba-2
+    title: "Cruciverba 2"
+    source_title_literal: "Cruciverba 2."
+    collection: artifacts
+    artifact_kind: crossword
+    slug: cruciverba-2
+    canonical_url: "/finished-things/cruciverba-2/"
+    stage: complete
+    draft: false
+    language: it
+    author: "Fabrizio Caragiulo"
+    author_evidence: user-statement
+    projects:
+      - id: games-and-riddles
+        highlight: true
+        order: 2
+    primary_asset: "source-content/crosswords/cruciverba-2.pdf"
+    source_files:
+      - "source-content/crosswords/cruciverba-2.pdf"
+    date:
+      written_on: null
+      written_label: null
+      sort_date: null
+      pdf_created: "2025-08-25"
+      date_evidence: pdf-metadata-only
+    needs:
+      - confirmation-of-display-title-punctuation
+      - authorial-date
+      - approved-summary
+      - tags
+
+  - id: la-signorina-probabilita
+    title: "La signorina Probabilita"
+    collection: fieldNotes
+    entry_kind: thought
+    slug: la-signorina-probabilita
+    canonical_url: "/field-notes/la-signorina-probabilita/"
+    stage: stable
+    draft: true
+    language: it
+    author: "Fagiolizio Carruba"
+    include_in_finished_things: true
+    include_in_homelog_log_when_published: true
+    projects: []
+    source_files:
+      - "source-content/thoughts/la-signorina-probabilita/Probabilità.tex"
+      - "source-content/thoughts/la-signorina-probabilita/Probabilità.pdf"
+    pdf_asset: "source-content/thoughts/la-signorina-probabilita/Probabilità.pdf"
+    tex_source: "source-content/thoughts/la-signorina-probabilita/Probabilità.tex"
+    date:
+      written_on: null
+      written_from: null
+      written_to: null
+      written_label: "8bre 2021–22 gennaro 23"
+      sort_date: null
+      date_evidence: authorial-label-needs-normalization
+    needs:
+      - editorial-review
+      - approved-summary
+      - tags
+      - verified-web-links
+      - web-reconstruction-of-tikz-element
+
+  - id: filastrocca-001
+    title: null
+    working_label: "Untitled filastrocca"
+    collection: experiments
+    entry_kind: fragment
+    slug: null
+    canonical_url: null
+    stage: seed
+    draft: true
+    language: it
+    author: "Fabrizio Caragiulo"
+    include_in_finished_things: false
+    include_in_homelog_log_when_published: false
+    projects: []
+    source_files:
+      - "source-content/experiments/filastrocca/filastrocca.md"
+    date:
+      written_on: null
+      written_label: null
+      sort_date: null
+      date_evidence: unknown
+    needs:
+      - title
+      - authorial-date
+      - intended-line-breaks
+      - approved-summary
+      - tags
+    relation_not_inferred:
+      - poetry-collection
+
+planned_content:
+  - id: lega-i-4
+    title: "Lega i 4"
+    project: games-and-riddles
+    status: planned
+    page_status: not-created
+    interactive_version: planned
+    canonical_url: null
+    source_files: []
+    known_rule: "Four words are given; the player must find their common theme."
+    needs:
+      - complete-rules
+      - examples-or-question-set
+      - accepted-answer-policy
+      - interaction-design
+
+unregistered_until_received:
+  - item: poem
+    intended_project: poetry-collection
+    intended_collection: artifacts
+    intended_surface: finished-things

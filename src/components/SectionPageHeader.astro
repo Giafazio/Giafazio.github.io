@@ -1,0 +1,35 @@
+---
+interface Props {
+  title: string;
+  subtitle: string;
+  introduction?: string;
+}
+
+const {
+  title,
+  subtitle,
+  introduction,
+} = Astro.props;
+---
+
+<header class="section-page-header">
+  <div class="section-page-header__heading">
+    <h1>
+      <span class="section-page-header__title">
+        {title}
+      </span>
+
+      <span class="section-page-header__subtitle">
+        {subtitle}
+      </span>
+    </h1>
+  </div>
+
+  {
+    introduction && (
+      <p class="section-page-header__introduction">
+        {introduction}
+      </p>
+    )
+  }
+</header>

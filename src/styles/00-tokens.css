@@ -1,0 +1,68 @@
+:root {
+  color-scheme: light;
+  --paper: #f3f0e8;
+  --paper-raised: #fbfaf5;
+  --ink: #1c1c1c;
+  --muted: #66635e;
+  --rule: #c8c1b5;
+  --rule-strong: #8d877d;
+  --link: #1155cc;
+  --link-visited: #1155cc;;
+  --focus: #b7542a;
+  --tile: #d7e7e6;
+  --tile-active: #bed7d6;
+  --resident: #315f65;
+  --warm: #f2b134;
+  --frame-main: #3b2416;
+  --frame-dark: #120b07;
+  --frame-highlight: #8a6040;
+  --log-metal-main: #737b80;
+  --log-metal-dark: #343b3f;
+  --log-metal-highlight: #bac1c5;
+  --home-log-top-height: clamp(28rem, 62vh, 42rem);
+  --home-log-mobile-height: min(32rem, 65vh);
+  --font-display:
+    "Spectral",
+    Georgia,
+    serif;
+
+  --font-body:
+    "Alegreya Variable",
+    Georgia,
+    serif;
+
+  --font-mono:
+    "Recursive Variable",
+    "Courier New",
+    ui-monospace,
+    monospace;
+
+  --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --content-width: 1180px;
+  --reading-width: 72ch;
+  --gutter: clamp(1rem, 4vw, 4rem);
+  --section-gap: clamp(3.5rem, 7vw, 6rem);
+  --site-decoration-width: 650px;
+  --site-decoration-top: 120px;
+  --site-decoration-right: -120px;
+  --site-decoration-opacity: 0.3;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --paper: #0b2135;
+  --paper-raised: #112b42;
+  --ink: #f6f0e6;
+  --muted: #b8c3c9;
+  --rule: #49677a;
+  --rule-strong: #8296a4;
+  --link: #8bc5ff;
+  --link-visited: #8bc5ff;
+  --focus: #f0a06e;
+  --tile: #173b55;
+  --tile-active: #24506c;
+  --resident: #9cd9d0;
+  --warm: #f6c552;
+}
+

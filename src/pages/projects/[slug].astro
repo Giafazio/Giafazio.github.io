@@ -1,0 +1,121 @@
+---
+import type { CollectionEntry } from "astro:content";
+import ProjectContents from "../../components/ProjectContents.astro";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { getProjectContents, getSiteData } from "../../lib/content";
+import ProjectTitleButton from
+  "../../components/ProjectTitleButton.astro";
+
+
+
+export async function getStaticPaths() {
+  const data = await getSiteData();
+  return data.publicProjects.map((project) => ({
+    params: { slug: project.data.slug },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props;
+const data = await getSiteData();
+const contents = getProjectContents(data, project.data.id);
+---
+
+<SiteLayout
+  title={project.data.title}
+  description={project.data.summary}
+  currentSection="projects"
+>
+  
+  <article data-project={project.data.id}>
+    <header
+      class="project-detail-header project-detail-header--project"
+      data-project={project.data.id}
+    >
+      <div class="project-detail-header__heading">
+        <h1>
+          <ProjectTitleButton
+            project={project}
+            variant="heading"
+            linked={false}
+          />
+        </h1>
+        <p class="meta project-detail-header__stage">
+          {project.data.stage}
+        </p>
+      </div>
+
+      <div class="project-detail-header__copy">
+  
+        <p class="about-copy">
+          {project.data.summary}
+        </p>
+      </div>
+    </header>
+
+      <div
+        class={
+          project.data.roadmap.length > 0
+            ? "project-page-sections project-page-sections--with-growing"
+            : "project-page-sections"
+        }
+      >
+        <section
+          class="project-page-contents"
+          aria-labelledby="project-contents-title"
+        >
+          <h2
+            class="project-page-section-title"
+            id="project-contents-title"
+          >
+            Contents
+          </h2>
+
+          <ProjectContents
+            entries={contents}
+            externalContents={
+              project.data.externalContents
+            }
+            projectId={project.data.id}
+          />
+        </section>
+
+        {
+          project.data.roadmap.length > 0 && (
+            <aside
+              class="growing-next"
+              aria-labelledby="growing-next-title"
+            >
+              <h2
+                class="growing-next__title"
+                id="growing-next-title"
+              >
+                Growing next
+              </h2>
+
+              <ul class="growing-next__list">
+                {project.data.roadmap.map((item) => (
+                  <li class="growing-next__item">
+                    <div class="growing-next__topline">
+                      <h3>{item.title}</h3>
+
+                      <span class="meta">
+                        {item.stage}
+                      </span>
+                    </div>
+
+                    <p>{item.statement}</p>
+                  </li>
+                ))}
+              </ul>
+            </aside>
+          )
+        }
+      </div>
+
+  </article>
+</SiteLayout>

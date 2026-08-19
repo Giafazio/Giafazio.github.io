@@ -1,0 +1,126 @@
+.site-main {
+  padding-block: clamp(2.25rem, 6vw, 5.25rem);
+}
+
+.site-main.home-main {
+  padding-top:
+    clamp(1rem, 2vw, 2rem);
+}
+
+
+.section-page-header {
+  position: relative;
+  min-width: 0;
+
+  margin-bottom:
+    clamp(2.75rem, 4vw, 3.25rem);
+
+  /*
+   * Riserva spazio sotto il riquadro
+   * sovrapposto alla linea.
+   */
+  padding-top:
+    clamp(2.5rem, 3.5vw, 3rem);
+
+  /*
+   * Riga legnosa principale, uguale
+   * a quella di Featured nella home.
+   */
+  border-top:
+    7px solid var(--frame-main);
+}
+
+.section-page-header::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+
+  height: 2px;
+
+  background: var(--frame-highlight);
+
+  content: "";
+  pointer-events: none;
+}
+
+.section-page-header__heading {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 1;
+
+  width: max-content;
+  max-width: calc(100% - 1.6rem);
+
+  padding: 0.42rem 0.75rem;
+
+  border:
+    3px solid var(--frame-main);
+
+  background: var(--paper-raised);
+
+  box-shadow:
+    0 0 0 1px var(--frame-dark),
+    inset 0 0 0 1px
+      var(--frame-highlight);
+
+  /*
+   * Il centro verticale del riquadro
+   * coincide con la linea legnosa.
+   */
+  transform: translate(-50%, -50%);
+}
+
+.section-page-header__heading h1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+
+  margin: 0;
+
+  color: var(--ink);
+  font-family: "Basteleur", serif;
+  font-size:
+    clamp(1.08rem, 1.75vw, 1.3rem);
+  font-weight: normal;
+  letter-spacing: 0;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.section-page-header__title {
+  font-size: 1.3em;
+}
+
+.section-page-header__subtitle {
+  font-size: 0.82em;
+  letter-spacing: 0.06em;
+  font-variant-caps: small-caps;
+}
+
+.section-page-header__introduction {
+  width: min(100%, 31rem);
+  margin: 0 0 0 auto;
+
+  font-family: var(--font-display);
+  font-size: 1.03rem;
+  font-style: italic;
+  line-height: 1.5;
+  text-align: right;
+  white-space: pre-line;
+}
+
+@media (max-width: 700px) {
+  .section-page-header {
+    border-top-width: 5px;
+    padding-top:
+      clamp(2.6rem, 10vw, 3.1rem);
+  }
+
+  .section-page-header__introduction {
+    width: min(86%, 31rem);
+  }
+}
+

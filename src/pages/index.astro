@@ -1,0 +1,182 @@
+---
+import EmptyState from "../components/EmptyState.astro";
+import HomeFeaturedCard from "../components/HomeFeaturedCard.astro";
+import LogItem from "../components/LogItem.astro";
+import WelcomeIntro from "../components/WelcomeIntro.astro";
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+import {
+  getLogItems,
+  getSiteData,
+} from "../lib/content";
+
+import {
+  getHomeFeatured,
+} from "../lib/homeFeatured";
+
+const data = await getSiteData();
+
+const {
+  galleryItems: homeGalleryItems,
+  remainingRows:
+    remainingFeaturedRows,
+} = getHomeFeatured(data);
+
+const logEntries =
+  getLogItems(data);
+
+---
+
+<SiteLayout
+  currentSection="home"
+  contentClass="home-main"
+>
+  <div class="homelog-grid homelog-grid--featured-log">
+    <section
+      class="welcome-panel"
+      aria-labelledby="welcome-title"
+    >
+      <WelcomeIntro />
+
+      <a
+        class="welcome-panel__contacts-link"
+        href="#site-footer"
+      >
+        About &amp; Contacts ↘
+      </a>
+    </section>
+
+    <section
+      class="home-current"
+      aria-labelledby="featured-title"
+    >
+      <header class="home-current__heading">
+        <h2 id="featured-title">
+          <span class="home-current__title">
+            Featured
+          </span>
+
+          <span class="home-current__subtitle">
+            The Table
+          </span>
+        </h2>
+      </header>
+
+      {
+        homeGalleryItems.length > 0 ? (
+          <ul
+            class="home-featured-gallery"
+            tabindex="0"
+            aria-label="Featured contents gallery"
+          >
+            {
+              homeGalleryItems.map(
+                (item) => (
+                  <li
+                    class:list={[
+                      "home-featured-item",
+                      `home-featured-item--${item.kind}`,
+                    ]}
+                  >
+                    <HomeFeaturedCard
+                      item={item}
+                    />
+                  </li>
+                ),
+              )
+            }
+          </ul>
+        ) : (
+          <div class="empty-state">
+            <p>
+              No featured public content is available yet.
+            </p>
+          </div>
+        )
+      }
+    </section>
+
+    <section
+      class="home-log-panel"
+      aria-labelledby="log-title"
+    >
+      <header class="home-log-panel__label">
+        <h2 id="log-title">
+          <span class="home-log-panel__title">
+            Log
+          </span>
+
+          <span class="home-log-panel__subtitle">
+            The Archive
+          </span>
+        </h2>
+      </header>
+
+      <div
+        class="home-log-panel__viewport"
+        role="region"
+        aria-label="Log entries"
+        tabindex="0"
+      >
+        {
+          logEntries.length > 0 ? (
+            <ol class="home-log-list">
+              {
+                logEntries.map(
+                  (item) => (
+                    <LogItem item={item} />
+                  ),
+                )
+              }
+            </ol>
+          ) : (
+            <EmptyState
+              title="Log ready"
+              text="No public updates are available yet."
+            />
+          )
+        }
+      </div>
+    </section>
+  </div>
+
+  {
+    remainingFeaturedRows.length > 0 && (
+      <div
+        class="home-featured-rest"
+        aria-label="More featured contents"
+      >
+        {
+          remainingFeaturedRows.map(
+            (row) => (
+              <ul
+                class:list={[
+                  "home-featured-row",
+                  `home-featured-row--${row.kind}`,
+                ]}
+                style={`--home-row-columns: ${row.columns};`}
+              >
+                {
+                  row.items.map(
+                    (item) => (
+                      <li
+                        class:list={[
+                          "home-featured-item",
+                          `home-featured-item--${item.kind}`,
+                        ]}
+                      >
+                        <HomeFeaturedCard
+                          item={item}
+                        />
+                      </li>
+                    ),
+                  )
+                }
+              </ul>
+            ),
+          )
+        }
+      </div>
+    )
+  }
+</SiteLayout>

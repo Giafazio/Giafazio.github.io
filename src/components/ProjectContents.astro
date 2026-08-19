@@ -1,0 +1,287 @@
+---
+import type {
+  CollectionEntry,
+} from "astro:content";
+
+import {
+  labelForEntry,
+  routeForEntry,
+  type PublishableEntry,
+} from "../lib/content";
+
+import { withBase } from "../lib/urls";
+
+type ExternalContent =
+  CollectionEntry<"projects">["data"]["externalContents"][number];
+
+interface Props {
+  gallery?: boolean;
+  entries: PublishableEntry[];
+  externalContents?: ExternalContent[];
+  projectId?: string;
+  showEmpty?: boolean;
+  showSummary?: boolean;
+}
+
+const {
+  entries,
+  externalContents = [],
+  projectId,
+  showEmpty = true,
+  gallery = false,
+  showSummary = false,
+} = Astro.props;
+
+const projectContentKind = (
+  entry: PublishableEntry,
+) =>
+  "artifactKind" in entry.data
+    ? entry.data.artifactKind
+    : labelForEntry(entry);
+
+const languageLabel = (
+  language: string,
+) =>
+  language === "it"
+    ? "ITA"
+    : language.toUpperCase();
+
+
+const publicationKinds = new Set([
+  "article",
+  "research article",
+]);
+
+
+const localContents = entries.map(
+  (entry, index) => {
+    const relation =
+      projectId
+        ? entry.data.projects.find(
+            (item) =>
+              item.id === projectId,
+          )
+        : undefined;
+
+    return {
+      title:
+        entry.data.title ??
+        entry.data.workingLabel ??
+        "Untitled",
+
+      summary: 
+        entry.data.summary,
+
+      kind:
+        projectContentKind(entry),
+
+      stage:
+        entry.data.stage,
+
+      language:
+        entry.data.language,
+
+      preview:
+        "artifactKind" in entry.data
+          ? entry.data.artifactKind === "crossword"
+            ? entry.data.crossword?.gridAsset
+            : entry.data.previewAsset
+          : undefined,
+
+      wordPreview:
+        "artifactKind" in entry.data &&
+        entry.data.artifactKind === "game"
+          ? entry.data.fourWordsGame
+              ?.rounds[0]?.words
+          : undefined,
+
+      themeProjectId:
+        entry.data.projects[0]?.id,
+
+      href:
+        routeForEntry(entry),
+
+      elsewhere: false,
+
+      highlight:
+        relation?.highlight ?? false,
+
+      order:
+        relation?.order ??
+        index,
+    };
+  },
+);
+
+const elsewhereContents =
+  externalContents.map(
+    (content) => ({
+      title: content.title,
+      kind: content.kind,
+      stage: content.stage,
+      language: content.language,
+      preview: undefined,
+      wordPreview: undefined,
+      themeProjectId: projectId,
+      href: content.href,
+      elsewhere: true,
+      highlight: false,
+      summary: undefined,
+      order:
+        content.order ??
+        Number.MAX_SAFE_INTEGER,
+    }),
+  );
+
+const projectContents = [
+  ...localContents,
+  ...elsewhereContents,
+].sort((first, second) => {
+  if (
+    first.highlight !==
+    second.highlight
+  ) {
+    return first.highlight
+      ? -1
+      : 1;
+  }
+
+  const orderDifference =
+    first.order - second.order;
+
+  if (orderDifference !== 0) {
+    return orderDifference;
+  }
+
+  return first.title.localeCompare(
+    second.title,
+  );
+});
+
+const isScrollableGallery =
+  gallery && projectContents.length > 2;
+---
+
+{
+  projectContents.length > 0 ? (
+    <ul
+      class:list={[
+        "project-content-grid",
+        {
+          "project-content-grid--gallery":
+            isScrollableGallery,
+        },
+      ]}
+      tabindex={
+        isScrollableGallery
+          ? "0"
+          : undefined
+      }
+      aria-label={
+        isScrollableGallery
+          ? "Project contents gallery"
+          : undefined
+      }
+    >
+      {projectContents.map((content) => (
+        <li
+          class="project-content-card"
+          data-project={content.themeProjectId}
+        >
+          <a
+            class="project-content-card__link"
+            href={withBase(content.href)}
+          >
+            <span
+              class:list={[
+                "project-content-card__title",
+                {
+                  "project-content-card__title--repository":
+                    content.kind === "repository",
+
+                  "project-content-card__title--publication":
+                    publicationKinds.has(
+                      content.kind,
+                    ),
+                },
+              ]}
+            >
+              {content.title}
+            </span>
+
+            {
+              showSummary &&
+                content.summary && (
+                  <span class="project-content-card__summary">
+                    {content.summary}
+                  </span>
+                )
+            }
+            {
+              content.preview && (
+                <span class="project-content-card__preview">
+                  <img
+                    src={withBase(
+                      content.preview,
+                    )}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              )
+            }
+
+              {
+                content.wordPreview && (
+                  <span
+                    class="project-content-card__word-preview"
+                    role="img"
+                    aria-label={`${content.title} preview: four hidden words`}
+                  >
+                    {
+                      content.wordPreview.map(() => (
+                        <span aria-hidden="true">
+                          ?
+                        </span>
+                      ))
+                    }
+                  </span>
+                )
+              }
+            
+            <span class="meta project-content-card__meta">
+              {content.kind}
+              {" · "}
+              {content.stage}
+
+              {
+                content.language && (
+                  <>
+                    {" · "}
+                    {languageLabel(
+                      content.language,
+                    )}
+                  </>
+                )
+              }
+
+              {
+                content.elsewhere && (
+                  <>
+                    {" · "}
+                    Elsewhere ↗
+                  </>
+                )
+              }
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  ) : showEmpty ? (
+    <p class="muted">
+      No public contents yet.
+    </p>
+  ) : null
+}

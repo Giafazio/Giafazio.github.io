@@ -1,0 +1,89 @@
+#site-footer {
+  scroll-margin-top: 1rem;
+}
+
+.site-footer {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+  align-items: start;
+  gap: 1.25rem 2rem;
+
+  margin-top: 2rem;
+  padding-block: 1.4rem 2.5rem;
+
+  border-top: 2px solid var(--ink);
+
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer__utility {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 1.25rem;
+  justify-self: start;
+}
+
+.site-footer__identity {
+  justify-self: end;
+  text-align: right;
+}
+
+.site-footer .site-footer__name {
+  margin-bottom: 0.55rem;
+  color: var(--ink);
+  font-family:
+    "Basteleur",
+    serif;
+
+  font-size: 1.08rem;
+}
+
+.site-footer__name-link,
+.site-footer__name-link:visited {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color:
+    color-mix(
+      in srgb,
+      currentColor 45%,
+      transparent
+    );
+  text-decoration-thickness: 0.07em;
+  text-underline-offset: 0.14em;
+}
+
+.site-footer__name-link:hover {
+  color: var(--link);
+  text-decoration-color: currentColor;
+}
+
+.site-footer__links {
+  display: grid;
+  grid-template-columns:
+    max-content
+    max-content;
+  gap: 0.2rem 0.75rem;
+
+  text-align: left;
+}
+
+.site-footer__line {
+  display: contents;
+}
+
+.site-footer__label {
+  font-weight: 700;
+}
+
+.site-footer__value {
+  white-space: nowrap;
+}
+

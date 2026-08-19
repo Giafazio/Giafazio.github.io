@@ -1,0 +1,66 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { getSiteData } from "../../lib/content";
+import { Image } from "astro:assets";
+
+
+export async function getStaticPaths() {
+  const data = await getSiteData();
+  return data.publicExperiments.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"experiments">;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<SiteLayout
+  title={entry.data.title ?? entry.data.workingLabel}
+  currentSection="experiments"
+  lang={entry.data.language ?? "en"}
+>
+ 
+  <article
+    class:list={[
+      "experiment-article",
+      {
+        "experiment-article--verse":
+          entry.data.presentation === "verse",
+        "experiment-article--image":
+          entry.data.presentation === "image",
+        "experiment-article--monospace":
+          entry.data.presentation ===
+            "monospace",
+      },
+    ]}
+  >
+    <header class="article-header">
+      <p class="meta">{entry.data.entryKind} · {entry.data.stage}</p>
+      <h1>{entry.data.title}</h1>
+      {entry.data.summary && <p class="about-copy">{entry.data.summary}</p>}
+    </header>
+    <div class="article-body">
+      {
+        entry.data.presentation === "image" &&
+        entry.data.preview && (
+          <figure class="experiment-image">
+            <Image
+              src={entry.data.preview.asset}
+              alt={entry.data.preview.alt}
+              width={1200}
+            />
+          </figure>
+        )
+      }
+
+      <Content />
+    </div>
+  </article>
+</SiteLayout>

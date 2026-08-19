@@ -1,0 +1,440 @@
+---
+import crowSprite from "../assets/navigation/crow/Crow.png";
+---
+
+<div
+  class="navigation-crow"
+  data-navigation-crow
+  data-facing="left"
+  data-sprite-src={crowSprite.src}
+  aria-hidden="true"
+  hidden
+>
+  <span
+    class="navigation-crow__sprite"
+    data-navigation-crow-sprite
+    style={`background-image: url("${crowSprite.src}")`}
+  ></span>
+</div>
+
+<style>
+  .navigation-crow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+
+    width: 64px;
+    height: 64px;
+
+    pointer-events: none;
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+  }
+
+  .navigation-crow__sprite {
+    display: block;
+    width: 64px;
+    height: 64px;
+
+    background-repeat: no-repeat;
+    background-position: -64px 0;
+    background-size: 3584px 64px;
+
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    transform-origin: center center;
+  }
+
+  .navigation-crow[data-facing="right"] .navigation-crow__sprite {
+    transform: scaleX(-1);
+  }
+</style>
+
+<script>
+  const FRAME_SIZE = 64;
+  const FRAME_COUNT = 56;
+  const LAST_SECTION_KEY = "fabrizios-webhome:crow-last-section";
+
+  const IDLE_FRAMES = [1, 2, 3, 4] as const;
+  const IDLE_DURATIONS = [130, 170, 140, 200] as const;
+
+  const TAKEOFF_START_FRAMES = [40, 40] as const;
+  const TAKEOFF_START_DURATIONS = [220, 130] as const;
+
+  const TAKEOFF_END_FRAMES = [36, 37] as const;
+  const TAKEOFF_END_DURATIONS = [130, 130] as const;
+
+  const FLY_FRAMES = [38, 39, 40, 41, 42, 43] as const;
+  const FLY_DURATIONS = [140, 140, 140, 140, 140, 140] as const;
+
+  const LANDING_FRAMES = [44, 34] as const;
+  const LANDING_DURATIONS = [140, 190] as const;
+
+  /* Coordinate del corvo fermo nel fotogramma 64 × 64. */
+  const IDLE_VISIBLE_RIGHT = 47;
+  const IDLE_FOOT_LINE = 47;
+
+  /* Posizione finale: bordo superiore destro del tasto attivo. */
+  const PERCH_RIGHT_INSET = 4;
+
+  /*
+  * La linea dei piedi viene collocata 1 px dentro
+  * il bordo superiore del tasto.
+  */
+  const PERCH_TOP_OFFSET = 1;
+
+  type Point = {
+    x: number;
+    y: number;
+  };
+
+  const wait = (milliseconds: number) =>
+    new Promise<void>((resolve) => {
+      window.setTimeout(resolve, milliseconds);
+    });
+
+  const loadImage = (src: string) =>
+    new Promise<HTMLImageElement>((resolve, reject) => {
+      const image = new Image();
+
+      image.addEventListener("load", () => resolve(image), { once: true });
+      image.addEventListener(
+        "error",
+        () => reject(new Error(`Unable to load crow sprite: ${src}`)),
+        { once: true },
+      );
+
+      image.src = src;
+    });
+
+  const readPreviousSection = () => {
+    try {
+      return window.sessionStorage.getItem(LAST_SECTION_KEY);
+    } catch {
+      return null;
+    }
+  };
+
+  const rememberSection = (section: string) => {
+    try {
+      window.sessionStorage.setItem(LAST_SECTION_KEY, section);
+    } catch {
+      /* L'animazione resta utilizzabile anche senza sessionStorage. */
+    }
+  };
+
+  const initializeNavigationCrows = () => {
+    const navigationElements = document.querySelectorAll<HTMLElement>(
+      "[data-crow-navigation]",
+    );
+
+    navigationElements.forEach((navigationElement) => {
+      if (navigationElement.dataset.crowInitialized === "true") {
+        return;
+      }
+
+      navigationElement.dataset.crowInitialized = "true";
+      void setupNavigationCrow(navigationElement);
+    });
+  };
+
+  const setupNavigationCrow = async (navigationElement: HTMLElement) => {
+    const crowElement = navigationElement.querySelector<HTMLElement>(
+      "[data-navigation-crow]",
+    );
+    const spriteElement = navigationElement.querySelector<HTMLElement>(
+      "[data-navigation-crow-sprite]",
+    );
+    const activeButton = navigationElement.querySelector<HTMLAnchorElement>(
+      '[data-nav-button][aria-current="page"]',
+    );
+
+    if (!crowElement || !spriteElement || !activeButton) {
+      return;
+    }
+
+    const currentSection = activeButton.dataset.section;
+    const spriteSrc = crowElement.dataset.spriteSrc;
+
+    if (!currentSection || !spriteSrc) {
+      return;
+    }
+
+    const previousSection = readPreviousSection();
+    rememberSection(currentSection);
+
+    const navigationButtons = Array.from(
+      navigationElement.querySelectorAll<HTMLAnchorElement>("[data-nav-button]"),
+    );
+
+    const previousButton = previousSection
+      ? navigationButtons.find(
+          (button) => button.dataset.section === previousSection,
+        ) ?? null
+      : null;
+
+    let disposed = false;
+    let frameSequenceToken = 0;
+    let movementAnimation: Animation | null = null;
+    let isFlying = false;
+    let currentFrame: number = IDLE_FRAMES[0];
+
+    const stopFrameSequence = () => {
+      frameSequenceToken += 1;
+    };
+
+    const setFrame = (frameIndex: number) => {
+      currentFrame = frameIndex;
+      spriteElement.style.backgroundPosition = `${-frameIndex * FRAME_SIZE}px 0`;
+    };
+
+    const playFrameSequence = async (
+      frames: readonly number[],
+      durations: readonly number[],
+      loop = false,
+    ) => {
+      stopFrameSequence();
+      const sequenceToken = frameSequenceToken;
+
+      do {
+        for (let index = 0; index < frames.length; index += 1) {
+          if (disposed || sequenceToken !== frameSequenceToken) {
+            return;
+          }
+
+          setFrame(frames[index]);
+          await wait(durations[index] ?? durations[durations.length - 1] ?? 100);
+        }
+      } while (loop && !disposed && sequenceToken === frameSequenceToken);
+    };
+
+    const getPerchPoint = (button: HTMLElement): Point => {
+      const navigationRect = navigationElement.getBoundingClientRect();
+      const buttonRect = button.getBoundingClientRect();
+
+      return {
+        x:
+          buttonRect.right -
+          navigationRect.left -
+          PERCH_RIGHT_INSET -
+          IDLE_VISIBLE_RIGHT,
+        y:
+          buttonRect.top -
+          navigationRect.top -
+          IDLE_FOOT_LINE +
+          PERCH_TOP_OFFSET,
+      };
+    };
+
+    const placeCrow = (point: Point) => {
+      crowElement.style.transform = `translate3d(${Math.round(point.x)}px, ${Math.round(point.y)}px, 0)`;
+    };
+
+    const setFacing = (direction: "left" | "right") => {
+      crowElement.dataset.facing = direction;
+    };
+
+    const flyBetween = async (from: Point, to: Point) => {
+      const deltaX = to.x - from.x;
+      const deltaY = to.y - from.y;
+      const distance = Math.hypot(deltaX, deltaY);
+      const lift = Math.min(48, Math.max(24, distance * 0.14));
+      const duration = Math.round(
+        Math.min(1050, Math.max(650, distance * 2.1)),
+      );
+
+      const keyframes = Array.from({ length: 9 }, (_, index) => {
+        const progress = index / 8;
+        const x = from.x + deltaX * progress;
+        const linearY = from.y + deltaY * progress;
+        const arcY = 4 * lift * progress * (1 - progress);
+
+        return {
+          transform: `translate3d(${x}px, ${linearY - arcY}px, 0)`,
+        };
+      });
+
+      const animation = crowElement.animate(keyframes, {
+        duration,
+        easing: "linear",
+        fill: "forwards",
+      });
+
+      movementAnimation = animation;
+
+      try {
+        await animation.finished;
+      } catch {
+        return;
+      } finally {
+        if (movementAnimation === animation) {
+          movementAnimation = null;
+        }
+      }
+
+      if (!disposed) {
+        placeCrow(to);
+      }
+    };
+
+    let repositionFrame: number | null = null;
+
+    const repositionCrow = () => {
+      if (!disposed && !isFlying) {
+        placeCrow(getPerchPoint(activeButton));
+        setFrame(currentFrame);
+      }
+    };
+
+    const requestCrowReposition = () => {
+      if (
+        disposed ||
+        repositionFrame !== null
+      ) {
+        return;
+      }
+
+      repositionFrame =
+        window.requestAnimationFrame(() => {
+          repositionFrame = null;
+          repositionCrow();
+        });
+    };
+
+    const resizeObserver =
+      new ResizeObserver(requestCrowReposition);
+
+    resizeObserver.observe(navigationElement);
+    resizeObserver.observe(activeButton);
+
+    const visualViewport = window.visualViewport;
+
+    window.addEventListener(
+      "resize",
+      requestCrowReposition,
+    );
+
+    visualViewport?.addEventListener(
+      "resize",
+      requestCrowReposition,
+    );
+
+    navigationElement.addEventListener(
+      "webhome:navigation-layout",
+      requestCrowReposition,
+    );
+
+    const cleanup = () => {
+      disposed = true;
+      stopFrameSequence();
+      movementAnimation?.cancel();
+      resizeObserver.disconnect();
+
+      window.removeEventListener(
+        "resize",
+        requestCrowReposition,
+      );
+
+      visualViewport?.removeEventListener(
+        "resize",
+        requestCrowReposition,
+      );
+
+      navigationElement.removeEventListener(
+        "webhome:navigation-layout",
+        requestCrowReposition,
+      );
+
+      if (repositionFrame !== null) {
+        window.cancelAnimationFrame(
+          repositionFrame,
+        );
+      }
+    };
+
+    document.addEventListener(
+      "astro:before-swap",
+      cleanup,
+      { once: true },
+    );
+
+    let loadedSprite: HTMLImageElement;
+
+    try {
+      loadedSprite = await loadImage(spriteSrc);
+    } catch (error) {
+      console.error(error);
+      cleanup();
+      return;
+    }
+
+    if (
+      loadedSprite.naturalWidth !== FRAME_SIZE * FRAME_COUNT ||
+      loadedSprite.naturalHeight !== FRAME_SIZE
+    ) {
+      console.error(
+        `Crow.png must be ${FRAME_SIZE * FRAME_COUNT} × ${FRAME_SIZE}px; ` +
+          `the loaded file is ${loadedSprite.naturalWidth} × ${loadedSprite.naturalHeight}px.`,
+      );
+      cleanup();
+      return;
+    }
+
+    if (disposed) {
+      return;
+    }
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const targetPoint = getPerchPoint(activeButton);
+    const shouldFly =
+      !reducedMotion &&
+      previousButton !== null &&
+      previousButton !== activeButton;
+
+    if (!shouldFly) {
+      placeCrow(targetPoint);
+      setFacing("left");
+      setFrame(IDLE_FRAMES[0]);
+      crowElement.hidden = false;
+
+      if (!reducedMotion) {
+        void playFrameSequence(IDLE_FRAMES, IDLE_DURATIONS, true);
+      }
+
+      return;
+    }
+
+    const originPoint = getPerchPoint(previousButton);
+
+    placeCrow(originPoint);
+    setFacing(targetPoint.x >= originPoint.x ? "right" : "left");
+    setFrame(TAKEOFF_START_FRAMES[0]);
+    crowElement.hidden = false;
+    isFlying = true;
+
+    await playFrameSequence(TAKEOFF_START_FRAMES, TAKEOFF_START_DURATIONS);
+
+    const flightPromise = flyBetween(originPoint, targetPoint);
+
+    await playFrameSequence(TAKEOFF_END_FRAMES, TAKEOFF_END_DURATIONS);
+    void playFrameSequence(FLY_FRAMES, FLY_DURATIONS, true);
+    await flightPromise;
+
+    if (disposed) {
+      return;
+    }
+
+    placeCrow(getPerchPoint(activeButton));
+    await playFrameSequence(LANDING_FRAMES, LANDING_DURATIONS);
+
+    isFlying = false;
+    setFacing("left");
+    void playFrameSequence(IDLE_FRAMES, IDLE_DURATIONS, true);
+  };
+
+  initializeNavigationCrows();
+  document.addEventListener("astro:page-load", initializeNavigationCrows);
+</script>

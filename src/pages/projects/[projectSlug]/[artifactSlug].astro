@@ -1,0 +1,87 @@
+---
+import {
+  render,
+} from "astro:content";
+
+import ArtifactDetail from
+  "../../../components/ArtifactDetail.astro";
+
+import SiteLayout from
+  "../../../layouts/SiteLayout.astro";
+
+import {
+  getSiteData,
+  type ArtifactEntry,
+  type ProjectEntry,
+} from "../../../lib/content";
+
+export async function getStaticPaths() {
+  const data = await getSiteData();
+
+  return data.publicArtifacts.flatMap(
+    (artifact) => {
+      const primaryProjectId =
+        artifact.data.projects[0]?.id;
+
+      if (!primaryProjectId) {
+        return [];
+      }
+
+      const project =
+        data.publicProjects.find(
+          (entry) =>
+            entry.data.id ===
+            primaryProjectId,
+        );
+
+      if (!project) {
+        return [];
+      }
+
+      return [
+        {
+          params: {
+            projectSlug:
+              project.data.slug,
+
+            artifactSlug:
+              artifact.data.slug,
+          },
+
+          props: {
+            artifact,
+            project,
+          },
+        },
+      ];
+    },
+  );
+}
+
+interface Props {
+  artifact: ArtifactEntry;
+  project: ProjectEntry;
+}
+
+const {
+  artifact,
+  project,
+} = Astro.props;
+
+const { Content } =
+  await render(artifact);
+---
+
+<SiteLayout
+  title={artifact.data.title}
+  description={artifact.data.summary}
+  currentSection="projects"
+  lang={artifact.data.language ?? "en"}
+>
+  <ArtifactDetail
+    artifact={artifact}
+    project={project}
+  >
+    <Content />
+  </ArtifactDetail>
+</SiteLayout>

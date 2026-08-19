@@ -1,0 +1,192 @@
+---
+import ProjectContents from "../../components/ProjectContents.astro";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import SectionPageHeader from "../../components/SectionPageHeader.astro";
+import ProjectTitleButton from
+  "../../components/ProjectTitleButton.astro";
+
+import { getProjectContents, getSiteData } from "../../lib/content";
+import { withBase } from "../../lib/urls";
+
+const data = await getSiteData();
+
+/*
+ * Numero massimo di progetti per ciascuna riga:
+ * prima 2, poi 3, poi 2, infine 3.
+ */
+const PROJECTS_PER_ROW = [2, 3, 2, 3] as const;
+
+const getProjectOrder = (
+  project:
+    (typeof data.publicProjects)[number],
+) =>
+  project.data.order ??
+  Number.MAX_SAFE_INTEGER;
+
+const expandedProjects = data.publicProjects
+  .filter(
+    (project) =>
+      project.data.projectsIndexMode === "expanded",
+  )
+  .sort(
+    (firstProject, secondProject) =>
+      getProjectOrder(firstProject) -
+      getProjectOrder(secondProject),
+  );
+
+const projectRows: Array<typeof expandedProjects> = [];
+
+let rowStart = 0;
+
+for (const rowCapacity of PROJECTS_PER_ROW) {
+  const row = expandedProjects.slice(
+    rowStart,
+    rowStart + rowCapacity,
+  );
+
+  if (row.length === 0) {
+    break;
+  }
+
+  projectRows.push(row);
+  rowStart += rowCapacity;
+}
+
+/*
+ * I progetti che non entrano nelle quattro righe,
+ * insieme a quelli marcati come "collapsed",
+ * vengono mostrati soltanto come tasti.
+ */
+const displayedProjectIds = new Set(
+  projectRows
+    .flat()
+    .map((project) => project.data.id),
+);
+
+const titleOnlyProjects = data.publicProjects
+  .filter(
+    (project) =>
+      !displayedProjectIds.has(project.data.id),
+  )
+  .sort(
+    (firstProject, secondProject) =>
+      getProjectOrder(firstProject) -
+      getProjectOrder(secondProject),
+  );
+
+---
+
+<SiteLayout title="Projects" currentSection="projects">
+  <SectionPageHeader
+    title="Projects & Research"
+    subtitle="The Garden"
+    introduction="Coherent works that develop over time."
+  />
+
+  <section
+    class="projects-showcase"
+    aria-label="Projects on display"
+  >
+    {
+      projectRows.map((row) => (
+        <div
+          class="projects-showcase__row"
+          style={`--projects-in-row: ${row.length}`}
+        >
+          {row.map((project) => {
+            const contents = getProjectContents(
+              data,
+              project.data.id,
+            );
+
+            const projectTitleId =
+              `project-title-${project.data.id}`;
+
+            return (
+              <article
+                class="project-box"
+                id={project.data.slug}
+                data-project={project.data.id}
+                aria-labelledby={projectTitleId}
+              >
+                <h2
+                  class="project-box__title"
+                  id={projectTitleId}
+                >
+                  <ProjectTitleButton
+                    project={project}
+                  />
+                </h2>
+                <p class="meta project-box__stage">
+                  {project.data.stage}
+                </p>
+
+                <div class="project-box__body">
+
+                  <p class="project-box__summary">
+                    {project.data.summary}
+                  </p>
+
+                  {
+                    project.data.preview && (
+                      <figure class="project-box__preview">
+                        <img
+                          src={withBase(
+                            project.data.preview.asset,
+                          )}
+                          alt={project.data.preview.alt}
+                          width="1038"
+                          height="736"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </figure>
+                    )
+}
+
+                  <ProjectContents
+                    entries={contents}
+                    externalContents={
+                      project.data.externalContents
+                    }
+                    projectId={project.data.id}
+                    gallery
+                  />
+
+                  {
+                    project.data.roadmap.map(
+                      (item) => (
+                        <p class="project-box__roadmap meta">
+                          Growing next ·{" "}
+                          <strong>{item.title}</strong>
+                          {" — "}
+                          {item.statement}
+                        </p>
+                      ),
+                    )
+                  }
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      ))
+    }
+  </section>
+
+  {
+    titleOnlyProjects.length > 0 && (
+      <section
+        class="projects-title-shelf"
+        aria-label="Other projects"
+      >
+        {titleOnlyProjects.map((project) => (
+          <ProjectTitleButton
+            project={project}
+            variant="standalone"
+          />
+        ))}
+      </section>
+    )
+  }
+</SiteLayout>

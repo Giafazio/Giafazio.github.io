@@ -1,0 +1,565 @@
+/*
+ * Projects: righe di riquadri esposti.
+ */
+
+.projects-showcase {
+  display: grid;
+  gap: clamp(4rem, 7vw, 6rem);
+}
+
+.projects-showcase__row {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      var(--projects-in-row),
+      minmax(0, 1fr)
+    );
+
+  align-items: stretch;
+  gap: clamp(1.5rem, 3vw, 2.75rem);
+}
+
+/*
+ * Riquadro del singolo progetto.
+ * Riprende la costruzione del Welcome.
+ */
+
+/*
+ * Variabili grafiche condivise dal riquadro
+ * e dal relativo tasto.
+ */
+
+.project-box,
+.project-title-button,
+.project-detail-header {
+  --project-border: var(--frame-main);
+
+  --project-border-dark:
+    color-mix(
+      in srgb,
+      var(--project-border),
+      black 55%
+    );
+
+  --project-border-highlight:
+    color-mix(
+      in srgb,
+      var(--project-border),
+      white 34%
+    );
+
+  --project-title-font: "Basteleur", serif;
+  --project-title-color: #ffffff;
+  --project-title-outline:
+    rgb(0 0 0 / 0.95);
+}
+
+.project-box {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+
+  padding:
+    clamp(4.6rem, 6vw, 5rem)
+    clamp(1.1rem, 2.5vw, 1.8rem)
+    clamp(1.3rem, 2.5vw, 2rem);
+
+  border:
+    5px solid
+    var(--project-border);
+
+  background: var(--paper-raised);
+
+  box-shadow:
+    0 0 0 2px
+      var(--project-border-dark),
+    inset 0 0 0 1px
+      var(--project-border-highlight);
+}
+
+/*
+ * Hue principale di ciascun progetto.
+ */
+
+[data-project="games-and-riddles"] {
+  --project-border: #1f75d2;
+}
+
+[data-project="esperimenti-di-portafoglio"] {
+  --project-border: #e6c066;
+}
+
+[data-project="poetry-collection"] {
+  --project-border: #76506f;
+}
+
+[data-project="agroxel"] {
+  --project-border: #66743f;
+
+  --project-title-font:
+    "Prosto One",
+    sans-serif;
+}
+
+[data-project="quellotondo"] {
+  --project-border: #1c1c1c;
+}
+
+[data-project="quantum-transport-rg"] {
+  --project-border: #4d247a;
+}
+
+[data-project="vaccase"] {
+  --project-border: #de0043;
+}
+
+/*
+ * Intestazione della singola pagina progetto.
+ */
+
+.project-detail-header {
+  position: relative;
+  min-width: 0;
+
+  margin-bottom:
+    clamp(2.5rem, 5vw, 3.5rem);
+
+  padding-top:
+    clamp(3.4rem, 5vw, 4.2rem);
+
+  border-top:
+    5px solid var(--project-border);
+}
+
+.project-detail-header::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+
+  height: 1px;
+
+  background:
+    var(--project-border-highlight);
+
+  content: "";
+  pointer-events: none;
+}
+
+.project-detail-header__heading {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 1;
+
+  width: max-content;
+  max-width: calc(100% - 1.5rem);
+
+  transform: translate(-50%, -50%);
+}
+
+.project-detail-header__heading h1 {
+  margin: 0;
+  line-height: 1;
+}
+
+.project-title-button--heading {
+  min-width: min(100%, 14rem);
+}
+
+.project-title-button--static {
+  cursor: default;
+}
+
+.project-detail-header__stage {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  left: 50%;
+
+  margin: 0;
+
+  white-space: nowrap;
+
+  transform: translateX(-50%);
+}
+
+.project-detail-header--project
+.project-detail-header__copy {
+  margin-top: 1.25rem;
+}
+
+.project-detail-header__copy {
+  max-width: 58rem;
+}
+
+.project-detail-header__copy > :last-child {
+  margin-bottom: 0;
+}
+
+.project-detail-header__project-name {
+  margin: 0;
+  line-height: 1;
+}
+
+.project-detail-header--artifact {
+  margin-bottom: 0;
+}
+
+.project-detail-header--artifact
+.project-detail-header__copy {
+  width: 100%;
+  max-width: none;
+}
+
+.artifact-detail-heading__topline {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+  align-items: center;
+  gap: 0.75rem 2rem;
+}
+
+.artifact-detail-heading__title {
+  margin: 0;
+
+  font-family:
+    var(
+      --project-title-font,
+      "Basteleur",
+      serif
+    );
+
+  font-size:
+    clamp(1.9rem, 3.9vw, 3.1rem);
+
+  font-weight: normal;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+.pdf-action-link {
+  font-family: var(--font-ui);
+  font-size:
+    clamp(1rem, 1.25vw, 1.12rem);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.artifact-detail-heading__pdf {
+  justify-self: end;
+}
+
+.artifact-detail-heading__meta {
+  margin: 0.65rem 0 0;
+}
+
+.artifact-detail-heading__summary {
+  margin: 1.25rem 0 0;
+}
+
+@media (max-width: 700px) {
+  .artifact-detail-heading__topline {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+
+  .pdf-action-link {
+    white-space: normal;
+  }
+
+  .artifact-detail-heading__pdf {
+    justify-self: start;
+  }
+}
+
+/*
+ * Titolo sovrapposto al centro del bordo superiore.
+ */
+
+.project-box__title {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 1;
+
+  width: max-content;
+  max-width: calc(100% - 1.5rem);
+  margin: 0;
+
+  line-height: 1;
+
+  transform: translate(-50%, -50%);
+}
+
+.project-box__stage {
+  position: absolute;
+  top: 2.65rem;
+  left: 50%;
+  z-index: 1;
+
+  margin: 0;
+
+  text-align: center;
+  white-space: nowrap;
+
+  transform: translateX(-50%);
+}
+
+/*
+ * Tasto maiolicato.
+ * Font, colore e contorno riprendono per ora il menu.
+ */
+
+.project-title-button {
+  position: relative;
+  isolation: isolate;
+
+  display: grid;
+  place-items: center;
+
+  min-height: 64px;
+  max-width: 100%;
+  padding: 6px 16px;
+
+  overflow: hidden;
+
+  border:
+    4px solid
+    var(--project-border);
+
+  background-color: #ffffff;
+
+  color:
+    var(
+      --project-title-color,
+      #ffffff
+    );
+
+  font-family:
+    var(
+      --project-title-font,
+      "Basteleur",
+      serif
+    );
+
+  font-size: 28px;
+  font-weight: normal;
+  letter-spacing: 0;
+
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+
+  overflow-wrap: anywhere;
+
+  -webkit-text-stroke:
+    6px
+    var(
+      --project-title-outline,
+      rgb(0 0 0 / 0.95)
+    );
+
+  paint-order: stroke fill;
+  text-shadow: none;
+
+  box-shadow:
+    0 0 0 1px
+      var(--project-border-dark),
+    inset 0 0 0 1px
+      var(--project-border-highlight),
+    0 2px 0
+      var(--project-border-dark);
+
+  transform: translateY(0);
+}
+
+/*
+* Livello maiolicato animabile.
+*/
+
+.project-title-button__base {
+  position: absolute;
+  inset: 0 0 -64px;
+  z-index: 0;
+
+  pointer-events: none;
+
+  background-color: #ffffff;
+
+  background-image:
+    linear-gradient(
+      to right,
+      transparent 0,
+      transparent 62px,
+      #ffffff 62px,
+      #ffffff 64px
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 62px,
+      #ffffff 62px,
+      #ffffff 64px
+    ),
+    linear-gradient(
+      rgb(0 0 0 / 0.16),
+      rgb(0 0 0 / 0.16)
+    ),
+    var(--project-title-tile);
+
+  background-repeat:
+    repeat,
+    repeat,
+    no-repeat,
+    repeat;
+
+  background-position: center center;
+
+  background-size:
+    64px 64px,
+    64px 64px,
+    100% 100%,
+    64px 64px;
+
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+
+  animation:
+    project-title-background-rise
+    12s
+    linear
+    infinite;
+
+  animation-play-state: paused;
+  will-change: transform;
+}
+
+/*
+* Il testo rimane sopra lo sfondo animato.
+*/
+
+.project-title-button__label {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+* Spostamento esatto di una maiolica.
+*/
+
+@keyframes project-title-background-rise {
+  from {
+    transform:
+      translate3d(0, 0, 0);
+  }
+
+  to {
+    transform:
+      translate3d(0, -64px, 0);
+  }
+}
+
+.project-title-button:visited {
+  color:
+    var(
+      --project-title-color,
+      #ffffff
+    );
+}
+
+.project-title-button:hover {
+  text-decoration: none;
+}
+
+.project-title-button:not(
+  .project-title-button--static
+):active {
+  transform: translateY(2px);
+}
+
+.project-box__body > :last-child {
+  margin-bottom: 0;
+}
+
+.project-box__summary {
+  margin-bottom: 1.25rem;
+}
+
+.project-box__roadmap {
+  margin-top: 1rem;
+}
+
+/*
+ * Le liste interne diventano verticali:
+ * nello spazio di mezza pagina sono più leggibili
+ * rispetto alle vecchie due colonne.
+ */
+
+.project-box .project-contents li {
+  grid-template-columns: 1fr;
+  gap: 0.15rem;
+  padding-block: 0.65rem;
+}
+
+.project-box .project-contents a {
+  font-size: 1.03rem;
+}
+
+/*
+ * Progetti mostrati soltanto come titolo.
+ */
+
+.projects-title-shelf {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(0.8rem, 2vw, 1.4rem);
+
+  margin-top: var(--section-gap);
+}
+
+.project-title-button--standalone {
+  min-width: min(100%, 14rem);
+}
+
+/*
+ * Su schermi stretti ogni progetto occupa
+ * una riga intera.
+ */
+
+@media (max-width: 760px) {
+  .projects-showcase,
+  .projects-showcase__row {
+    gap: 4rem;
+  }
+
+  .projects-showcase__row {
+    grid-template-columns: 1fr;
+  }
+
+  .project-box {
+    padding-inline: 1rem;
+    border-width: 4px;
+  }
+
+  .project-title-button {
+    min-height: 48px;
+    padding: 5px 10px;
+
+    font-size:
+      clamp(16px, 5.5vw, 22px);
+
+    -webkit-text-stroke-width: 3px;
+  }
+
+  .project-detail-header {
+    padding-top: 3.2rem;
+    border-top-width: 4px;
+  }
+
+  .project-title-button--heading {
+    min-width: min(100%, 11rem);
+  }
+}
+

@@ -1,0 +1,401 @@
+---
+import type { SiteSection } from "../data/site";
+
+interface Props {
+  label: string;
+  href: string;
+  section: SiteSection;
+  active: boolean;
+  baseBackground?: string;
+}
+
+const {
+  label,
+  href,
+  section,
+  active,
+  baseBackground,
+} = Astro.props;
+
+const TILE_SIZE = 64;
+const TILE_SEPARATOR = 2;
+const TILE_DURATION_SECONDS = 12;
+
+const TILE_OVERLAY = "rgb(0 0 0 / 0.16)";
+
+const tileSize = `${TILE_SIZE}px`;
+const tileInnerEnd = `${TILE_SIZE - TILE_SEPARATOR}px`;
+const tileShift = `-${TILE_SIZE}px`;
+const tileDuration = `${TILE_DURATION_SECONDS}s`;
+
+const tileOverlay = TILE_OVERLAY;
+---
+
+<a
+  class="nav-button"
+  href={href}
+  data-nav-button
+  data-section={section}
+  aria-current={active ? "page" : undefined}
+>
+  <span
+    class="nav-button__base"
+    data-nav-button-base
+    aria-hidden="true"
+    style={baseBackground
+      ? `--nav-tile-image: url("${baseBackground}")`
+      : undefined}
+  ></span>
+
+  <span
+    class="nav-button__overlay"
+    aria-hidden="true"
+  ></span>
+
+  <span
+    class="nav-button__scene"
+    aria-hidden="true"
+  ></span>
+
+  <span class="nav-button__label">
+    {label}
+  </span>
+</a>
+
+<style define:vars={{
+  tileSize,
+  tileInnerEnd,
+  tileShift,
+  tileDuration,
+  tileOverlay,
+}}>
+
+  .nav-button {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+
+    /*
+    * In una riga flex il tasto parte dalla propria
+    * larghezza naturale, determinata dal testo.
+    */
+    flex: 0 0 auto;
+
+    min-width: 0;
+    min-height: 64px;
+    padding: 6px 16px;
+
+    box-sizing: border-box;
+
+    border: 4px solid #5a3b26;
+
+    color: var(--nav-label-color, #ffffff);
+    text-decoration: none;
+    white-space: nowrap;
+
+    transform: translateY(0);
+    overflow: hidden;
+  }
+
+  .nav-button:visited {
+   color: var(--nav-label-color, #ffffff);
+  }
+
+  .nav-button__base,
+  .nav-button__overlay,
+  .nav-button__scene {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+  }
+
+  .nav-button__overlay {
+    z-index: 1;
+    background: var(--tileOverlay);
+  }
+
+  .nav-button__base {
+    z-index: 0;
+
+    /*
+    * Il livello è più alto del tasto di una tile.
+    * In questo modo può traslare verso l'alto
+    * senza lasciare uno spazio vuoto sotto.
+    */
+    inset: 0 0 calc(-1 * var(--tileSize)) 0;
+
+    background-color: #ffffff;
+
+    background-image:
+      linear-gradient(
+        to right,
+        transparent 0,
+        transparent var(--tileInnerEnd),
+        #ffffff var(--tileInnerEnd),
+        #ffffff var(--tileSize)
+      ),
+      linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent var(--tileInnerEnd),
+        #ffffff var(--tileInnerEnd),
+        #ffffff var(--tileSize)
+      ),
+      var(--nav-tile-image, none);
+
+    background-repeat: repeat;
+
+    background-size:
+      var(--tileSize)
+      var(--tileSize);
+
+    background-position: center center;
+
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+
+    animation:
+      nav-button-background-rise
+      var(--tileDuration)
+      linear
+      infinite;
+
+    animation-play-state: paused;
+    will-change: transform;
+  }
+
+  @keyframes nav-button-background-rise {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+
+    to {
+      transform:
+        translate3d(0, var(--tileShift), 0);
+    }
+  }
+
+  .nav-button__scene {
+    z-index: 2;
+    opacity: 0;
+  }
+
+  .nav-button:hover .nav-button__scene,
+  .nav-button[aria-current="page"] .nav-button__scene {
+    opacity: 1;
+  }
+
+  .nav-button:active {
+    transform:
+      translateY(var(--nav-button-press-depth, 2px));
+  }
+
+  .nav-button__label {
+    position: relative;
+    z-index: 3;
+
+    font-family: "Basteleur", serif;
+    font-weight: normal;
+    font-size: 28px;
+    line-height: 1;
+
+    -webkit-text-stroke: 6px rgb(0 0 0 / 0.95);
+    paint-order: stroke fill;
+    text-shadow: none;
+    }
+
+  @media (max-width: 700px) {
+    .nav-button {
+      min-height: 30px;
+      padding: 3px 6px;
+    }
+
+    .nav-button__label {
+      font-size: clamp(14px, 4.25vw, 22px);
+      -webkit-text-stroke-width: 3px;
+    }
+  }
+</style>
+
+<script>
+  const TILE_FINISH_PLAYBACK_RATE = 48;
+
+  const initializeNavTileMotion = () => {
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    const buttons =
+      document.querySelectorAll<HTMLElement>(
+        "[data-nav-button]",
+      );
+
+    buttons.forEach((button) => {
+      if (button.dataset.tileMotionInitialized) {
+        return;
+      }
+
+      const base =
+        button.querySelector<HTMLElement>(
+          "[data-nav-button-base]",
+        );
+
+      if (!base) {
+        return;
+      }
+
+      button.dataset.tileMotionInitialized = "pending";
+
+      window.requestAnimationFrame(() => {
+        const motion = base.getAnimations()[0];
+
+        if (!motion) {
+          delete button.dataset.tileMotionInitialized;
+          return;
+        }
+
+        button.dataset.tileMotionInitialized = "true";
+
+        motion.pause();
+        motion.currentTime = 0;
+
+        if (reducedMotion) {
+          return;
+        }
+
+        let finishTimer: number | null = null;
+        let pointerInside = false;
+        let keyboardFocused = false;
+
+        const clearFinishTimer = () => {
+          if (finishTimer !== null) {
+            window.clearTimeout(finishTimer);
+            finishTimer = null;
+          }
+        };
+
+        const runSlowly = () => {
+          clearFinishTimer();
+
+          motion.updatePlaybackRate(1);
+          motion.play();
+        };
+
+        const finishQuickly = () => {
+          clearFinishTimer();
+
+          const timing = motion.effect?.getTiming();
+          const duration = timing?.duration;
+
+          if (
+            typeof duration !== "number" ||
+            !Number.isFinite(duration) ||
+            duration <= 0
+          ) {
+            motion.pause();
+            motion.currentTime = 0;
+            return;
+          }
+
+          const currentTime =
+            Number(motion.currentTime ?? 0);
+
+          const positionInCycle =
+            ((currentTime % duration) + duration) %
+            duration;
+
+          /*
+           * Se siamo già esattamente all'inizio del ciclo,
+           * non c'è nulla da completare.
+           */
+          if (positionInCycle === 0) {
+            motion.pause();
+            motion.currentTime = 0;
+            motion.updatePlaybackRate(1);
+            return;
+          }
+
+          const remainingTime =
+            duration - positionInCycle;
+
+          motion.updatePlaybackRate(
+            TILE_FINISH_PLAYBACK_RATE,
+          );
+
+          motion.play();
+
+          /*
+           * remainingTime è espresso alla velocità normale.
+           * Dividendo per il playback rate otteniamo il
+           * tempo reale necessario per raggiungere la fine.
+           */
+          finishTimer = window.setTimeout(() => {
+            finishTimer = null;
+
+            /*
+             * Nel frattempo il mouse potrebbe essere
+             * rientrato sul tasto.
+             */
+            if (pointerInside || keyboardFocused) {
+              return;
+            }
+
+            motion.pause();
+            motion.currentTime = 0;
+            motion.updatePlaybackRate(1);
+          }, remainingTime / TILE_FINISH_PLAYBACK_RATE);
+        };
+
+        button.addEventListener(
+          "pointerenter",
+          () => {
+            pointerInside = true;
+            runSlowly();
+          },
+        );
+
+        button.addEventListener(
+          "pointerleave",
+          () => {
+            pointerInside = false;
+
+            if (!keyboardFocused) {
+              finishQuickly();
+            }
+          },
+        );
+
+        button.addEventListener(
+          "focus",
+          () => {
+            keyboardFocused =
+              button.matches(":focus-visible");
+
+            if (keyboardFocused) {
+              runSlowly();
+            }
+          },
+        );
+
+        button.addEventListener(
+          "blur",
+          () => {
+            keyboardFocused = false;
+
+            if (!pointerInside) {
+              finishQuickly();
+            }
+          },
+        );
+      });
+    });
+  };
+
+  initializeNavTileMotion();
+
+  document.addEventListener(
+    "astro:page-load",
+    initializeNavTileMotion,
+  );
+</script>

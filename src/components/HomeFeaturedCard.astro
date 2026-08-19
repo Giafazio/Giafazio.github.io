@@ -1,0 +1,127 @@
+---
+import ProjectContents from "./ProjectContents.astro";
+import ProjectTitleButton from
+  "./ProjectTitleButton.astro";
+
+import type {
+  HomeFeaturedItem,
+} from "../lib/homeFeatured";
+
+import {
+  withBase,
+} from "../lib/urls";
+
+interface Props {
+  item: HomeFeaturedItem;
+}
+
+const { item } = Astro.props;
+
+const projectItem =
+  item.kind === "project"
+    ? item
+    : null;
+
+const entryItem =
+  item.kind === "entry"
+    ? item
+    : null;
+---
+
+{
+  projectItem ? (
+    <article
+      class="project-box home-featured-project"
+      data-project={projectItem.project.data.id}
+    >
+      <h3 class="project-box__title">
+        <ProjectTitleButton
+          project={projectItem.project}
+        />
+      </h3>
+
+      <div class="project-box__body">
+        {
+          projectItem.project.data.summary && (
+            <p class="home-featured-project__summary">
+              {projectItem.project.data.summary}
+            </p>
+          )
+        }
+
+        {
+          projectItem.project.data.preview && (
+            <figure class="home-featured-project__preview">
+              <img
+                src={withBase(
+                  projectItem.project.data.preview.asset,
+                )}
+                alt={
+                  projectItem.project.data.preview.alt
+                }
+                width="1038"
+                height="736"
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+          )
+        }
+
+        {
+          projectItem.contents.length > 0 && (
+            <ProjectContents
+              entries={projectItem.contents}
+              projectId={
+                projectItem.project.data.id
+              }
+              showEmpty={false}
+            />
+          )
+        }
+
+        <footer class="home-featured-project__footer">
+          <p class="meta">
+            project
+            {" · "}
+            {projectItem.project.data.stage}
+          </p>
+
+          {
+            projectItem.project.data
+              .externalContents.length > 0 && (
+              <nav
+                class="home-featured-project__external"
+                aria-label={`External contents of ${projectItem.project.data.title}`}
+              >
+                {
+                  projectItem.project.data.externalContents.map(
+                    (content) => (
+                      <a href={content.href}>
+                        {
+                          content.kind ===
+                          "repository"
+                            ? "Repository"
+                            : content.title
+                        }
+                        {" ↗"}
+                      </a>
+                    ),
+                  )
+                }
+              </nav>
+            )
+          }
+        </footer>
+      </div>
+    </article>
+  ) : entryItem ? (
+    <div class="home-featured-entry">
+      <ProjectContents
+        entries={[entryItem.entry]}
+        showEmpty={false}
+        showSummary={true}
+      />
+    </div>
+  ) : null
+}

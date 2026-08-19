@@ -1,0 +1,33 @@
+---
+import type { ArtifactEntry } from "../lib/content";
+import { publicAsset, routeFor, withBase } from "../lib/urls";
+
+interface Props {
+  artifact: ArtifactEntry;
+}
+
+const { artifact } = Astro.props;
+const { title, slug, previewAsset, artifactKind, language } = artifact.data;
+---
+
+<article class="artifact-card">
+  {
+    previewAsset && (
+      <a
+        class="artifact-preview"
+        href={withBase(routeFor("artifacts", slug))}
+        aria-label={`Open ${title}`}
+      >
+        <img
+          src={publicAsset(previewAsset)}
+          alt={`Preview of ${title}`}
+          width="800"
+          height="600"
+          loading="lazy"
+        />
+      </a>
+    )
+  }
+  <p class="meta">{artifactKind} · {language?.toUpperCase()}</p>
+  <h2><a href={withBase(routeFor("artifacts", slug))}>{title}</a></h2>
+</article>

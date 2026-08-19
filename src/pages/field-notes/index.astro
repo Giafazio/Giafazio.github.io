@@ -1,0 +1,43 @@
+---
+import EmptyState from
+  "../../components/EmptyState.astro";
+
+import EntryGallery from
+  "../../components/EntryGallery.astro";
+
+import SectionPageHeader from
+  "../../components/SectionPageHeader.astro";
+
+import SiteLayout from
+  "../../layouts/SiteLayout.astro";
+
+import {
+  getSiteData,
+} from "../../lib/content";
+
+const data = await getSiteData();
+---
+
+<SiteLayout title="Field Notes & Thoughts" currentSection="field-notes">
+  <SectionPageHeader
+    title="Field Notes & Thoughts"
+    subtitle="The Living Room"
+    introduction="An index for notes about this site and Thoughts
+  about stuff that attract my attention."
+  />
+
+  {
+    data.publicFieldNotes.length > 0 ? (
+      <EntryGallery
+        entries={data.publicFieldNotes}
+        variant="living-room"
+        ariaLabel="Field Notes and Thoughts"
+      />
+    ) : (
+      <EmptyState
+        title="Index ready"
+        text="No Field Note or Thought is public yet. The current draft remains excluded from this index and from the generated routes."
+      />
+    )
+  }
+</SiteLayout>

@@ -1,0 +1,55 @@
+---
+import EmptyState from
+  "../../components/EmptyState.astro";
+
+import EntryGallery from
+  "../../components/EntryGallery.astro";
+
+import SectionPageHeader from
+  "../../components/SectionPageHeader.astro";
+
+import SiteLayout from
+  "../../layouts/SiteLayout.astro";
+
+import {
+  compareCreationDate,
+  getSiteData,
+} from "../../lib/content";
+
+const data = await getSiteData();
+
+const standaloneArtifacts =
+  data.publicArtifacts.filter(
+    (artifact) =>
+      artifact.data.projects.length === 0,
+  );
+
+const kitchenEntries = [
+  ...data.publicExperiments,
+  ...standaloneArtifacts,
+].sort(compareCreationDate);
+---
+
+<SiteLayout title="Experiments & Fragments" currentSection="experiments">
+  <SectionPageHeader
+    title="Experiments & Fragments"
+    subtitle="The Kitchen"
+    introduction="Standalones and variants, tests and prototypes, 
+and deliberately open pieces."
+  />
+
+  {
+    kitchenEntries.length > 0 ? (
+      <EntryGallery
+        entries={kitchenEntries}
+        variant="kitchen"
+        ariaLabel="Experiments, Fragments and standalone Artifacts"
+      />
+    ) : (
+      <EmptyState
+        title="Nothing on the table yet"
+        text="The registered fragment is still a draft and therefore generates no public page."
+      />
+    )
+  }
+</SiteLayout>

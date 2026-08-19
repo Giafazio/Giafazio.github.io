@@ -1,0 +1,343 @@
+---
+import SectionPageHeader from
+  "../components/SectionPageHeader.astro";
+
+import SiteLayout from
+  "../layouts/SiteLayout.astro";
+---
+
+<SiteLayout
+  title="Acknowledgements"
+  description="Credits, licensing, privacy information, and disclaimers for Fabrizio's Webhome."
+  lang="en"
+  contentClass="acknowledgements-main"
+>
+  <SectionPageHeader
+    title="Acknowledgements"
+    subtitle="About This Site"
+    introduction={`Credits, sources, terms of reuse,
+and a few necessary caveats.`}
+  />
+
+  <article class="acknowledgements-page">
+    <section
+      class="acknowledgements-page__section acknowledgements-page__section--wide"
+      aria-labelledby="about-this-webhome"
+    >
+      <h2 id="about-this-webhome">
+        About this Webhome
+      </h2>
+
+      <p>
+        Fabrizio’s Webhome is a personal and evolving
+        collection of projects, thoughts, experiments,
+        games, and other artifacts by Fabrizio Caragiulo.
+        It was conceived as a place in which unfinished
+        processes may remain visible alongside completed
+        work.
+      </p>
+
+      <p>
+        The site was designed and developed iteratively
+        by Fabrizio Caragiulo with assistance from
+        OpenAI Codex. Editorial decisions, published
+        materials, and final responsibility for the
+        site remain Fabrizio’s.
+      </p>
+
+      <p>
+        The website is built with
+        {" "}
+        <a href="https://astro.build/">
+          Astro
+        </a>,
+        TypeScript, HTML, and CSS. Font files are
+        self-hosted, partly through
+        {" "}
+        <a href="https://fontsource.org/">
+          Fontsource
+        </a>.
+      </p>
+    </section>
+
+    <section
+      class="acknowledgements-page__section acknowledgements-page__section--wide"
+      aria-labelledby="credits"
+    >
+      <h2 id="credits">
+        Credits
+      </h2>
+
+      <h3>Typography</h3>
+
+      <ul>
+        <li>
+          <a href="https://velvetyne.fr/fonts/basteleur/">
+            Basteleur
+          </a>,
+          designed by Keussel and distributed by
+          Velvetyne Type Foundry.
+        </li>
+
+        <li>
+          <a href="https://github.com/huertatipografica/Alegreya">
+            Alegreya
+          </a>,
+          by the Alegreya Project Authors.
+        </li>
+
+        <li>
+          <a href="https://github.com/productiontype/Spectral">
+            Spectral
+          </a>,
+          by Production Type.
+        </li>
+
+        <li>
+          <a href="https://github.com/arrowtype/recursive">
+            Recursive
+          </a>,
+          by the Recursive Project Authors.
+        </li>
+
+        <li>
+          Prosto One, by Jovanny Lemonad and
+          Pavel Emelyanov.
+        </li>
+      </ul>
+
+      <p>
+        These typefaces are distributed under the
+        SIL Open Font License 1.1. Their respective
+        copyright notices and licence terms remain
+        applicable.
+      </p>
+
+      <h3>Translations</h3>
+      <p>
+        Works identified by the <i>Translations</i> tag are translations
+        of pre-existing works. Each translation page credits the original
+        work and its author or rightsholder, identifies the translator, and
+        states the applicable source licence, permission, or public-domain
+        status.
+      </p>
+
+      <h3>Images and visual materials</h3>
+
+      <ul>
+        <li>
+          The photographs were taken by
+          Fabrizio Caragiulo or E. N. The handwritten
+          wordmark is an original work by Fabrizio
+          Caragiulo.
+        </li>
+
+        <li>
+          The animated crow uses the Crow sprite from
+          {" "}
+          <a href="https://peakpixels.itch.io/commonbirds">
+            Common Birds
+          </a>
+          {" "}
+          by Peak Pixels, purchased and used under
+          the terms supplied by its author. It is
+          excluded from this site’s general content
+          licence and is not offered for extraction
+          or redistribution.
+        </li>
+
+        <li>
+        The tile backgrounds are pixel-art
+        reinterpretations by Fabrizio Caragiulo,
+        based on
+        {" "}
+        <a href="https://wordpress.org/photos/photo/4636317663/">
+            a photograph of Lisbon tile magnets
+        </a>
+        {" "}
+        by Marco Almeida | Webdados, obtained
+        from the WordPress Photo Directory and
+        released under
+        {" "}
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/">
+            CC0 1.0
+        </a>.
+        Attribution is not required, but the
+        original photographer is gratefully
+        acknowledged.
+        </li>
+
+        <li>
+          The corner ornament is an SVG adaptation
+          by Fabrizio Caragiulo of
+          {" "}
+          <a href="https://commons.wikimedia.org/wiki/File:Vintage_pattern_from_The_Practical_Decorator_and_Ornamentist_by_G.A_%26_M.A._Audsley_from_rawpixel%E2%80%99s_own_original_first_edition_of_the_publication_67.jpg">
+            a pattern from <i>The Practical Decorator
+            and Ornamentist</i>
+          </a>
+          {" "}
+          by G. A. and M. A. Audsley, from a
+          digitisation by Rawpixel. The source image
+          and this SVG adaptation are licensed under
+          the
+          {" "}
+          <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike
+            4.0 International licence
+          </a>.
+        </li>
+      </ul>
+    </section>
+
+    <section
+      class="acknowledgements-page__section"
+      aria-labelledby="disclaimer"
+    >
+      <h2 id="disclaimer">
+        Disclaimer
+      </h2>
+
+      <p>
+        This is a personal, exploratory, and evolving
+        website. Its contents may be incomplete,
+        provisional, inaccurate, or revised without
+        notice.
+      </p>
+
+      <p>
+        Nothing published here constitutes financial,
+        legal, medical, academic, or other professional
+        advice. In particular, portfolio analyses and
+        financial experiments are educational works,
+        not investment recommendations or guarantees
+        of future results.
+      </p>
+
+      <p>
+        External links are provided for context and
+        convenience. They do not imply endorsement,
+        and Fabrizio Caragiulo is not responsible for
+        the availability, accuracy, or practices of
+        third-party websites.
+      </p>
+
+      <p>
+        To the extent permitted by law, the site and
+        its contents are provided “as is”, without
+        warranties of any kind.
+      </p>
+    </section>
+
+    <section
+      class="acknowledgements-page__section"
+      aria-labelledby="privacy"
+    >
+      <h2 id="privacy">
+        Privacy
+      </h2>
+
+      <p>
+        This site does not use analytics, advertising
+        trackers, contact forms, or cookies.
+      </p>
+
+      <p>
+        It uses the browser’s session storage only to
+        preserve temporary interface state: the
+        continuity of the menu animation and the
+        shuffled sequence used by <i>Lega i 4</i>.
+        This information remains on the visitor’s
+        device and is not transmitted by the site’s
+        own code.
+      </p>
+
+      <p>
+        The hosting provider may process ordinary
+        technical request data under its own terms.
+        Following an external link or using an email
+        link may also involve services governed by
+        third-party privacy policies.
+      </p>
+    </section>
+
+    <section
+      class="acknowledgements-page__section acknowledgements-page__section--wide"
+      aria-labelledby="licensing"
+    >
+      <h2 id="licensing">
+        Copyright and licensing
+      </h2>
+
+      <p>
+        Unless otherwise stated, original textual and
+        visual content by Fabrizio Caragiulo—including
+        writings, photographs, crosswords, games, and
+        original graphics—is licensed under the
+        {" "}
+        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+          Creative Commons
+          Attribution-NonCommercial-ShareAlike 4.0
+          International licence
+        </a>.
+      </p>
+
+      <p>
+        This means that the material may be shared and
+        adapted for non-commercial purposes, provided
+        that appropriate credit is given, changes are
+        indicated, and adaptations are distributed
+        under the same or a compatible licence.
+      </p>
+
+      <p>
+        A suitable attribution is:
+        “<i>Title of the work</i>, by Fabrizio
+        Caragiulo, from Fabrizio’s Webhome”, followed
+        by a link to the original page and to the
+        licence.
+      </p>
+
+      <p>
+        Source code written specifically for this
+        website is licensed under the
+        {" "}
+        <a href="https://opensource.org/license/mit">
+          MIT License
+        </a>.
+        This permission applies to the code, not to
+        the site’s editorial content or third-party
+        assets.
+      </p>
+
+        <p>
+        Fonts, software dependencies, purchased
+        assets, externally hosted works, and
+        materials carrying a separate notice
+        remain subject to their respective
+        licences. The CV, personal information, 
+        the photographs, and the Peak
+        Pixels sprite are not included in the 
+        general reuse licence.
+        Photographs by E. N. are used
+        with permission.
+        The corner ornament remains licensed
+        separately under CC BY-SA 4.0.
+        </p>
+
+        <p>
+          Translations are excluded from the site’s general CC BY-NC-SA 4.0
+          licence unless explicitly stated otherwise on the individual page.
+          Copyright and other rights that subsist in the underlying works
+          remain with their respective authors or rightsholders. Publication
+          on this site does not transfer or waive those rights. Any reuse of
+          a translation must comply both with the notice on its individual
+          page and with the legal status of the underlying work.
+        </p>
+
+      <p>
+        © 2026 Fabrizio Caragiulo. Some rights
+        reserved.
+      </p>
+    </section>
+  </article>
+</SiteLayout>

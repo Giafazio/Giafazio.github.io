@@ -1,0 +1,205 @@
+---
+import CrosswordReader from
+  "./CrosswordReader.astro";
+
+import FourWordsGame from
+  "./FourWordsGame.astro";
+
+import ProjectTitleButton from
+  "./ProjectTitleButton.astro";
+
+import type {
+  ArtifactEntry,
+  ProjectEntry,
+} from "../lib/content";
+
+import {
+  publicAsset,
+  withBase,
+} from "../lib/urls";
+
+interface Props {
+  artifact: ArtifactEntry;
+  project?: ProjectEntry;
+}
+
+const {
+  artifact,
+  project,
+} = Astro.props;
+
+const crossword =
+  artifact.data.crossword;
+
+const fourWordsGame =
+  artifact.data.fourWordsGame;
+
+const gameProjectId =
+  project?.data.id ?? "standalone";
+
+const primaryActionLabel =
+  project
+    ? "Open PDF"
+    : "Open file";
+
+const browseAction = project
+  ? {
+      href: "/atlas/?kind=artifacts",
+      label: "Browse Artifacts in the Index",
+    }
+  : {
+      href: "/experiments/",
+      label:
+        "Browse Experiments & Fragments",
+    };
+---
+
+<article
+  class:list={[
+    !project && "experiment-article",
+  ]}
+>
+  <header
+    class:list={[
+      project
+        ? [
+            "project-detail-header",
+            "project-detail-header--artifact",
+          ]
+        : [
+            "article-header",
+            "artifact-detail-heading",
+          ],
+    ]}
+    data-project={project?.data.id}
+  >
+    {
+      project && (
+        <div class="project-detail-header__heading">
+          <div class="project-detail-header__project-name">
+            <ProjectTitleButton
+              project={project}
+              variant="heading"
+            />
+          </div>
+        </div>
+      )
+    }
+
+    <div
+      class:list={[
+        project &&
+          "project-detail-header__copy",
+
+        project &&
+          "artifact-detail-heading",
+      ]}
+    >
+      <div class="artifact-detail-heading__topline">
+        <h1 class="artifact-detail-heading__title">
+          {artifact.data.title}
+        </h1>
+
+        {
+          crossword &&
+          artifact.data.primaryAsset && (
+            <a
+              class="
+                pdf-action-link
+                artifact-detail-heading__pdf
+              "
+              href={publicAsset(
+                artifact.data.primaryAsset,
+              )}
+            >
+              Apri o stampa il PDF
+            </a>
+          )
+        }
+      </div>
+
+      <p class="meta artifact-detail-heading__meta">
+        {artifact.data.artifactKind}
+        {" · "}
+        {artifact.data.stage}
+
+        {
+          artifact.data.language && (
+            <>
+              {" · "}
+              {
+                artifact.data.language
+                  .toUpperCase()
+              }
+            </>
+          )
+        }
+      </p>
+
+      {
+        artifact.data.summary &&
+        !fourWordsGame && (
+          <p
+            class="
+              about-copy
+              artifact-detail-heading__summary
+            "
+          >
+            {artifact.data.summary}
+          </p>
+        )
+      }
+    </div>
+  </header>
+
+  {
+    crossword ? (
+      <CrosswordReader
+        id={artifact.data.id}
+        title={artifact.data.title}
+        crossword={crossword}
+      />
+    ) : fourWordsGame ? (
+      <FourWordsGame
+        id={artifact.data.id}
+        title={artifact.data.title}
+        projectId={gameProjectId}
+        game={fourWordsGame}
+      />
+    ) : artifact.data.previewAsset ? (
+      <div class="artifact-preview">
+        <img
+          src={publicAsset(
+            artifact.data.previewAsset,
+          )}
+          alt={`Preview of ${artifact.data.title}`}
+          width="1000"
+          height="750"
+        />
+      </div>
+    ) : null
+  }
+
+  <div class="article-body">
+    <slot />
+  </div>
+
+  <div class="artifact-actions">
+    {
+      artifact.data.primaryAsset &&
+      !crossword && (
+        <a
+          href={publicAsset(
+            artifact.data.primaryAsset,
+          )}
+        >
+          {primaryActionLabel}
+        </a>
+      )
+    }
+
+    <a href={withBase(browseAction.href)}>
+      {browseAction.label}
+    </a>
+  </div>
+</article>

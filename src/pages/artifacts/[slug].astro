@@ -1,0 +1,89 @@
+---
+import {
+  render,
+} from "astro:content";
+
+import ArtifactDetail from
+  "../../components/ArtifactDetail.astro";
+
+import SiteLayout from
+  "../../layouts/SiteLayout.astro";
+
+import {
+  getSiteData,
+  routeForEntry,
+  type ArtifactEntry,
+} from "../../lib/content";
+
+import {
+  routeFor,
+  withBase,
+} from "../../lib/urls";
+
+export async function getStaticPaths() {
+  const data = await getSiteData();
+
+  return data.publicArtifacts.map(
+    (artifact) => {
+      const standalonePath = routeFor(
+        "artifacts",
+        artifact.data.slug,
+      );
+
+      const canonicalPath =
+        routeForEntry(artifact);
+
+      return {
+        params: {
+          slug: artifact.data.slug,
+        },
+
+        props: {
+          artifact,
+
+          destination:
+            canonicalPath === standalonePath
+              ? null
+              : withBase(canonicalPath),
+        },
+      };
+    },
+  );
+}
+
+interface Props {
+  artifact: ArtifactEntry;
+  destination: string | null;
+}
+
+const {
+  artifact,
+  destination,
+} = Astro.props;
+
+/*
+ * Gli artifact appartenenti a un progetto
+ * conservano la propria pagina canonica
+ * interna al progetto.
+ */
+if (destination) {
+  return Astro.redirect(
+    destination,
+    301,
+  );
+}
+
+const { Content } =
+  await render(artifact);
+---
+
+<SiteLayout
+  title={artifact.data.title}
+  description={artifact.data.summary}
+  currentSection="experiments"
+  lang={artifact.data.language ?? "en"}
+>
+  <ArtifactDetail artifact={artifact}>
+    <Content />
+  </ArtifactDetail>
+</SiteLayout>

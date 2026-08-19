@@ -1,0 +1,104 @@
+---
+import {
+  render,
+  type CollectionEntry,
+} from "astro:content";
+
+import LongformArticle from "../../components/LongformArticle.astro";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+
+import {
+  formatCreationDate,
+  getSiteData,
+} from "../../lib/content";
+
+import { publicAsset } from "../../lib/urls";
+
+export async function getStaticPaths() {
+  const data = await getSiteData();
+
+  return data.publicFieldNotes.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"fieldNotes">;
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+
+const pageTitle =
+  entry.data.title ??
+  entry.data.workingLabel ??
+  "Untitled";
+
+const kindLabel =
+  entry.data.entryKind === "site-note"
+    ? "Site note"
+    : "Thought";
+
+const isLongform =
+  entry.data.presentation === "longform";
+---
+
+<SiteLayout
+  title={pageTitle}
+  currentSection="field-notes"
+  lang={entry.data.language ?? "en"}
+  contentClass={entry.data.hyphenate ? "hyphenated-content" : ""}
+>
+  {
+    isLongform ? (
+      <LongformArticle
+        title={pageTitle}
+        kindLabel={kindLabel}
+        language={entry.data.language ?? "en"}
+        stage={entry.data.stage}
+        authorialCredit={entry.data.authorialCredit}
+        authorialDateLabel={entry.data.authorialDateLabel}
+        pdfAsset={entry.data.pdfAsset}
+        headings={headings}
+        showTableOfContents={entry.data.showTableOfContents}
+      >
+        <Content />
+      </LongformArticle>
+    ) : (
+      <article class="field-note-article">
+        <header class="article-header">
+          <p class="meta">
+            {kindLabel}
+            {` · ${formatCreationDate(entry.data.creationDate)}`}
+          </p>
+
+          <h1>{pageTitle}</h1>
+
+        </header>
+
+        <div
+          class:list={[
+            "article-body",
+            {
+              "article-body--indented":
+                entry.data.indentParagraphs,
+            },
+          ]}
+        >
+          <Content />
+        </div>
+
+        {
+          entry.data.pdfAsset && (
+            <p class="artifact-actions">
+              <a href={publicAsset(entry.data.pdfAsset)}>
+                Apri il PDF
+              </a>
+            </p>
+          )
+        }
+      </article>
+    )
+  }
+</SiteLayout>

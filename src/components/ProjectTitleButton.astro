@@ -1,0 +1,76 @@
+---
+import type {
+  ProjectEntry,
+} from "../lib/content";
+
+import {
+  getProjectTileStyle,
+} from "../lib/projectAppearance";
+
+import {
+  routeFor,
+  withBase,
+} from "../lib/urls";
+
+type ProjectTitleButtonVariant =
+  | "default"
+  | "heading"
+  | "standalone";
+
+interface Props {
+  project: ProjectEntry;
+  variant?: ProjectTitleButtonVariant;
+  linked?: boolean;
+}
+
+const {
+  project,
+  variant = "default",
+  linked = true,
+} = Astro.props;
+
+const Element = linked ? "a" : "span";
+
+const className = [
+  "project-title-button",
+
+  variant !== "default"
+    ? `project-title-button--${variant}`
+    : null,
+
+  !linked
+    ? "project-title-button--static"
+    : null,
+]
+  .filter(Boolean)
+  .join(" ");
+
+const href = linked
+  ? withBase(
+      routeFor(
+        "projects",
+        project.data.slug,
+      ),
+    )
+  : undefined;
+---
+
+<Element
+  class={className}
+  data-project={project.data.id}
+  data-nav-button
+  href={href}
+  style={getProjectTileStyle(
+    project.data.id,
+  )}
+>
+  <span
+    class="project-title-button__base"
+    data-nav-button-base
+    aria-hidden="true"
+  ></span>
+
+  <span class="project-title-button__label">
+    {project.data.title}
+  </span>
+</Element>

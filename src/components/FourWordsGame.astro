@@ -1,0 +1,744 @@
+---
+import type {
+  CollectionEntry,
+} from "astro:content";
+
+type ArtifactEntry =
+  CollectionEntry<"artifacts">;
+
+type FourWordsGameData =
+  NonNullable<
+    ArtifactEntry["data"]["fourWordsGame"]
+  >;
+
+interface Props {
+  id: string;
+  title: string;
+  projectId: string;
+  game: FourWordsGameData;
+}
+
+const {
+  id,
+  title,
+  projectId,
+  game,
+} = Astro.props;
+
+const firstRound = game.rounds[0];
+
+if (!firstRound) {
+  throw new Error(
+    `${title} deve contenere almeno un gioco.`,
+  );
+}
+
+const solutionId =
+  `${id}-solution`;
+---
+
+<section
+  class="four-words-game"
+  data-four-words-game
+  data-game-id={id}
+  data-project={projectId}
+  data-rounds={JSON.stringify(game.rounds)}
+  aria-label={`Gioco ${title}`}
+>
+  <header class="four-words-game__header">
+    <p class="four-words-game__prompt">
+      Trova ciò che lega queste quattro parole.
+    </p>
+
+    <p
+      class="four-words-game__progress"
+      data-game-progress
+      aria-live="polite"
+    >
+      1 / {game.rounds.length}
+    </p>
+  </header>
+
+  <ol
+    class="four-words-game__words"
+    aria-label="Le quattro parole"
+    aria-live="polite"
+  >
+    {
+      firstRound.words.map((word) => (
+        <li data-game-word>
+          {word}
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="four-words-game__actions">
+    <button
+      type="button"
+      class="four-words-game__button"
+      data-solution-button
+      aria-controls={solutionId}
+      aria-expanded="false"
+    >
+      Mostra la soluzione
+    </button>
+
+    <button
+      type="button"
+      class="four-words-game__button four-words-game__button--next"
+      data-next-button
+    >
+      Gioca di nuovo
+    </button>
+  </div>
+
+  <p
+    id={solutionId}
+    class="four-words-game__solution"
+    data-solution-panel
+    aria-live="polite"
+    hidden
+  >
+    <span>Soluzione:</span>
+
+    <strong data-solution-text>
+      {firstRound.solution}
+    </strong>
+  </p>
+</section>
+
+<style>
+  .four-words-game {
+    margin-block:
+      clamp(2rem, 4vw, 3rem);
+
+    padding:
+      clamp(1rem, 3vw, 2rem);
+
+    border:
+      3px solid
+      var(
+        --project-border,
+        var(--resident)
+      );
+
+    background:
+      var(--paper-raised);
+
+    box-shadow:
+      inset 0 0 0 1px
+        color-mix(
+          in srgb,
+          var(
+            --project-border,
+            var(--resident)
+          ) 35%,
+          transparent
+        ),
+      0.45rem 0.5rem 0
+        rgb(0 0 0 / 0.1);
+  }
+
+  .four-words-game__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+
+    margin-bottom:
+      clamp(1rem, 2.5vw, 1.5rem);
+  }
+
+  .four-words-game__prompt,
+  .four-words-game__progress {
+    margin: 0;
+  }
+
+  .four-words-game__prompt {
+    font-family: var(--font-display);
+    font-size:
+      clamp(1.15rem, 2.2vw, 1.5rem);
+    line-height: 1.25;
+  }
+
+  .four-words-game__progress {
+    flex: 0 0 auto;
+
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .four-words-game__words {
+    display: grid;
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+    gap:
+      clamp(0.3rem, 1.2vw, 0.8rem);
+
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .four-words-game__words li {
+    display: grid;
+    place-items: center;
+
+    min-width: 0;
+    min-height:
+      clamp(5rem, 10vw, 7.5rem);
+
+    padding:
+      clamp(0.35rem, 1.5vw, 1rem);
+
+    border:
+      1px solid
+      var(
+        --project-border,
+        var(--resident)
+      );
+
+    background: var(--paper);
+
+    font-family:
+      var(
+        --project-title-font,
+        "Basteleur",
+        serif
+      );
+
+    font-size:
+      clamp(0.8rem, 2.1vw, 1.55rem);
+
+    line-height: 1.15;
+    text-align: center;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .four-words-game__actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+
+    margin-top:
+      clamp(1rem, 2.5vw, 1.5rem);
+  }
+
+  .four-words-game__button {
+    min-height: 2.8rem;
+    padding: 0.55rem 0.9rem;
+
+    border:
+      1px solid
+      var(
+        --project-border,
+        var(--resident)
+      );
+
+    border-radius: 0;
+    background: var(--paper-raised);
+    color: var(--ink);
+    cursor: pointer;
+
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+  }
+
+  .four-words-game__button:hover {
+    background:
+      color-mix(
+        in srgb,
+        var(--paper-raised) 78%,
+        var(
+          --project-border,
+          var(--resident)
+        )
+      );
+  }
+
+  .four-words-game__button--next {
+    background:
+      var(
+        --project-border,
+        var(--resident)
+      );
+
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .four-words-game__button--next:hover {
+    background:
+      color-mix(
+        in srgb,
+        var(
+          --project-border,
+          var(--resident)
+        ) 82%,
+        black
+      );
+  }
+
+  .four-words-game__solution {
+    margin: 1.25rem 0 0;
+    padding-top: 1rem;
+
+    border-top:
+      1px solid
+      color-mix(
+        in srgb,
+        var(
+          --project-border,
+          var(--resident)
+        ) 55%,
+        transparent
+      );
+
+    font-size:
+      clamp(1.05rem, 2vw, 1.3rem);
+    text-align: center;
+  }
+
+  .four-words-game__solution span {
+    margin-right: 0.35rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 560px) {
+    .four-words-game {
+      padding: 0.8rem;
+    }
+
+    .four-words-game__header {
+      gap: 0.5rem;
+    }
+
+    .four-words-game__words {
+      gap: 0.25rem;
+    }
+
+    .four-words-game__words li {
+      min-height: 4.5rem;
+      padding-inline: 0.15rem;
+
+      font-size:
+        clamp(0.67rem, 3.1vw, 0.95rem);
+    }
+
+    .four-words-game__actions {
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+      gap: 0.4rem;
+    }
+
+    .four-words-game__button {
+      padding-inline: 0.35rem;
+      font-size: 0.68rem;
+    }
+  }
+</style>
+
+<script>
+  type FourWordsRound = {
+    id: string;
+    words: [
+      string,
+      string,
+      string,
+      string,
+    ];
+    solution: string;
+  };
+
+  type StoredGameState = {
+    order: string[];
+    position: number;
+  };
+
+  const shuffleRoundIds = (
+    ids: string[],
+    avoidFirstId?: string,
+  ): string[] => {
+    const shuffled = [...ids];
+
+    /*
+     * Mescolamento Fisher-Yates:
+     * ciascun gioco appare una sola volta
+     * prima dell'inizio del nuovo ciclo.
+     */
+    for (
+      let index = shuffled.length - 1;
+      index > 0;
+      index -= 1
+    ) {
+      const randomIndex =
+        Math.floor(
+          Math.random() * (index + 1),
+        );
+
+      const current =
+        shuffled[index];
+
+      const replacement =
+        shuffled[randomIndex];
+
+      if (
+        current === undefined ||
+        replacement === undefined
+      ) {
+        continue;
+      }
+
+      shuffled[index] = replacement;
+      shuffled[randomIndex] = current;
+    }
+
+    /*
+     * Il primo gioco del nuovo ciclo
+     * non deve coincidere con l'ultimo
+     * del ciclo precedente.
+     */
+    const firstId = shuffled[0];
+
+    if (
+      avoidFirstId &&
+      firstId === avoidFirstId &&
+      shuffled.length > 1
+    ) {
+      const replacementIndex =
+        shuffled.findIndex(
+          (roundId) =>
+            roundId !== avoidFirstId,
+        );
+
+      const replacementId =
+        shuffled[replacementIndex];
+
+      if (
+        replacementIndex > 0 &&
+        firstId &&
+        replacementId
+      ) {
+        shuffled[0] = replacementId;
+        shuffled[replacementIndex] =
+          firstId;
+      }
+    }
+
+    return shuffled;
+  };
+
+  const initializeFourWordsGames = () => {
+    document
+      .querySelectorAll<HTMLElement>(
+        "[data-four-words-game]",
+      )
+      .forEach((gameElement) => {
+        if (
+          gameElement.dataset
+            .fourWordsGameInitialized ===
+          "true"
+        ) {
+          return;
+        }
+
+        gameElement.dataset
+          .fourWordsGameInitialized =
+          "true";
+
+        const gameId =
+          gameElement.dataset.gameId;
+
+        const serializedRounds =
+          gameElement.dataset.rounds;
+
+        if (
+          !gameId ||
+          !serializedRounds
+        ) {
+          return;
+        }
+
+        let rounds: FourWordsRound[];
+
+        try {
+          rounds =
+            JSON.parse(
+              serializedRounds,
+            ) as FourWordsRound[];
+        } catch {
+          return;
+        }
+
+        if (rounds.length === 0) {
+          return;
+        }
+
+        const roundById =
+          new Map(
+            rounds.map(
+              (round) => [
+                round.id,
+                round,
+              ],
+            ),
+          );
+
+        const roundIds =
+          rounds.map(
+            (round) => round.id,
+          );
+
+        const wordElements =
+          Array.from(
+            gameElement
+              .querySelectorAll<HTMLElement>(
+                "[data-game-word]",
+              ),
+          );
+
+        const progressElement =
+          gameElement
+            .querySelector<HTMLElement>(
+              "[data-game-progress]",
+            );
+
+        const solutionPanel =
+          gameElement
+            .querySelector<HTMLElement>(
+              "[data-solution-panel]",
+            );
+
+        const solutionText =
+          gameElement
+            .querySelector<HTMLElement>(
+              "[data-solution-text]",
+            );
+
+        const solutionButton =
+          gameElement
+            .querySelector<HTMLButtonElement>(
+              "[data-solution-button]",
+            );
+
+        const nextButton =
+          gameElement
+            .querySelector<HTMLButtonElement>(
+              "[data-next-button]",
+            );
+
+        if (
+          wordElements.length !== 4 ||
+          !progressElement ||
+          !solutionPanel ||
+          !solutionText ||
+          !solutionButton ||
+          !nextButton
+        ) {
+          return;
+        }
+
+        const storageKey =
+          `four-words-game:${gameId}:v1`;
+
+        let order =
+          shuffleRoundIds(roundIds);
+
+        let position = 0;
+
+        /*
+         * Se la pagina viene ricaricata
+         * nella stessa scheda, recuperiamo
+         * il percorso già iniziato.
+         */
+        try {
+          const savedValue =
+            sessionStorage.getItem(
+              storageKey,
+            );
+
+          if (savedValue) {
+            const saved =
+              JSON.parse(
+                savedValue,
+              ) as StoredGameState;
+
+            const validOrder =
+              Array.isArray(
+                saved.order,
+              ) &&
+              saved.order.length ===
+                roundIds.length &&
+              new Set(
+                saved.order,
+              ).size ===
+                roundIds.length &&
+              saved.order.every(
+                (roundId) =>
+                  typeof roundId ===
+                    "string" &&
+                  roundById.has(
+                    roundId,
+                  ),
+              );
+
+            const validPosition =
+              Number.isInteger(
+                saved.position,
+              ) &&
+              saved.position >= 0 &&
+              saved.position <
+                roundIds.length;
+
+            if (
+              validOrder &&
+              validPosition
+            ) {
+              order = [
+                ...saved.order,
+              ];
+
+              position =
+                saved.position;
+            }
+          }
+        } catch {
+          /*
+           * Il gioco continua a funzionare
+           * anche se la memoria del browser
+           * non è disponibile.
+           */
+        }
+
+        const saveState = () => {
+          try {
+            sessionStorage.setItem(
+              storageKey,
+              JSON.stringify({
+                order,
+                position,
+              }),
+            );
+          } catch {
+            /*
+             * Nessuna interruzione del gioco.
+             */
+          }
+        };
+
+        const hideSolution = () => {
+          solutionPanel.hidden = true;
+
+          solutionButton.setAttribute(
+            "aria-expanded",
+            "false",
+          );
+
+          solutionButton.textContent =
+            "Mostra la soluzione";
+        };
+
+        const renderCurrentRound = () => {
+          const roundId =
+            order[position];
+
+          const round =
+            roundId
+              ? roundById.get(
+                  roundId,
+                )
+              : undefined;
+
+          if (!round) {
+            return;
+          }
+
+          wordElements.forEach(
+            (
+              wordElement,
+              index,
+            ) => {
+              wordElement.textContent =
+                round.words[index] ??
+                "";
+            },
+          );
+
+          progressElement.textContent =
+            `${position + 1} / ${rounds.length}`;
+
+          solutionText.textContent =
+            round.solution;
+
+          hideSolution();
+        };
+
+        solutionButton.addEventListener(
+          "click",
+          () => {
+            const willShow =
+              solutionPanel.hidden;
+
+            solutionPanel.hidden =
+              !willShow;
+
+            solutionButton.setAttribute(
+              "aria-expanded",
+              String(willShow),
+            );
+
+            solutionButton.textContent =
+              willShow
+                ? "Nascondi la soluzione"
+                : "Mostra la soluzione";
+          },
+        );
+
+        nextButton.addEventListener(
+          "click",
+          () => {
+            const currentRoundId =
+              order[position];
+
+            if (
+              position >=
+              order.length - 1
+            ) {
+              order =
+                shuffleRoundIds(
+                  roundIds,
+                  currentRoundId,
+                );
+
+              position = 0;
+            } else {
+              position += 1;
+            }
+
+            saveState();
+            renderCurrentRound();
+          },
+        );
+
+        renderCurrentRound();
+        saveState();
+      });
+  };
+
+  initializeFourWordsGames();
+
+  document.addEventListener(
+    "astro:page-load",
+    initializeFourWordsGames,
+  );
+</script>

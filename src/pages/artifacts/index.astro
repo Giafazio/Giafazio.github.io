@@ -1,0 +1,11 @@
+---
+return Astro.redirect(
+  `${
+    import.meta.env.BASE_URL.replace(
+      /\/+$/,
+      "",
+    )
+  }/atlas/?kind=artifacts`,
+  301,
+);
+---

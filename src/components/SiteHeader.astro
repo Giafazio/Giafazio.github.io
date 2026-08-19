@@ -1,0 +1,915 @@
+---
+import { getImage } from "astro:assets";
+
+import NavButton from "./NavButton.astro";
+import NavigationCrow from "./NavigationCrow.astro";
+
+import maio1Tile from "../assets/navigation/tiles/maio1.png";
+import maio2Tile from "../assets/navigation/tiles/maio2.png";
+
+import anatrosoHeaderBackground from
+  "../assets/header/Anatroso nitido.png";
+
+import isuienHeaderBackground from
+  "../assets/header/IsuienNara.png";
+
+import pollinoHeaderBackground from
+  "../assets/header/pollino.png";
+
+import gattistanbulHeaderBackground from
+  "../assets/header/gattistanbul.png";
+
+import HeaderWordmark from "../assets/header/HandWrittenHeaderFabriziosWebhome.svg";
+
+import {
+  navigation,
+  siteConfig,
+  type SiteSection,
+} from "../data/site";
+
+import { withBase } from "../lib/urls";
+
+interface Props {
+  currentSection?: SiteSection;
+}
+
+const { currentSection } = Astro.props;
+
+const navigationRows = [
+  navigation.slice(0, 3),
+  navigation.slice(3),
+];
+
+const headerBackgroundSources = [
+  {
+    source: anatrosoHeaderBackground,
+    position: "50% 55%",
+  },
+  {
+    source: isuienHeaderBackground,
+    position: "50% 45%",
+  },
+  {
+    source: pollinoHeaderBackground,
+    position: "50% 60%",
+  },
+  {
+    source: gattistanbulHeaderBackground,
+    position: "50% 43%",
+  },
+] as const;
+
+const headerBackgrounds = await Promise.all(
+  headerBackgroundSources.map(
+    async ({ source, position }) => {
+      const optimizedImage = await getImage({
+        src: source,
+        width: Math.min(source.width, 1600),
+        format: "webp",
+        quality: 80,
+      });
+
+      return {
+        src: optimizedImage.src,
+        position,
+      };
+    },
+  ),
+);
+
+const defaultHeaderBackground =
+  headerBackgrounds.find(
+    (_, index) => index === 2,
+  );
+
+if (!defaultHeaderBackground) {
+  throw new Error(
+    "The default header background is missing.",
+  );
+}
+
+const getBaseBackground = (section: SiteSection) => {
+  switch (section) {
+    case "home":
+      return maio1Tile.src;
+
+    case "field-notes":
+      return maio2Tile.src;
+
+    case "projects":
+      return maio1Tile.src;
+
+    case "experiments":
+      return maio2Tile.src;
+
+    case "atlas":
+      return maio1Tile.src;
+  }
+};
+---
+
+<header
+  class="webhome-header"
+  data-header-backgrounds={JSON.stringify(
+    headerBackgrounds,
+  )}
+  style={`
+    --header-background:
+      url("${defaultHeaderBackground.src}");
+    --header-background-position:
+      ${defaultHeaderBackground.position};
+  `}
+>
+
+  <div
+    class="webhome-header__banner"
+    data-header-banner
+  >
+    <div
+      class="webhome-header__background-track"
+      data-header-background-track
+      aria-hidden="true"
+    >
+      <div
+        class="webhome-header__background-image"
+        data-header-background-image
+      ></div>
+    </div>
+    <a
+      class="webhome-header__title"
+      href={withBase("/")}
+      aria-label={siteConfig.headerTitle}
+    >
+      <HeaderWordmark
+        class="webhome-header__wordmark"
+        aria-hidden="true"
+        focusable="false"
+      />
+    </a>
+  </div>
+
+  <nav
+    class="webhome-nav"
+    aria-label="Main navigation"
+    data-crow-navigation
+  >
+    <div class="webhome-nav__buttons">
+      {
+        navigationRows.map((row) => (
+          <div class="webhome-nav__row">
+            {row.map((item) => (
+              <NavButton
+                label={item.shortLabel}
+                href={withBase(item.href)}
+                section={item.section}
+                active={item.section === currentSection}
+                baseBackground={getBaseBackground(item.section)}
+              />
+            ))}
+          </div>
+        ))
+      }
+    </div>
+
+    <NavigationCrow />
+  </nav>
+
+</header>
+
+<style>
+  .webhome-header {
+    position: relative;
+
+    --nav-button-press-depth: 2px;
+    --wordmark-fill: #ffffff;
+    --wordmark-outline: #000000;
+    --nav-label-color: #ffffff;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+
+    gap: 0;
+  }
+
+  .webhome-header__banner {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background-color: var(--paper-raised);
+
+    display: grid;
+    align-items: center;
+    justify-items: start;
+
+    min-width: 0;
+    min-height: 180px;
+
+    padding: clamp(36px, 1.6vw, 24px);
+
+    border: 7px solid var(--frame-main);
+
+
+    box-shadow:
+      0 0 0 2px var(--frame-dark);
+  }
+
+  .webhome-header__background-track {
+    position: absolute;
+    inset: -36px 0;
+    z-index: 0;
+
+    pointer-events: none;
+
+    transform:
+      translate3d(
+        0,
+        var(--header-parallax-y, 0px),
+        0
+      );
+
+    will-change: transform;
+  }
+
+  .webhome-header__background-image {
+    position: absolute;
+    inset: -4px;
+
+    background-image: var(--header-background);
+    background-size: cover;
+    background-position:
+      var(
+        --header-background-position,
+        center
+      );
+    background-repeat: no-repeat;
+
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  /*
+  * Ricostruiamo il sottile bordo interno sopra
+  * l'immagine mobile.
+  */
+  .webhome-header__banner::after {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+
+    box-shadow:
+      inset 0 0 0 2px var(--frame-highlight);
+
+    content: "";
+    pointer-events: none;
+  }
+
+  .webhome-header__title {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: clamp(180px, 24vw, 360px);
+    max-width: 100%;
+
+    color: var(--wordmark-fill);
+    line-height: 0;
+    text-decoration: none;
+
+    transform: translateY(0);
+  }
+
+  .webhome-header__title:visited {
+    color: var(--wordmark-fill);
+  }
+
+  .webhome-header__title:hover {
+    text-decoration: none;
+  }  
+
+  .webhome-header__title:active {
+    transform:
+      translateY(var(--nav-button-press-depth, 2px));
+  }
+
+  :global(.webhome-header__wordmark) {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  :global(.webhome-header__wordmark path) {
+    fill: currentColor;
+
+    stroke: var(--wordmark-outline);
+    stroke-width: 5px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    paint-order: stroke fill;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .webhome-nav {
+    position: relative;
+
+    width: 100%;
+    min-width: 0;
+
+    /*
+    * Zona riservata al corvo posato
+    * sul bordo superiore dei tasti.
+    */
+    padding-top: 52px;
+
+    overflow: visible;
+  }
+
+  .webhome-nav__buttons {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: stretch;
+
+    gap: 4px;
+
+    width:  100%;
+    margin-inline: auto;
+
+  }
+
+  .webhome-nav__row {
+    display: contents;
+  }
+
+
+
+  .webhome-nav--two-rows
+  .webhome-nav__buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 48px;
+  }
+
+  .webhome-nav--two-rows
+  .webhome-nav__row {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+
+    gap: 2px;
+  }
+
+  @media (max-width: 700px) {
+    .webhome-header__banner {
+      min-height: 140px;
+      padding: 12px;
+      border-width: 5px;
+    }
+
+    .webhome-header__title {
+      width: min(100%, 360px);
+    }
+  }
+</style>	
+
+<script>
+
+  type HeaderBackground = {
+    src: string;
+    position: string;
+  };
+
+  let selectedHeaderBackground:
+    HeaderBackground | null = null;
+
+  const initializeRandomHeaderBackground =
+    () => {
+      const headers =
+        document.querySelectorAll<HTMLElement>(
+          "[data-header-backgrounds]",
+        );
+
+      headers.forEach((header) => {
+        if (
+          header.dataset
+            .randomBackgroundInitialized ===
+          "true"
+        ) {
+          return;
+        }
+
+        let backgrounds: HeaderBackground[] = [];
+
+        try {
+          backgrounds = JSON.parse(
+            header.dataset.headerBackgrounds ??
+              "[]",
+          ) as HeaderBackground[];
+        } catch {
+          backgrounds = [];
+        }
+
+        if (backgrounds.length === 0) {
+          return;
+        }
+
+        /*
+        * La variabile resta valorizzata durante
+        * la navigazione interna di Astro.
+        * Una ricarica completa esegue invece
+        * una nuova estrazione.
+        */
+        const selectedBackgroundIsAvailable =
+          selectedHeaderBackground
+            ? backgrounds.some(
+                (background) =>
+                  background.src ===
+                  selectedHeaderBackground?.src,
+              )
+            : false;
+
+        if (!selectedBackgroundIsAvailable) {
+          const randomIndex =
+            Math.floor(
+              Math.random() *
+              backgrounds.length,
+            );
+
+          selectedHeaderBackground =
+            backgrounds[randomIndex] ??
+            null;
+        }
+
+        if (!selectedHeaderBackground) {
+          return;
+        }
+
+        header.style.setProperty(
+          "--header-background",
+          `url("${selectedHeaderBackground.src}")`,
+        );
+
+        header.style.setProperty(
+          "--header-background-position",
+          selectedHeaderBackground.position,
+        );
+
+        header.dataset
+          .randomBackgroundInitialized =
+          "true";
+      });
+    };
+
+  const PARALLAX_RATE = 0.16;
+
+  const TREMOR_MIN_DELAY_MS = 5_000;
+  const TREMOR_MAX_DELAY_MS = 13_000;
+
+  const TREMOR_MIN_DURATION_MS = 650;
+  const TREMOR_MAX_DURATION_MS = 1_050;
+
+  const TREMOR_X_PX = 1.4;
+  const TREMOR_Y_PX = 1;
+  const TREMOR_ROTATION_DEG = 0.04;
+
+  const randomBetween = (
+    minimum: number,
+    maximum: number,
+  ) =>
+    minimum + Math.random() * (maximum - minimum);
+
+  const initializeHeaderBackgroundMotion = () => {
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    const banners =
+      document.querySelectorAll<HTMLElement>(
+        "[data-header-banner]",
+      );
+
+    banners.forEach((banner) => {
+      if (
+        banner.dataset.backgroundMotionInitialized ===
+        "true"
+      ) {
+        return;
+      }
+
+      banner.dataset.backgroundMotionInitialized =
+        "true";
+
+      const track =
+        banner.querySelector<HTMLElement>(
+          "[data-header-background-track]",
+        );
+
+      const image =
+        banner.querySelector<HTMLElement>(
+          "[data-header-background-image]",
+        );
+
+      if (!track || !image || reducedMotion) {
+        return;
+      }
+
+      let parallaxFrame: number | null = null;
+      let tremorTimer: number | null = null;
+      let tremorAnimation: Animation | null = null;
+      let disposed = false;
+
+      const applyParallax = () => {
+        parallaxFrame = null;
+
+        if (disposed) {
+          return;
+        }
+
+        /*
+        * Coordinata del bordo inferiore del banner
+        * rispetto all'intero documento.
+        */
+        const bannerBottomInDocument =
+          banner.getBoundingClientRect().bottom +
+          window.scrollY;
+
+        /*
+        * Il movimento viene limitato soltanto quando
+        * il banner è ormai interamente uscito dallo schermo.
+        */
+        const relevantScroll = Math.min(
+          Math.max(window.scrollY, 0),
+          bannerBottomInDocument,
+        );
+
+        const movement =
+          -relevantScroll * PARALLAX_RATE;
+
+        track.style.setProperty(
+          "--header-parallax-y",
+          `${movement}px`,
+        );
+      };
+
+      const requestParallaxUpdate = () => {
+        if (parallaxFrame !== null) {
+          return;
+        }
+
+        parallaxFrame =
+          window.requestAnimationFrame(
+            applyParallax,
+          );
+      };
+
+      function scheduleTremor() {
+        if (disposed) {
+          return;
+        }
+
+        const delay = randomBetween(
+          TREMOR_MIN_DELAY_MS,
+          TREMOR_MAX_DELAY_MS,
+        );
+
+        tremorTimer = window.setTimeout(
+          runTremor,
+          delay,
+        );
+      }
+
+      function runTremor() {
+        tremorTimer = null;
+
+        if (
+          disposed ||
+          !banner.isConnected ||
+          !image
+        ) {
+          cleanup();
+          return;
+        }
+        
+        const neutralTransform =
+          "translate3d(0, 0, 0) rotate(0deg)";
+
+        const keyframes: Keyframe[] = [
+          {
+            transform: neutralTransform,
+            offset: 0,
+          },
+        ];
+
+        const intermediateFrames = 6;
+
+        for (
+          let index = 1;
+          index <= intermediateFrames;
+          index += 1
+        ) {
+          const x = randomBetween(
+            -TREMOR_X_PX,
+            TREMOR_X_PX,
+          );
+
+          const y = randomBetween(
+            -TREMOR_Y_PX,
+            TREMOR_Y_PX,
+          );
+
+          const rotation = randomBetween(
+            -TREMOR_ROTATION_DEG,
+            TREMOR_ROTATION_DEG,
+          );
+
+          keyframes.push({
+            transform:
+              `translate3d(${x.toFixed(2)}px, ` +
+              `${y.toFixed(2)}px, 0) ` +
+              `rotate(${rotation.toFixed(3)}deg)`,
+            offset:
+              index /
+              (intermediateFrames + 1),
+          });
+        }
+
+        keyframes.push({
+          transform: neutralTransform,
+          offset: 1,
+        });
+
+        const animation = image.animate(
+          keyframes,
+          {
+            duration: randomBetween(
+              TREMOR_MIN_DURATION_MS,
+              TREMOR_MAX_DURATION_MS,
+            ),
+            easing: "linear",
+          },
+        );
+
+        tremorAnimation = animation;
+
+        animation.onfinish = () => {
+          if (tremorAnimation === animation) {
+            tremorAnimation = null;
+          }
+
+          scheduleTremor();
+        };
+      }
+
+      function cleanup() {
+        if (disposed) {
+          return;
+        }
+
+        disposed = true;
+
+        window.removeEventListener(
+          "scroll",
+          requestParallaxUpdate,
+        );
+
+        window.removeEventListener(
+          "resize",
+          requestParallaxUpdate,
+        );
+
+        if (parallaxFrame !== null) {
+          window.cancelAnimationFrame(
+            parallaxFrame,
+          );
+        }
+
+        if (tremorTimer !== null) {
+          window.clearTimeout(tremorTimer);
+        }
+
+        if (tremorAnimation) {
+          tremorAnimation.onfinish = null;
+          tremorAnimation.cancel();
+        }
+      }
+
+      window.addEventListener(
+        "scroll",
+        requestParallaxUpdate,
+        { passive: true },
+      );
+
+      window.addEventListener(
+        "resize",
+        requestParallaxUpdate,
+      );
+
+      document.addEventListener(
+        "astro:before-swap",
+        cleanup,
+        { once: true },
+      );
+
+      applyParallax();
+      scheduleTremor();
+    });
+  };
+
+  const initializeAdaptiveNavigationLayout =
+    () => {
+      const headers =
+        document.querySelectorAll<HTMLElement>(
+          ".webhome-header",
+        );
+
+      headers.forEach((header) => {
+        if (
+          header.dataset
+            .adaptiveNavigationInitialized ===
+          "true"
+        ) {
+          return;
+        }
+
+        const banner =
+          header.querySelector<HTMLElement>(
+            ".webhome-header__banner",
+          );
+
+        const navigation =
+          header.querySelector<HTMLElement>(
+            ".webhome-nav",
+          );
+
+        const buttons =
+          header.querySelector<HTMLElement>(
+            ".webhome-nav__buttons",
+          );
+
+        if (!banner || !navigation || !buttons) {
+          return;
+        }
+
+        header.dataset
+          .adaptiveNavigationInitialized =
+          "true";
+
+        let layoutFrame:
+          number | null = null;
+
+        let disposed = false;
+
+        const applyLayout = () => {
+          layoutFrame = null;
+
+          if (
+            disposed ||
+            !header.isConnected
+          ) {
+            return;
+          }
+
+          /*
+          * Ogni misurazione parte dalla
+          * configurazione a una riga.
+          */
+          navigation.classList.remove(
+            "webhome-nav--two-rows",
+          );
+
+          /*
+          * L'allineamento temporaneo a sinistra
+          * permette a scrollWidth di misurare
+          * tutto il contenuto eccedente.
+          */
+          const navigationButtons = Array.from(
+            buttons.querySelectorAll<HTMLElement>(
+              "[data-nav-button]",
+            ),
+          );
+
+          const buttonsStyle =
+            window.getComputedStyle(buttons);
+
+          const columnGap =
+            Number.parseFloat(buttonsStyle.columnGap) || 0;
+
+          const requiredWidth =
+            navigationButtons.reduce(
+              (total, button) =>
+                total +
+                button.getBoundingClientRect().width,
+              0,
+            ) +
+            columnGap *
+              Math.max(navigationButtons.length - 1, 0);
+
+          const availableWidth =
+            buttons.getBoundingClientRect().width;
+
+          /*
+          * Tolleriamo fino a 8px di eccedenza complessiva
+          * per assorbire gli arrotondamenti introdotti dallo zoom.
+          */
+          const overflowTolerance = 1;
+
+          const rowOverflows =
+            requiredWidth >
+            availableWidth +
+              overflowTolerance;
+
+          navigation.classList.toggle(
+            "webhome-nav--two-rows",
+            rowOverflows,
+          );
+
+          navigation.dispatchEvent(
+            new Event("webhome:navigation-layout"),
+          );
+        };
+
+        const requestLayoutUpdate = () => {
+          if (
+            disposed ||
+            layoutFrame !== null
+          ) {
+            return;
+          }
+
+          layoutFrame =
+            window.requestAnimationFrame(
+              applyLayout,
+            );
+        };
+
+        const resizeObserver =
+          new ResizeObserver(
+            requestLayoutUpdate,
+          );
+
+        /*
+        * Osserviamo il banner, la cui larghezza
+        * rappresenta lo spazio disponibile.
+        * Non osserviamo i tasti, evitando cicli
+        * causati dal passaggio tra una e due righe.
+        */
+        resizeObserver.observe(banner);
+
+        window.addEventListener(
+          "resize",
+          requestLayoutUpdate,
+        );
+
+        document.fonts.ready.then(
+          requestLayoutUpdate,
+        );
+
+        const cleanup = () => {
+          disposed = true;
+
+          resizeObserver.disconnect();
+
+          window.removeEventListener(
+            "resize",
+            requestLayoutUpdate,
+          );
+
+          if (layoutFrame !== null) {
+            window.cancelAnimationFrame(
+              layoutFrame,
+            );
+          }
+        };
+
+        document.addEventListener(
+          "astro:before-swap",
+          cleanup,
+          { once: true },
+        );
+
+        requestLayoutUpdate();
+      });
+    };
+
+  initializeRandomHeaderBackground();
+  initializeHeaderBackgroundMotion();  
+  initializeAdaptiveNavigationLayout();
+
+  document.addEventListener(
+    "astro:page-load",
+    initializeRandomHeaderBackground,
+  );
+
+  document.addEventListener(
+    "astro:page-load",
+    initializeHeaderBackgroundMotion,
+  );
+
+  document.addEventListener(
+    "astro:page-load",
+    initializeAdaptiveNavigationLayout,
+  );
+</script>

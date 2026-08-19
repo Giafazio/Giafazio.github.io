@@ -1,0 +1,415 @@
+---
+import type {
+  ArtifactEntry,
+  ExperimentEntry,
+  FieldNoteEntry,
+} from "../lib/content";
+
+import {
+  formatCreationDate,
+  labelForEntry,
+  routeForEntry,
+} from "../lib/content";
+
+import { withBase } from "../lib/urls";
+
+import { Image } from "astro:assets";
+
+type GalleryEntry =
+  | FieldNoteEntry
+  | ExperimentEntry
+  | ArtifactEntry;
+
+interface Props {
+  entries: GalleryEntry[];
+  variant: "living-room" | "kitchen";
+  ariaLabel: string;
+}
+
+const {
+  entries,
+  variant,
+  ariaLabel,
+} = Astro.props;
+
+const languageLabel = (
+  language: string,
+) =>
+  language === "it"
+    ? "ITA"
+    : language.toUpperCase();
+---
+
+<section
+  class="entry-gallery"
+  data-variant={variant}
+  aria-label={ariaLabel}
+>
+  <ol class="entry-gallery__grid">
+    {
+      entries.map((entry) => {
+        const title =
+          entry.data.title ??
+          entry.data.workingLabel ??
+          "Untitled";
+
+        const isInteractive =
+          entry.collection === "experiments"
+            ? entry.data.interactive
+            : entry.collection === "artifacts" &&
+              Boolean(
+                entry.data.crossword ||
+                entry.data.fourWordsGame,
+              );
+
+        const experimentPreview =
+          entry.collection === "experiments"
+            ? entry.data.preview
+            : undefined;
+
+        const artifactPreview =
+          entry.collection === "artifacts" &&
+          entry.data.previewAsset
+            ? {
+                asset:
+                  entry.data.previewAsset,
+
+                alt:
+                  entry.data.previewAlt ??
+                  `Preview of ${title}`,
+
+                position:
+                  entry.data.previewPosition ??
+                  "50% 50%",
+
+                fit:
+                  entry.data.previewFit ??
+                  "contain",
+              }
+            : undefined;
+
+        return (
+          <li class="entry-gallery__item">
+            <a
+              class="entry-gallery__card"
+              href={withBase(
+                routeForEntry(entry),
+              )}
+            >
+              <span class="entry-gallery__topline">
+                <span class="meta">
+                  {labelForEntry(entry)}
+                </span>
+
+                <span class="meta">
+                  {entry.data.stage}
+                </span>
+              </span>
+
+              <h2 class="entry-gallery__title">
+                {title}
+              </h2>
+
+              {
+                experimentPreview && (
+                    <span
+                      class:list={[
+                        "entry-gallery__preview",
+                        {
+                          "entry-gallery__preview--contain":
+                            experimentPreview.fit === "contain",
+                        },
+                      ]}
+                      style={`
+                        --entry-preview-position:
+                          ${experimentPreview.position ?? "50% 50%"};
+                      `}
+                    >
+                      <Image
+                        src={experimentPreview.asset}
+                        alt={experimentPreview.alt}
+                        width={800}
+                        loading="lazy"
+                      />
+                    </span>
+                  )
+                }
+
+                {
+                  artifactPreview && (
+                    <span
+                      class:list={[
+                        "entry-gallery__preview",
+                        {
+                          "entry-gallery__preview--contain":
+                            artifactPreview.fit === "contain",
+                        },
+                      ]}
+                      style={`
+                        --entry-preview-position:
+                          ${artifactPreview.position};
+                      `}
+                    >
+                      <img
+                        src={withBase(artifactPreview.asset)}
+                        alt={artifactPreview.alt}
+                        width="800"
+                        height="450"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </span>
+                  )
+                }
+
+              {
+                entry.data.summary && (
+                  <p class="entry-gallery__summary">
+                    {entry.data.summary}
+                  </p>
+                )
+              }
+
+              <span
+                class="meta entry-gallery__footer"
+              >
+                <span>
+                  {
+                    formatCreationDate(
+                      entry.data.creationDate,
+                    )
+                  }
+                </span>
+
+                {
+                  entry.data.language && (
+                    <span>
+                      {
+                        languageLabel(
+                          entry.data.language,
+                        )
+                      }
+                    </span>
+                  )
+                }
+
+                {
+                  isInteractive && (
+                    <span>Interactive</span>
+                  )
+                }
+              </span>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ol>
+</section>
+
+<style>
+  .entry-gallery {
+    --entry-gallery-accent:
+      var(--resident);
+
+    --entry-gallery-gap:
+      clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .entry-gallery[data-variant="kitchen"] {
+    --entry-gallery-accent:
+      var(--focus);
+  }
+
+  .entry-gallery__grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+
+    gap: var(--entry-gallery-gap);
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+  }
+
+  .entry-gallery__item {
+    display: flex;
+
+    flex:
+      0 1
+      calc(33.333333% - 1rem);
+
+    min-width: 0;
+  }
+
+  .entry-gallery__card,
+  .entry-gallery__card:visited {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    min-height: 13.5rem;
+    padding: 1rem 1.1rem;
+
+    border:
+      1px solid
+      color-mix(
+        in srgb,
+        var(--entry-gallery-accent) 70%,
+        transparent
+      );
+
+    background:
+      color-mix(
+        in srgb,
+        var(--paper-raised) 94%,
+        var(--entry-gallery-accent)
+      );
+
+    color: var(--ink);
+    text-decoration: none;
+
+    box-shadow:
+      inset 0 0 0 1px
+      color-mix(
+        in srgb,
+        var(--entry-gallery-accent) 18%,
+        transparent
+      );
+
+    transition:
+      transform 140ms ease,
+      border-color 140ms ease;
+  }
+
+  .entry-gallery__card::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+
+    height: 4px;
+
+    background:
+      var(--entry-gallery-accent);
+
+    content: "";
+  }
+
+  .entry-gallery__card:hover {
+    border-color:
+      var(--entry-gallery-accent);
+
+    text-decoration: none;
+    transform: translateY(-2px);
+  }
+
+  .entry-gallery__card:focus-visible {
+    outline:
+      2px solid
+      var(--entry-gallery-accent);
+
+    outline-offset: 3px;
+  }
+
+  .entry-gallery__topline {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+
+    gap: 0.75rem;
+  }
+
+  .entry-gallery__title {
+    margin: 1.1rem 0 0.7rem;
+
+    font-size:
+      clamp(1.35rem, 2vw, 1.65rem);
+
+    line-height: 1.15;
+  }
+
+  .entry-gallery__preview {
+    display: block;
+    overflow: hidden;
+
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin: 0 0 0.9rem;
+
+    border:
+      1px solid
+      color-mix(
+        in srgb,
+        var(--entry-gallery-accent) 45%,
+        transparent
+      );
+
+    background: var(--paper);
+  }
+
+  .entry-gallery__preview img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position:
+      var(
+        --entry-preview-position,
+        50% 50%
+      );
+  }
+
+  .entry-gallery__preview--contain img {
+    padding: 0.55rem;
+    object-fit: contain;
+  }
+
+  .entry-gallery__summary {
+    margin: 0 0 1rem;
+    line-height: 1.45;
+  }
+
+  .entry-gallery__footer {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 0 0.45rem;
+    margin-top: auto;
+  }
+
+  .entry-gallery__footer
+  > span
+  + span::before {
+    margin-right: 0.45rem;
+    content: "·";
+  }
+
+  @media (max-width: 900px) {
+    .entry-gallery__item {
+      flex-basis:
+        calc(50% - 0.75rem);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .entry-gallery__item {
+      flex-basis: 100%;
+    }
+  }
+
+  @media (
+    prefers-reduced-motion: reduce
+  ) {
+    .entry-gallery__card {
+      transition: none;
+    }
+  }
+</style>

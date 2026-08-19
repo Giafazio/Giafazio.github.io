@@ -1,0 +1,459 @@
+---
+import { siteConfig } from "../data/site";
+import { routeFor, withBase } from "../lib/urls";
+
+const { welcome } = siteConfig;
+
+const messages = welcome.enthusiasmTexts.map(
+  (rawText, level) => {
+    const paragraphs = rawText
+      .trim()
+      .split(/\r?\n\s*\r?\n/);
+
+    if (paragraphs.length !== 2) {
+      throw new Error(
+        `Welcome enthusiasm level ${level} must contain exactly two paragraphs.`,
+      );
+    }
+
+    const nameParts = paragraphs[0].split("{name}");
+
+    if (nameParts.length !== 2) {
+      throw new Error(
+        `Welcome enthusiasm level ${level} must contain exactly one {name} marker.`,
+      );
+    }
+
+    const afterName = nameParts[1].trimStart();
+
+    /*
+     * Separa la punteggiatura conclusiva del
+     * greeting dal resto del primo capoverso.
+     *
+     * Esempio:
+     * "! Tinkerer by inclination..."
+     *
+     * diventa:
+     * greetingPunctuation: "!"
+     * firstParagraph: "Tinkerer by inclination..."
+     */
+    const greetingMatch = afterName.match(
+      /^([.!?]+)\s*([\s\S]+)$/,
+    );
+
+    if (!greetingMatch) {
+      throw new Error(
+        `Welcome enthusiasm level ${level} must contain text after the greeting.`,
+      );
+    }
+
+    return {
+      beforeName: nameParts[0].trimEnd(),
+      greetingPunctuation: greetingMatch[1],
+      firstParagraph: greetingMatch[2].trim(),
+      secondParagraph: paragraphs[1].trim(),
+    };
+  },
+);
+
+const initialLevel = welcome.defaultEnthusiasm;
+const initialMessage = messages[initialLevel];
+const maxLevel = messages.length - 1;
+
+const nameHref = withBase(
+  routeFor("fieldNotes", "aggiungi-titolo"),
+);
+---
+
+<div
+  class="welcome-intro"
+  data-welcome-intro
+  data-welcome-messages={JSON.stringify(messages)}
+>
+  <div class="welcome-panel__topline">
+    <header class="welcome-panel__label">
+      <h1 id="welcome-title">
+        <span class="welcome-panel__title">
+          Welcome!
+        </span>
+
+        <span class="welcome-panel__subtitle">
+          The Entrance
+        </span>
+      </h1>
+    </header>
+
+    <p class="welcome-copy__greeting">
+      <span data-welcome-before>
+        {initialMessage.beforeName}{" "}
+      </span>
+
+      <a
+        class="welcome-name"
+        href={nameHref}
+        title='Leggi "Aggiungi titolo"'
+        data-welcome-name
+      >
+        <span class="visually-hidden">
+          Fabrizio
+        </span>
+
+        <span
+          class="welcome-name__variants"
+          aria-hidden="true"
+        >
+          {
+            welcome.nameVariants.map(
+              (variant, index) => (
+                <span
+                  class:list={[
+                    "welcome-name__variant",
+                    {
+                      "is-active":
+                        index === 0,
+                    },
+                  ]}
+                  lang={variant.lang}
+                  dir={variant.dir}
+                  data-welcome-name-variant
+                >
+                  {variant.text}
+                </span>
+              ),
+            )
+          }
+        </span>
+      </a><span
+        data-welcome-greeting-punctuation
+      >{initialMessage.greetingPunctuation}</span>
+    </p>
+  </div>
+
+<div class="welcome-copy">
+  <!--
+    Tutti i testi partecipano al calcolo
+    dell'altezza, ma restano invisibili.
+  -->
+  <div
+    class="welcome-copy__sizer"
+    aria-hidden="true"
+  >
+    {
+      messages.map((message) => (
+        <div class="welcome-copy__sizer-message">
+          <p class="welcome-copy__paragraph">
+            {message.firstParagraph}
+          </p>
+
+          <p class="welcome-copy__paragraph">
+            {message.secondParagraph}
+          </p>
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- Unico testo effettivamente visibile -->
+  <div class="welcome-copy__active">
+    <p
+      class="welcome-copy__paragraph"
+      data-welcome-first
+    >
+      {initialMessage.firstParagraph}
+    </p>
+
+    <p
+      class="welcome-copy__paragraph"
+      data-welcome-second
+    >
+      {initialMessage.secondParagraph}
+    </p>
+  </div>
+</div>
+
+  <div class="welcome-enthusiasm">
+     <div
+      class="welcome-enthusiasm__bar"
+      style={`--enthusiasm-progress: ${
+        (initialLevel / maxLevel) * 100
+      }%;`}
+      data-welcome-enthusiasm-bar
+     >
+      <input
+        id="welcome-enthusiasm-range"
+        class="welcome-enthusiasm__range"
+        type="range"
+        min="0"
+        max={maxLevel}
+        step="1"
+        value={initialLevel}
+        aria-valuetext={`Enthusiasm ${initialLevel} of ${maxLevel}`}
+        data-welcome-enthusiasm
+      />
+    </div>
+    <div class="welcome-enthusiasm__scale">
+  <span
+    class="welcome-enthusiasm__limit
+      welcome-enthusiasm__limit--low"
+    aria-hidden="true"
+  >
+    Low
+  </span>
+
+  <label
+    class="welcome-enthusiasm__label"
+    for="welcome-enthusiasm-range"
+  >
+    Enthusiasm
+  </label>
+
+  <span
+    class="welcome-enthusiasm__limit
+      welcome-enthusiasm__limit--high"
+    aria-hidden="true"
+  >
+    High
+  </span>
+</div>
+
+    <output
+      class="visually-hidden"
+      for="welcome-enthusiasm-range"
+      data-welcome-output
+    >
+      Enthusiasm {initialLevel} of {maxLevel}
+    </output>
+  </div>
+</div>
+
+<script>
+  type WelcomeMessage = {
+    beforeName: string;
+    greetingPunctuation: string;
+    firstParagraph: string;
+    secondParagraph: string;
+  };
+
+  const initializeWelcomeIntro = () => {
+    const welcomeIntros =
+      document.querySelectorAll<HTMLElement>(
+        "[data-welcome-intro]",
+      );
+
+    welcomeIntros.forEach((root) => {
+      if (
+        root.dataset.welcomeInitialized ===
+        "true"
+      ) {
+        return;
+      }
+
+      const messagesData =
+        root.dataset.welcomeMessages;
+
+      if (!messagesData) {
+        return;
+      }
+
+      const messages = JSON.parse(
+        messagesData,
+      ) as WelcomeMessage[];
+
+      const beforeName =
+        root.querySelector<HTMLElement>(
+          "[data-welcome-before]",
+        );
+
+      const greetingPunctuation =
+        root.querySelector<HTMLElement>(
+          "[data-welcome-greeting-punctuation]",
+        );
+
+      const firstParagraph =
+        root.querySelector<HTMLElement>(
+          "[data-welcome-first]",
+        );
+
+      const secondParagraph =
+        root.querySelector<HTMLElement>(
+          "[data-welcome-second]",
+        );
+      
+      const enthusiasmBar =
+        root.querySelector<HTMLElement>(
+          "[data-welcome-enthusiasm-bar]",
+        );
+
+      const range =
+        root.querySelector<HTMLInputElement>(
+          "[data-welcome-enthusiasm]",
+        );
+
+      const output =
+        root.querySelector<HTMLOutputElement>(
+          "[data-welcome-output]",
+        );
+
+      if (
+        !beforeName ||
+        !greetingPunctuation ||
+        !firstParagraph ||
+        !secondParagraph ||
+        !enthusiasmBar ||
+        !range
+      ) {
+        return;
+      }
+
+      const renderMessage = (
+        requestedLevel: number,
+      ) => {
+        const level = Math.max(
+          0,
+          Math.min(
+            messages.length - 1,
+            Math.round(requestedLevel),
+          ),
+        );
+
+        const message = messages[level];
+
+        beforeName.textContent =
+          `${message.beforeName} `;
+
+        greetingPunctuation.textContent =
+          message.greetingPunctuation;
+
+        firstParagraph.textContent =
+          message.firstParagraph;
+
+        secondParagraph.textContent =
+          message.secondParagraph;
+
+        range.value = String(level);
+
+        const progress =
+          messages.length > 1
+            ? (
+                level /
+                (messages.length - 1)
+              ) * 100
+            : 0;
+
+        enthusiasmBar.style.setProperty(
+          "--enthusiasm-progress",
+          `${progress}%`,
+        );
+
+        range.setAttribute(
+          "aria-valuetext",
+          `Enthusiasm ${level} of ${
+            messages.length - 1
+          }`,
+        );
+
+        if (output) {
+          output.textContent =
+            `Enthusiasm ${level} of ${
+              messages.length - 1
+            }`;
+        }
+      };
+
+      range.addEventListener("input", () => {
+        renderMessage(range.valueAsNumber);
+      });
+
+      const nameLink =
+        root.querySelector<HTMLAnchorElement>(
+          "[data-welcome-name]",
+        );
+
+      const nameVariants = Array.from(
+        root.querySelectorAll<HTMLElement>(
+          "[data-welcome-name-variant]",
+        ),
+      );
+
+      let currentNameIndex = 0;
+
+      const showName = (index: number) => {
+        nameVariants.forEach(
+          (variant, variantIndex) => {
+            variant.classList.toggle(
+              "is-active",
+              variantIndex === index,
+            );
+          },
+        );
+
+        currentNameIndex = index;
+      };
+
+      const showRandomForeignName = () => {
+        const foreignNames =
+          nameVariants.length - 1;
+
+        if (foreignNames < 1) {
+          return;
+        }
+
+        let nextIndex =
+          1 +
+          Math.floor(
+            Math.random() * foreignNames,
+          );
+
+        /*
+         * Evita di scegliere due volte
+         * consecutivamente la stessa grafia.
+         */
+        if (
+          nextIndex === currentNameIndex &&
+          foreignNames > 1
+        ) {
+          nextIndex =
+            (nextIndex % foreignNames) + 1;
+        }
+
+        showName(nextIndex);
+      };
+
+      nameLink?.addEventListener(
+        "pointerenter",
+        showRandomForeignName,
+      );
+
+      nameLink?.addEventListener(
+        "pointerleave",
+        () => showName(0),
+      );
+
+      nameLink?.addEventListener(
+        "focus",
+        () => {
+          if (currentNameIndex === 0) {
+            showRandomForeignName();
+          }
+        },
+      );
+
+      nameLink?.addEventListener(
+        "blur",
+        () => showName(0),
+      );
+
+      renderMessage(range.valueAsNumber);
+
+      root.dataset.welcomeInitialized =
+        "true";
+    });
+  };
+
+  initializeWelcomeIntro();
+
+  document.addEventListener(
+    "astro:page-load",
+    initializeWelcomeIntro,
+  );
+</script>
