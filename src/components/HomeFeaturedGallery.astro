@@ -1,0 +1,246 @@
+---
+import HomeFeaturedCard from
+  "./HomeFeaturedCard.astro";
+
+import type {
+  HomeFeaturedItem,
+} from "../lib/homeFeatured";
+
+interface Props {
+  items: HomeFeaturedItem[];
+}
+
+type GallerySlide = {
+  kind:
+    | "project"
+    | "artifacts"
+    | "entry";
+
+  items: HomeFeaturedItem[];
+};
+
+const { items } = Astro.props;
+
+const slides: GallerySlide[] = [];
+
+for (const item of items) {
+  const isArtifact =
+    item.kind === "entry" &&
+    item.entry.collection === "artifacts";
+
+  if (isArtifact) {
+    const previousSlide =
+      slides[slides.length - 1];
+
+    if (
+      previousSlide?.kind === "artifacts" &&
+      previousSlide.items.length < 2
+    ) {
+      previousSlide.items.push(item);
+      continue;
+    }
+
+    slides.push({
+      kind: "artifacts",
+      items: [item],
+    });
+
+    continue;
+  }
+
+  slides.push({
+    kind: item.kind,
+    items: [item],
+  });
+}
+---
+
+<div
+  class="home-featured-gallery-shell"
+  data-home-featured-gallery
+>
+  {
+    slides.length > 1 && (
+      <button
+        class="
+          home-featured-gallery__button
+          home-featured-gallery__button--previous
+        "
+        type="button"
+        aria-label="Previous featured contents"
+        aria-controls="home-featured-gallery-track"
+        data-gallery-previous
+        disabled
+      >
+        ←
+      </button>
+    )
+  }
+
+  <ul
+    id="home-featured-gallery-track"
+    class="home-featured-gallery"
+    tabindex="0"
+    aria-label="Featured contents gallery"
+    data-gallery-track
+  >
+    {
+      slides.map((slide) => (
+        <li
+          class:list={[
+            "home-featured-slide",
+            `home-featured-slide--${slide.kind}`,
+          ]}
+          data-count={slide.items.length}
+        >
+          {
+            slide.items.map((item) => (
+              <div
+                class:list={[
+                  "home-featured-slide__item",
+                  "home-featured-item",
+                  `home-featured-item--${item.kind}`,
+                ]}
+              >
+                <HomeFeaturedCard item={item} />
+              </div>
+            ))
+          }
+        </li>
+      ))
+    }
+  </ul>
+
+  {
+    slides.length > 1 && (
+      <button
+        class="
+          home-featured-gallery__button
+          home-featured-gallery__button--next
+        "
+        type="button"
+        aria-label="Next featured contents"
+        aria-controls="home-featured-gallery-track"
+        data-gallery-next
+      >
+        →
+      </button>
+    )
+  }
+</div>
+
+<script>
+  const initializeFeaturedGalleries = () => {
+    const galleries =
+      document.querySelectorAll<HTMLElement>(
+        "[data-home-featured-gallery]",
+      );
+
+    galleries.forEach((root) => {
+      if (
+        root.dataset.galleryInitialized ===
+        "true"
+      ) {
+        return;
+      }
+
+      const track =
+        root.querySelector<HTMLElement>(
+          "[data-gallery-track]",
+        );
+
+      const previousButton =
+        root.querySelector<HTMLButtonElement>(
+          "[data-gallery-previous]",
+        );
+
+      const nextButton =
+        root.querySelector<HTMLButtonElement>(
+          "[data-gallery-next]",
+        );
+
+      if (
+        !track ||
+        !previousButton ||
+        !nextButton
+      ) {
+        return;
+      }
+
+      const getSlideStep = () => {
+        const firstSlide =
+          track.querySelector<HTMLElement>(
+            ".home-featured-slide",
+          );
+
+        if (!firstSlide) {
+          return track.clientWidth;
+        }
+
+        const trackStyle =
+          getComputedStyle(track);
+
+        const gap =
+          Number.parseFloat(
+            trackStyle.columnGap,
+          ) || 0;
+
+        return (
+          firstSlide.getBoundingClientRect()
+            .width + gap
+        );
+      };
+
+      const updateButtons = () => {
+        const maximumScroll =
+          track.scrollWidth -
+          track.clientWidth;
+
+        previousButton.disabled =
+          track.scrollLeft <= 1;
+
+        nextButton.disabled =
+          track.scrollLeft >=
+          maximumScroll - 1;
+      };
+
+      previousButton.addEventListener(
+        "click",
+        () => {
+          track.scrollBy({
+            left: -getSlideStep(),
+            behavior: "smooth",
+          });
+        },
+      );
+
+      nextButton.addEventListener(
+        "click",
+        () => {
+          track.scrollBy({
+            left: getSlideStep(),
+            behavior: "smooth",
+          });
+        },
+      );
+
+      track.addEventListener(
+        "scroll",
+        updateButtons,
+        { passive: true },
+      );
+
+      updateButtons();
+
+      root.dataset.galleryInitialized =
+        "true";
+    });
+  };
+
+  initializeFeaturedGalleries();
+
+  document.addEventListener(
+    "astro:page-load",
+    initializeFeaturedGalleries,
+  );
+</script>

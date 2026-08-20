@@ -375,6 +375,47 @@ const nameHref = withBase(
         ),
       );
 
+      /*
+      * Le varianti sono inizialmente display:none:
+      * chiediamo quindi esplicitamente al browser
+      * di caricare i font necessari prima
+      * del primo passaggio del mouse.
+      */
+      const warmNameFonts = () => {
+        const fontRequests =
+          nameVariants.flatMap((variant) => {
+            const sample =
+              variant.textContent?.trim();
+
+            if (!sample) {
+              return [];
+            }
+
+            const style =
+              getComputedStyle(variant);
+
+            const fontDescriptor = [
+              style.fontStyle,
+              style.fontWeight,
+              "1em",
+              style.fontFamily,
+            ].join(" ");
+
+            return [
+              document.fonts.load(
+                fontDescriptor,
+                sample,
+              ),
+            ];
+          });
+
+        void Promise.allSettled(
+          fontRequests,
+        );
+      };
+
+      warmNameFonts();
+
       let currentNameIndex = 0;
 
       const showName = (index: number) => {

@@ -14,6 +14,12 @@
 }
 
 @media (max-width: 760px) {
+  .webhome-header::before {
+    right: calc(
+      0px - clamp(1rem, 4vw, 1.5rem)
+    );
+  }
+
   body {
     background: var(--paper);
   }

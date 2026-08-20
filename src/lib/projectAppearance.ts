@@ -19,6 +19,12 @@ import quantumTransportTitleTile from
 import vaccaseTitleTile from
   "../assets/navigation/tiles/maio2_2.png";
 
+import caragiuloriginTitleTile from
+  "../assets/navigation/tiles/maio2_3.png";
+
+import fumettonziTitleTile from
+  "../assets/navigation/tiles/maio1_5.png";
+
 const projectTitleTiles:
   Record<string, string> = {
     "games-and-riddles":
@@ -41,6 +47,12 @@ const projectTitleTiles:
 
     "vaccase":
       vaccaseTitleTile.src,
+
+    "caragiulorigin":
+      caragiuloriginTitleTile.src,
+
+    "fumettonzi":
+      fumettonziTitleTile.src,
   };
 
 export function getProjectTileStyle(

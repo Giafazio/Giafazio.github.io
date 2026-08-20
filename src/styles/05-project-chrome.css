@@ -113,6 +113,14 @@
   --project-border: #de0043;
 }
 
+[data-project="caragiulorigin"] {
+  --project-border: #1c790b;
+}
+
+[data-project="fumettonzi"] {
+  --project-border: #4d5cac;
+}
+
 /*
  * Intestazione della singola pagina progetto.
  */

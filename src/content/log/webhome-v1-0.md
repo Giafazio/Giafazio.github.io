@@ -4,7 +4,7 @@ title: "Webhome 1.0: homepage refined for launch"
 loggedOn: "2026-08-19"
 type: site-update
 operation: add
-order: 1
+order: 2
 label: "Webhome 1.0"
 message: "homepage refined for launch"
 headlineLayout: stacked
