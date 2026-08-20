@@ -139,7 +139,6 @@
 @media (max-width: 480px) {
   .welcome-panel {
     padding-inline: 1rem;
-    border-width: 4px;
   }
 
   .welcome-panel__contacts-link {
@@ -148,6 +147,53 @@
       calc(100% - 1.5rem);
   }
 }
+
+@media (max-width: 700px) {
+  /*
+   * Cornici principali:
+   * Welcome, Log e riquadri dei progetti.
+   */
+  .welcome-panel,
+  .home-log-panel,
+  .project-box {
+    border-width: 3px;
+  }
+
+  .welcome-panel {
+    box-shadow:
+      0 0 0 1px var(--frame-dark),
+      inset 0 0 0 1px
+        var(--frame-highlight);
+  }
+
+  .project-box {
+    box-shadow:
+      0 0 0 1px
+        var(--project-border-dark),
+      inset 0 0 0 1px
+        var(--project-border-highlight);
+  }
+
+  /*
+   * Targhe sovrapposte alle cornici.
+   */
+  .welcome-panel__label,
+  .welcome-panel__contacts-link,
+  .home-current__heading,
+  .home-log-panel__label,
+  .section-page-header__heading {
+    border-width: 2px;
+  }
+
+  /*
+   * I titoli maiolicati conservano
+   * un bordo leggermente più marcato.
+   */
+  .project-title-button {
+    border-width: 3px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

@@ -2,7 +2,6 @@
 id: fumettonzi-010
 title: "Umorismo in Galilea"
 slug: umorismo-in-galilea
-summary: "Dove ci mettiamo, maestro?"
 stage: full-grown
 draft: false
 language: it
@@ -15,9 +14,12 @@ artifactKind: image
 projects:
   - id: fumettonzi
     order: 5
+
 previewAsset: /images/artifacts/fumettonzi/010.png
-previewAlt: "Gesù indica ai discepoli dove mettersi rispondendo A posto lì."
+previewAlt: "Gesù indica ai discepoli di mettersi A posto lì."
 previewFit: contain
+previewRendering: pixelated
+
 creationDate:
   precision: year
   value: "2010"

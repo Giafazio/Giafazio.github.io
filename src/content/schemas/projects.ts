@@ -25,6 +25,12 @@ export const projectSchema =
       ])
       .default("expanded"),
 
+    artifactSequence:
+      z.boolean().default(false),
+
+    detailSummaryContentIds:
+      z.array(stableId).default([]),
+
     order: z
       .number()
       .int()

@@ -10,6 +10,13 @@ const {
   subtitle,
   introduction,
 } = Astro.props;
+
+const introductionLines = introduction
+  ? introduction
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+  : [];
 ---
 
 <header class="section-page-header">
@@ -28,7 +35,19 @@ const {
   {
     introduction && (
       <p class="section-page-header__introduction">
-        {introduction}
+        {
+          introductionLines.map((line, index) => (
+            <span
+              class="section-page-header__introduction-line"
+            >
+              {line}
+              {
+                index < introductionLines.length - 1 &&
+                  " "
+              }
+            </span>
+          ))
+        }
       </p>
     )
   }

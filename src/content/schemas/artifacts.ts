@@ -38,12 +38,11 @@ const crosswordData = z.object({
 const fourWordsRound = z.object({
   id: stableId,
 
-  words: z.tuple([
-    z.string().min(1),
-    z.string().min(1),
-    z.string().min(1),
-    z.string().min(1),
-  ]),
+  words: z
+    .array(
+      z.string().min(1),
+    )
+    .min(4),
 
   solution:
     z.string().min(1),
@@ -100,6 +99,13 @@ export const artifactSchema =
         "contain",
       ])
       .default("contain"),
+
+    previewRendering: z
+      .enum([
+        "auto",
+        "pixelated",
+      ])
+      .default("auto"),
 
     crossword:
       crosswordData.optional(),

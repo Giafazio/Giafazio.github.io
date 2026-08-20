@@ -101,7 +101,7 @@
 }
 
 .section-page-header__introduction {
-  width: min(100%, 31rem);
+  width: min(100%, 38rem);
   margin: 0 0 0 auto;
 
   font-family: var(--font-display);
@@ -109,18 +109,32 @@
   font-style: italic;
   line-height: 1.5;
   text-align: right;
-  white-space: pre-line;
+}
+
+.section-page-header__introduction-line {
+  display: block;
 }
 
 @media (max-width: 700px) {
   .section-page-header {
+    /*
+     * Impedisce ai cartigli più alti
+     * di raggiungere il menu.
+     */
+    margin-top: 1.5rem;
+
     border-top-width: 5px;
+
     padding-top:
       clamp(2.6rem, 10vw, 3.1rem);
   }
 
   .section-page-header__introduction {
     width: min(86%, 31rem);
+  }
+
+  .section-page-header__introduction-line {
+    display: inline;
   }
 }
 

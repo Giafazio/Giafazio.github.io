@@ -45,6 +45,12 @@ fourWordsGame:
         - Leone
         - Dini
         - Amato
+        - Gentiloni
+        - Letta
+        - Scelba
+        - Spadolini
+        - Forlani
+        - De Mita
       solution: "Presidenti del Consiglio italiani."
 
     - id: gruppi-terroristici-europei
@@ -69,7 +75,7 @@ fourWordsGame:
         - Denaro
         - Consonante
         - Detersivo
-      solution: "Può essere liquido."
+      solution: "Possono essere liquidi."
 
     - id: terremoti-italiani
       words:
@@ -93,6 +99,7 @@ fourWordsGame:
         - Salita
         - Amala
         - Arido
+        - Umani
       solution: "Cambia una lettera e diventano gusti."
 
     - id: prefisso-para
@@ -101,6 +108,7 @@ fourWordsGame:
         - Vento
         - Fango
         - Fulmine
+        - Stinchi
       solution: "Para..."
 
     - id: prefisso-passa
@@ -118,6 +126,7 @@ fourWordsGame:
         - Subito
         - Ambito
       solution: "Cambiano senso con l'accento."
+
     - id: gambi
       words:
         - Fungo
@@ -125,6 +134,7 @@ fourWordsGame:
         - Fiore
         - Note
       solution: "Hanno un gambo."
+
     - id: canone
       words:
         - Bibbia
@@ -132,6 +142,7 @@ fourWordsGame:
         - Palchebel
         - Policleto
       solution: "Canoni famosi."
+
     - id: ossa
       words:
         - Atlante
@@ -139,13 +150,16 @@ fourWordsGame:
         - Martello
         - Costa
       solution: "Ossa."
+
     - id: non-capire
       words:
         - Cavolo
         - Sega
         - Tubo
         - Acca
+        - Mazza
       solution: "Non capire un(a)..." 
+
     - id: province-abruzzesi
       words:
         - PE
@@ -153,6 +167,7 @@ fourWordsGame:
         - CH
         - TE
       solution: "Province d'Abruzzo."
+
     - id: i-regina
       words:
         - Mercurio
@@ -160,13 +175,18 @@ fourWordsGame:
         - Sarto
         - Diacono
       solution: "Cognomi dei Queen, in italiano."
+
     - id: harry-e
       words:
         - Pietra
         - Camera
         - Prigioniero
         - Calice
+        - Ordine
+        - Principe
+        - Doni
       solution: "Harry potter e ..."
+
     - id: dostoevskij
       words:
         - Delitto

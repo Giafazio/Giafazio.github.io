@@ -2,7 +2,6 @@
 id: fumettonzi-015
 title: "Di chi è la poltrona?"
 slug: di-chi-e-la-poltrona
-summary: "Una disputa sull’identità di una poltrona."
 stage: full-grown
 draft: false
 language: it
@@ -16,8 +15,10 @@ projects:
   - id: fumettonzi
     order: 8
 previewAsset: /images/artifacts/fumettonzi/015.png
-previewAlt: "Tre persone discutono se una poltrona sia di Ivano oppure semplicemente una poltrona."
+previewAlt: "In tre discutono se la poltrona sia d'Ivano."
 previewFit: contain
+previewRendering: pixelated
+
 creationDate:
   precision: year
   value: "2010"

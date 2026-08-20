@@ -89,4 +89,7 @@ export const datedContentFields =
       .iso
       .date()
       .optional(),
+
+    showSummaryInGallery:
+      z.boolean().default(true),
   });

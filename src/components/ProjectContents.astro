@@ -21,6 +21,7 @@ interface Props {
   projectId?: string;
   showEmpty?: boolean;
   showSummary?: boolean;
+  summaryEntryIds?: readonly string[];
 }
 
 const {
@@ -30,6 +31,7 @@ const {
   showEmpty = true,
   gallery = false,
   showSummary = false,
+  summaryEntryIds = [],
 } = Astro.props;
 
 const projectContentKind = (
@@ -64,6 +66,8 @@ const localContents = entries.map(
         : undefined;
 
     return {
+      id: entry.data.id,
+
       title:
         entry.data.title ??
         entry.data.workingLabel ??
@@ -88,11 +92,16 @@ const localContents = entries.map(
             : entry.data.previewAsset
           : undefined,
 
+      previewRendering:
+        "artifactKind" in entry.data
+          ? entry.data.previewRendering
+          : "auto",
+
       wordPreview:
         "artifactKind" in entry.data &&
         entry.data.artifactKind === "game"
           ? entry.data.fourWordsGame
-              ?.rounds[0]?.words
+              ?.rounds[0]?.words.slice(0, 4)
           : undefined,
 
       themeProjectId:
@@ -116,12 +125,16 @@ const localContents = entries.map(
 const elsewhereContents =
   externalContents.map(
     (content) => ({
+      id: `external:${content.href}`,
       title: content.title,
       kind: content.kind,
       stage: content.stage,
       language: content.language,
+
       preview: undefined,
       wordPreview: undefined,
+      previewRendering: "auto" as const,
+
       themeProjectId: projectId,
       href: content.href,
       elsewhere: true,
@@ -210,8 +223,11 @@ const isScrollableGallery =
             </span>
 
             {
-              showSummary &&
-                content.summary && (
+              (
+                showSummary ||
+                summaryEntryIds.includes(content.id)
+              ) &&
+              content.summary && (
                   <span class="project-content-card__summary">
                     {content.summary}
                   </span>
@@ -219,7 +235,15 @@ const isScrollableGallery =
             }
             {
               content.preview && (
-                <span class="project-content-card__preview">
+                <span
+                  class:list={[
+                    "project-content-card__preview",
+
+                    content.previewRendering ===
+                      "pixelated" &&
+                      "project-content-card__preview--pixelated",
+                  ]}
+                >
                   <img
                     src={withBase(
                       content.preview,

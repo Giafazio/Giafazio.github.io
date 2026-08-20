@@ -2,7 +2,7 @@
 id: hey-fool
 title: "Hey fool"
 slug: hey-fool
-summary: "Trasposizione fonetica inglese dell’incipit de Il cinque maggio."
+summary: "La riconosci?"
 stage: full-grown
 draft: false
 language: en

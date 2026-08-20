@@ -11,6 +11,7 @@ import SiteLayout from
 
 import {
   getSiteData,
+  getProjectContents,
   type ArtifactEntry,
   type ProjectEntry,
 } from "../../../lib/content";
@@ -38,6 +39,53 @@ export async function getStaticPaths() {
         return [];
       }
 
+      const sequenceArtifacts =
+        project.data.artifactSequence
+          ? getProjectContents(
+              data,
+              project.data.id,
+            ).filter(
+              (
+                entry,
+              ): entry is ArtifactEntry =>
+                entry.collection ===
+                "artifacts",
+            )
+          : [];
+
+      const currentIndex =
+        sequenceArtifacts.findIndex(
+          (entry) =>
+            entry.data.id ===
+            artifact.data.id,
+        );
+
+      const hasSequence =
+        currentIndex >= 0 &&
+        sequenceArtifacts.length > 1;
+
+      const previousArtifact =
+        hasSequence
+          ? sequenceArtifacts[
+              (
+                currentIndex -
+                1 +
+                sequenceArtifacts.length
+              ) %
+                sequenceArtifacts.length
+            ]
+          : undefined;
+
+      const nextArtifact =
+        hasSequence
+          ? sequenceArtifacts[
+              (
+                currentIndex + 1
+              ) %
+                sequenceArtifacts.length
+            ]
+          : undefined;
+
       return [
         {
           params: {
@@ -51,6 +99,8 @@ export async function getStaticPaths() {
           props: {
             artifact,
             project,
+            previousArtifact,
+            nextArtifact,
           },
         },
       ];
@@ -61,11 +111,15 @@ export async function getStaticPaths() {
 interface Props {
   artifact: ArtifactEntry;
   project: ProjectEntry;
+  previousArtifact?: ArtifactEntry;
+  nextArtifact?: ArtifactEntry;
 }
 
 const {
   artifact,
   project,
+  previousArtifact,
+  nextArtifact,
 } = Astro.props;
 
 const { Content } =
@@ -81,6 +135,8 @@ const { Content } =
   <ArtifactDetail
     artifact={artifact}
     project={project}
+    previousArtifact={previousArtifact}
+    nextArtifact={nextArtifact}
   >
     <Content />
   </ArtifactDetail>

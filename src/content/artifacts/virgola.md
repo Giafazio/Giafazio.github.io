@@ -16,6 +16,7 @@ artifactKind: image
 projects: []
 
 summary: "Io sono colui che diventerà la stella del telefonino."
+showSummaryInGallery: false
 
 previewAsset: /images/artifacts/virgola.png
 previewAlt: "Io sono colui che diventerà la stella del telefonino."

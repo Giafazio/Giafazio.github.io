@@ -114,6 +114,10 @@ async function loadSiteData():
 }
 
 export function getSiteData(): Promise<SiteData> {
+  if (import.meta.env.DEV) {
+    return loadSiteData();
+  }
+
   siteDataPromise ??= loadSiteData();
   return siteDataPromise;
 }

@@ -3,10 +3,13 @@ id: fumettonzi
 title: "Fumettonzi"
 slug: fumettonzi
 summary: "Fumetti realizzati durante gli anni del liceo, a mano o direttamente in Paint."
+
 stage: full-grown
 draft: false
 homeOverview: false
 projectsIndexMode: expanded
+artifactSequence: true
+
 order: 8
 subjects: []
 tags: []

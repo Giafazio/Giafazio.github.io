@@ -2,7 +2,7 @@
 id: albero-fabrizio
 title: "Albero genealogico"
 slug: albero-fabrizio
-summary: "Una rappresentazione a ventaglio delle origini della mia famiglia."
+summary: "Il mio albero genealogico a ventaglio, 7 generazioni di avi mostrate."
 stage: full-grown
 draft: false
 language: it

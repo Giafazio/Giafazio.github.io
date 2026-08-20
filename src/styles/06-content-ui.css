@@ -365,7 +365,8 @@
 .project-content-card__preview img {
   display: block;
 
-  width:
+  width: auto;
+  max-width:
     min(72%, 11rem);
   height: auto;
   max-height: 11rem;
@@ -381,6 +382,11 @@
   background: #ffffff;
 
   object-fit: contain;
+}
+
+.project-content-card__preview--pixelated img {
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
 }
 
 .project-content-card__word-preview {

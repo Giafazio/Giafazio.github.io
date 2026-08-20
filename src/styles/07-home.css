@@ -301,13 +301,16 @@
 /* Cinese semplificato */
 .welcome-name__variant:lang(zh-Hans) {
   font-family:
-    "ZCOOL XiaoWei",
-    FangSong,
+    "Ma Shan Zheng",
     "Microsoft YaHei",
-    sans-serif;
-
-  font-size: 0.98em;
+    cursive;
+  font-size: 1.14em;
   font-weight: 400;
+  line-height: 0.95;
+  font-synthesis: none;
+
+  -webkit-text-stroke: 0.15px currentColor;
+  paint-order: stroke fill;
 }
 
 /* Giapponese */
@@ -319,39 +322,44 @@
 
   font-size: 0.96em;
   font-weight: 700;
+  font-synthesis: none;
+
+  -webkit-text-stroke: 0.15px currentColor;
+  paint-order: stroke fill;
 }
 
 /* Arabo */
 .welcome-name__variant:lang(ar) {
   font-family:
-    "Reem Kufi Fun Variable",
-    "Noto Kufi Arabic",
-    sans-serif;
+    "Scheherazade New",
+    serif;
 
-  font-size: 1.03em;
+  font-size: 1.12em;
   font-weight: 600;
+  font-synthesis: none;
 }
 
 /* Russo */
 .welcome-name__variant:lang(ru) {
   font-family:
-    "Brygada 1918 Variable",
-    Georgia,
-    serif;
+    "Lobster",
+    cursive;
 
-  font-size: 1em;
-  font-weight: 600;
+  font-size: 0.96em;
+  font-weight: 400;
+  font-synthesis: none;
 }
 
 /* Greco */
 .welcome-name__variant:lang(el) {
   font-family:
-    "GFS Neohellenic",
-    "Palatino Linotype",
+    "EB Garamond",
+    Garamond,
     serif;
 
-  font-size: 1.02em;
-  font-weight: 700;
+  font-size: 1.04em;
+  font-weight: 600;
+  font-synthesis: none;
 }
 
 /* Coreano */
@@ -364,40 +372,44 @@
 
   font-size: 1em;
   font-weight: 400;
+  font-synthesis: none;
+
+  -webkit-text-stroke: 0.25px currentColor;
+  paint-order: stroke fill;
 }
 
 /* Armeno */
 .welcome-name__variant:lang(hy) {
   font-family:
+    "Noto Serif Armenian Variable",
     Sylfaen,
-    "Noto Serif Armenian",
     serif;
-
-  font-size: 0.98em;
-  font-weight: 500;
+  font-size: 1em;
+  font-weight: 900;
+  font-synthesis: none;
 }
 
 /* Georgiano */
 .welcome-name__variant:lang(ka) {
   font-family:
-    "Segoe UI",
-    "Noto Sans Georgian",
-    sans-serif;
-
-  font-size: 0.98em;
-  font-weight: 500;
+    "Noto Serif Georgian Variable",
+    "Noto Serif",
+    serif;
+  font-size: 1em;
+  font-weight: 900;
+  font-synthesis: none;
 }
 
 /* Ebraico */
 .welcome-name__variant:lang(he) {
   font-family:
-    David,
-    "Noto Serif Hebrew",
+    "Cardo",
     "Times New Roman",
     serif;
 
-  font-size: 1em;
-  font-weight: 500;
+  font-size: 1.04em;
+  font-weight: 400;
+  font-synthesis: none;
 }
 
 /* Slider */
@@ -419,8 +431,13 @@
   right: 0;
 
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "low high"
+    "label label";
+
   align-items: baseline;
+  row-gap: 0.38rem;
 
   color: var(--ink);
 
@@ -434,23 +451,43 @@
 }
 
 .welcome-enthusiasm__label {
+  grid-area: label;
   justify-self: center;
+
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.28rem;
 
   margin: 0;
 
   color: inherit;
-  font: inherit;
+
+  font-family:
+    "Alegreya Variable",
+    Georgia,
+    serif;
+
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.01em;
   text-transform: none;
 
   pointer-events: auto;
   cursor: pointer;
 }
 
+.welcome-enthusiasm__arrow {
+  font-weight: 700;
+}
+
 .welcome-enthusiasm__limit--low {
+  grid-area: low;
   justify-self: start;
 }
 
 .welcome-enthusiasm__limit--high {
+  grid-area: high;
   justify-self: end;
 }
 
@@ -621,18 +658,43 @@
       clamp(0.78rem, 3.1vw, 0.96rem);
 
     line-height: 1.2;
-    white-space: nowrap;
+    white-space: normal;
+    text-wrap: balance;
 
     transform: translateY(1.15rem);
   }
 
+  .welcome-panel {
+    /*
+    * Riserva al controllo lo spazio che,
+    * essendo assoluto, non occuperebbe
+    * nel normale flusso della pagina.
+    */
+    margin-bottom: 4.25rem;
+  }
+
   .welcome-enthusiasm {
+    top: calc(100% + 1.45rem);
+    right: 1rem;
+    bottom: auto;
     left: 1rem;
-    right: 10.75rem;
+  }
+
+  .welcome-enthusiasm__bar {
+    /*
+    * Su desktop la barra si sovrappone
+    * alla cornice. Su mobile torna nella
+    * propria posizione naturale.
+    */
+    transform: none;
+  }
+
+  .welcome-enthusiasm__scale {
+    top: calc(100% + 0.55rem);
   }
 
   .welcome-enthusiasm__label {
-    font-size: 0.68rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -649,7 +711,7 @@
   padding-top:
     clamp(2.4rem, 4vw, 3.4rem);
   margin-top:
-   clamp(0.85rem, 1.6vw, 1.35rem);
+    clamp(1.3rem, 2.4vw, 2rem);
 
   /*
    * Stesso colore e spessore del bordo
@@ -657,6 +719,13 @@
    */
   border-top:
     7px solid var(--frame-main);
+}
+
+@media (min-width: 621px) {
+  .home-current {
+    margin-top:
+      clamp(2.4rem, 3.3vw, 3.15rem);
+  }
 }
 
 .home-current::before {

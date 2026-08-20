@@ -2,7 +2,6 @@
 id: fumettonzi-014
 title: "Vai, attacca!"
 slug: vai-attacca
-summary: "Un comando che si presta a troppe interpretazioni."
 stage: full-grown
 draft: false
 language: it
@@ -18,6 +17,8 @@ projects:
 previewAsset: /images/artifacts/fumettonzi/014.png
 previewAlt: "Un cane interpreta letteralmente il comando Vai, attacca."
 previewFit: contain
+previewRendering: pixelated
+
 creationDate:
   precision: year
   value: "2010"

@@ -33,6 +33,17 @@ if (!firstRound) {
   );
 }
 
+const roundsPerSequence = 10;
+
+const initialRoundCount =
+  Math.min(
+    roundsPerSequence,
+    game.rounds.length,
+  );
+
+const initialWords =
+  firstRound.words.slice(0, 4);
+
 const solutionId =
   `${id}-solution`;
 ---
@@ -43,6 +54,7 @@ const solutionId =
   data-game-id={id}
   data-project={projectId}
   data-rounds={JSON.stringify(game.rounds)}
+  data-round-limit={roundsPerSequence}
   aria-label={`Gioco ${title}`}
 >
   <header class="four-words-game__header">
@@ -55,7 +67,7 @@ const solutionId =
       data-game-progress
       aria-live="polite"
     >
-      1 / {game.rounds.length}
+      1 / {initialRoundCount}
     </p>
   </header>
 
@@ -65,7 +77,7 @@ const solutionId =
     aria-live="polite"
   >
     {
-      firstRound.words.map((word) => (
+      initialWords.map((word) => (
         <li data-game-word>
           {word}
         </li>
@@ -89,7 +101,7 @@ const solutionId =
       class="four-words-game__button four-words-game__button--next"
       data-next-button
     >
-      Gioca di nuovo
+      Prossimo round
     </button>
   </div>
 
@@ -351,12 +363,7 @@ const solutionId =
 <script>
   type FourWordsRound = {
     id: string;
-    words: [
-      string,
-      string,
-      string,
-      string,
-    ];
+    words: string[];
     solution: string;
   };
 
@@ -365,17 +372,11 @@ const solutionId =
     position: number;
   };
 
-  const shuffleRoundIds = (
-    ids: string[],
-    avoidFirstId?: string,
-  ): string[] => {
-    const shuffled = [...ids];
+  function shuffleItems<Item>(
+    items: readonly Item[],
+  ): Item[] {
+    const shuffled = [...items];
 
-    /*
-     * Mescolamento Fisher-Yates:
-     * ciascun gioco appare una sola volta
-     * prima dell'inizio del nuovo ciclo.
-     */
     for (
       let index = shuffled.length - 1;
       index > 0;
@@ -403,39 +404,62 @@ const solutionId =
       shuffled[randomIndex] = current;
     }
 
+    return shuffled;
+  }
+
+  const shuffleRoundIds = (
+    ids: string[],
+    limit: number,
+    avoidFirstId?: string,
+  ): string[] => {
+    const sequence =
+      shuffleItems(ids).slice(
+        0,
+        Math.min(limit, ids.length),
+      );
+
     /*
-     * Il primo gioco del nuovo ciclo
-     * non deve coincidere con l'ultimo
-     * del ciclo precedente.
-     */
-    const firstId = shuffled[0];
+    * Il primo round della nuova sequenza
+    * non coincide con l’ultimo precedente.
+    */
+    const firstId = sequence[0];
 
     if (
       avoidFirstId &&
       firstId === avoidFirstId &&
-      shuffled.length > 1
+      sequence.length > 1
     ) {
       const replacementIndex =
-        shuffled.findIndex(
+        sequence.findIndex(
           (roundId) =>
             roundId !== avoidFirstId,
         );
 
       const replacementId =
-        shuffled[replacementIndex];
+        sequence[replacementIndex];
 
       if (
         replacementIndex > 0 &&
         firstId &&
         replacementId
       ) {
-        shuffled[0] = replacementId;
-        shuffled[replacementIndex] =
+        sequence[0] = replacementId;
+        sequence[replacementIndex] =
           firstId;
       }
     }
 
-    return shuffled;
+    return sequence;
+  };
+
+  const selectRoundWords = (
+    words: string[],
+  ): string[] => {
+    if (words.length === 4) {
+      return [...words];
+    }
+
+    return shuffleItems(words).slice(0, 4);
   };
 
   const initializeFourWordsGames = () => {
@@ -462,9 +486,18 @@ const solutionId =
         const serializedRounds =
           gameElement.dataset.rounds;
 
+        const roundLimit =
+          Number.parseInt(
+            gameElement.dataset.roundLimit ??
+              "",
+            10,
+          );
+
         if (
           !gameId ||
-          !serializedRounds
+          !serializedRounds ||
+          !Number.isInteger(roundLimit) ||
+          roundLimit < 1
         ) {
           return;
         }
@@ -505,6 +538,12 @@ const solutionId =
               .querySelectorAll<HTMLElement>(
                 "[data-game-word]",
               ),
+          );
+
+        const sequenceLength =
+          Math.min(
+            roundLimit,
+            roundIds.length,
           );
 
         const progressElement =
@@ -549,10 +588,13 @@ const solutionId =
         }
 
         const storageKey =
-          `four-words-game:${gameId}:v1`;
+          `four-words-game:${gameId}:v2`;
 
         let order =
-          shuffleRoundIds(roundIds);
+          shuffleRoundIds(
+            roundIds,
+            roundLimit,
+          );
 
         let position = 0;
 
@@ -578,11 +620,11 @@ const solutionId =
                 saved.order,
               ) &&
               saved.order.length ===
-                roundIds.length &&
+                sequenceLength &&
               new Set(
                 saved.order,
               ).size ===
-                roundIds.length &&
+                sequenceLength &&
               saved.order.every(
                 (roundId) =>
                   typeof roundId ===
@@ -593,12 +635,13 @@ const solutionId =
               );
 
             const validPosition =
+              Array.isArray(saved.order) &&
               Number.isInteger(
                 saved.position,
               ) &&
               saved.position >= 0 &&
               saved.position <
-                roundIds.length;
+                saved.order.length;
 
             if (
               validOrder &&
@@ -663,19 +706,28 @@ const solutionId =
             return;
           }
 
+          const visibleWords =
+            selectRoundWords(
+              round.words,
+            );
+
           wordElements.forEach(
             (
               wordElement,
               index,
             ) => {
               wordElement.textContent =
-                round.words[index] ??
-                "";
+                visibleWords[index] ?? "";
             },
           );
 
           progressElement.textContent =
-            `${position + 1} / ${rounds.length}`;
+            `${position + 1} / ${order.length}`;
+
+          nextButton.textContent =
+            position === order.length - 1
+              ? "Gioca di nuovo"
+              : "Prossimo round";
 
           solutionText.textContent =
             round.solution;
@@ -717,6 +769,7 @@ const solutionId =
               order =
                 shuffleRoundIds(
                   roundIds,
+                  roundLimit,
                   currentRoundId,
                 );
 

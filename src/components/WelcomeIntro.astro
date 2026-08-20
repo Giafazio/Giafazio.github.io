@@ -116,6 +116,7 @@ const nameHref = withBase(
                   lang={variant.lang}
                   dir={variant.dir}
                   data-welcome-name-variant
+                  data-welcome-name-weight={variant.weight}
                 >
                   {variant.text}
                 </span>
@@ -192,29 +193,38 @@ const nameHref = withBase(
       />
     </div>
     <div class="welcome-enthusiasm__scale">
-  <span
-    class="welcome-enthusiasm__limit
-      welcome-enthusiasm__limit--low"
-    aria-hidden="true"
-  >
-    Low
-  </span>
+      <span
+        class="welcome-enthusiasm__limit
+          welcome-enthusiasm__limit--low"
+        aria-hidden="true"
+      >
+        Low
+      </span>
 
-  <label
-    class="welcome-enthusiasm__label"
-    for="welcome-enthusiasm-range"
-  >
-    Enthusiasm
-  </label>
+      <span
+        class="welcome-enthusiasm__limit
+          welcome-enthusiasm__limit--high"
+        aria-hidden="true"
+      >
+        High
+      </span>
 
-  <span
-    class="welcome-enthusiasm__limit
-      welcome-enthusiasm__limit--high"
-    aria-hidden="true"
-  >
-    High
-  </span>
-</div>
+      <label
+        class="welcome-enthusiasm__label"
+        for="welcome-enthusiasm-range"
+      >
+        <strong
+          class="welcome-enthusiasm__arrow"
+          aria-hidden="true"
+        >
+          ⇐
+        </strong>
+
+        <span>Enthusiasm Level</span>
+
+        <span aria-hidden="true">⇒</span>
+      </label>
+    </div>
 
     <output
       class="visually-hidden"
@@ -364,11 +374,6 @@ const nameHref = withBase(
         renderMessage(range.valueAsNumber);
       });
 
-      const nameLink =
-        root.querySelector<HTMLAnchorElement>(
-          "[data-welcome-name]",
-        );
-
       const nameVariants = Array.from(
         root.querySelectorAll<HTMLElement>(
           "[data-welcome-name-variant]",
@@ -416,8 +421,6 @@ const nameHref = withBase(
 
       warmNameFonts();
 
-      let currentNameIndex = 0;
-
       const showName = (index: number) => {
         nameVariants.forEach(
           (variant, variantIndex) => {
@@ -427,62 +430,73 @@ const nameHref = withBase(
             );
           },
         );
-
-        currentNameIndex = index;
       };
 
-      const showRandomForeignName = () => {
-        const foreignNames =
-          nameVariants.length - 1;
-
-        if (foreignNames < 1) {
-          return;
-        }
-
-        let nextIndex =
-          1 +
-          Math.floor(
-            Math.random() * foreignNames,
+      const nameWeights = nameVariants.map(
+        (variant) => {
+          const weight = Number(
+            variant.dataset.welcomeNameWeight,
           );
 
-        /*
-         * Evita di scegliere due volte
-         * consecutivamente la stessa grafia.
-         */
-        if (
-          nextIndex === currentNameIndex &&
-          foreignNames > 1
-        ) {
-          nextIndex =
-            (nextIndex % foreignNames) + 1;
-        }
-
-        showName(nextIndex);
-      };
-
-      nameLink?.addEventListener(
-        "pointerenter",
-        showRandomForeignName,
-      );
-
-      nameLink?.addEventListener(
-        "pointerleave",
-        () => showName(0),
-      );
-
-      nameLink?.addEventListener(
-        "focus",
-        () => {
-          if (currentNameIndex === 0) {
-            showRandomForeignName();
-          }
+          return Number.isFinite(weight) &&
+            weight > 0
+            ? weight
+            : 0;
         },
       );
 
-      nameLink?.addEventListener(
-        "blur",
-        () => showName(0),
-      );
+      const totalNameWeight =
+        nameWeights.reduce(
+          (total, weight) =>
+            total + weight,
+          0,
+        );
+
+      const chooseWeightedName = () => {
+        let draw =
+          Math.random() * totalNameWeight;
+
+        for (
+          let index = 0;
+          index < nameWeights.length;
+          index += 1
+        ) {
+          draw -= nameWeights[index];
+
+          if (draw < 0) {
+            return index;
+          }
+        }
+
+        return Math.max(
+          0,
+          nameWeights.length - 1,
+        );
+      };
+
+      const reducedMotion =
+        window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
+
+      if (
+        nameVariants.length > 1 &&
+        totalNameWeight > 0 &&
+        !reducedMotion
+      ) {
+        const intervalId =
+          window.setInterval(
+            () => {
+              showName(
+                chooseWeightedName(),
+              );
+            },
+            3000,
+          );
+
+        root.dataset.welcomeNameInterval =
+          String(intervalId);
+      }
 
       renderMessage(range.valueAsNumber);
 
@@ -491,7 +505,32 @@ const nameHref = withBase(
     });
   };
 
+  const clearWelcomeNameIntervals = () => {
+    document
+      .querySelectorAll<HTMLElement>(
+        "[data-welcome-name-interval]",
+      )
+      .forEach((root) => {
+        const intervalId = Number(
+          root.dataset
+            .welcomeNameInterval,
+        );
+
+        if (Number.isFinite(intervalId)) {
+          window.clearInterval(intervalId);
+        }
+
+        delete root.dataset
+          .welcomeNameInterval;
+      });
+  };
+
   initializeWelcomeIntro();
+
+  document.addEventListener(
+    "astro:before-swap",
+    clearWelcomeNameIntervals,
+  );
 
   document.addEventListener(
     "astro:page-load",

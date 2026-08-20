@@ -8,16 +8,66 @@ export const siteConfig = {
     defaultEnthusiasm: 3,
 
     nameVariants: [
-      { text: "Fabrizio", lang: "it", dir: "ltr" },
-      { text: "发彬佐", lang: "zh-Hans", dir: "ltr" },
-      { text: "ファブリツィオ", lang: "ja", dir: "ltr" },
-      { text: "Φαμπρισο", lang: "el", dir: "ltr" },
-      { text: "Фабрицио", lang: "ru", dir: "ltr" },
-      { text: "파브리지오", lang: "ko", dir: "ltr" },
-      { text: "Ֆաբրիցիո", lang: "hy", dir: "ltr" },
-      { text: "ფაბრიციო", lang: "ka", dir: "ltr" },
-      { text: "פבריציו", lang: "he", dir: "rtl" },
-      { text: "فابريتسيو", lang: "ar", dir: "rtl" },
+      {
+        text: "Fabrizio",
+        lang: "it",
+        dir: "ltr",
+        weight: 0.45,
+      },
+      {
+        text: "发彬佐",
+        lang: "zh-Hans",
+        dir: "ltr",
+        weight: 0.175,
+      },
+      {
+        text: "ファブリツィオ",
+        lang: "ja",
+        dir: "ltr",
+        weight: 0.1,
+      },
+      {
+        text: "Φαμπρισο",
+        lang: "el",
+        dir: "ltr",
+        weight: 0.05,
+      },
+      {
+        text: "Фабриций",
+        lang: "ru",
+        dir: "ltr",
+        weight: 0.05,
+      },
+      {
+        text: "파브리지오",
+        lang: "ko",
+        dir: "ltr",
+        weight: 0.025,
+      },
+      {
+        text: "Ֆաբրիցիո",
+        lang: "hy",
+        dir: "ltr",
+        weight: 0.0125,
+      },
+      {
+        text: "ფაბრიციო",
+        lang: "ka",
+        dir: "ltr",
+        weight: 0.025,
+      },
+      {
+        text: "פבריציו",
+        lang: "he",
+        dir: "rtl",
+        weight: 0.0125,
+      },
+      {
+        text: "فابريتسيو",
+        lang: "ar",
+        dir: "rtl",
+        weight: 0.1,
+      },
     ],
 
     enthusiasmTexts: [

@@ -8,9 +8,10 @@ import FourWordsGame from
 import ProjectTitleButton from
   "./ProjectTitleButton.astro";
 
-import type {
-  ArtifactEntry,
-  ProjectEntry,
+import {
+  type ArtifactEntry,
+  type ProjectEntry,
+  routeForEntry,
 } from "../lib/content";
 
 import {
@@ -21,11 +22,15 @@ import {
 interface Props {
   artifact: ArtifactEntry;
   project?: ProjectEntry;
+  previousArtifact?: ArtifactEntry;
+  nextArtifact?: ArtifactEntry;
 }
 
 const {
   artifact,
   project,
+  previousArtifact,
+  nextArtifact,
 } = Astro.props;
 
 const crossword =
@@ -42,22 +47,15 @@ const primaryActionLabel =
     ? "Open PDF"
     : "Open file";
 
-const browseAction = project
-  ? {
-      href: "/atlas/?kind=artifacts",
-      label: "Browse Artifacts in the Index",
-    }
-  : {
-      href: "/experiments/",
-      label:
-        "Browse Experiments & Fragments",
-    };
+const naturalImagePreview =
+  artifact.data.artifactKind === "image";
 ---
 
 <article
   class:list={[
     !project && "experiment-article",
   ]}
+  data-project={project?.data.id}
 >
   <header
     class:list={[
@@ -167,27 +165,78 @@ const browseAction = project
         game={fourWordsGame}
       />
     ) : artifact.data.previewAsset ? (
-      <div class="artifact-preview">
+      <div
+        class:list={[
+          "artifact-preview",
+
+          naturalImagePreview &&
+            "artifact-preview--natural",
+
+          artifact.data.previewRendering ===
+            "pixelated" &&
+            "artifact-preview--pixelated",
+        ]}
+      >
         <img
           src={publicAsset(
             artifact.data.previewAsset,
           )}
-          alt={`Preview of ${artifact.data.title}`}
-          width="1000"
-          height="750"
+          alt={
+            artifact.data.previewAlt ??
+            `Preview of ${artifact.data.title}`
+          }
+          style={`object-fit: ${
+            artifact.data.previewFit
+          }; object-position: ${
+            artifact.data.previewPosition ??
+            "50% 50%"
+          };`}
+          decoding="async"
         />
       </div>
     ) : null
+  }
+
+  {
+    previousArtifact &&
+    nextArtifact && (
+      <nav
+        class="artifact-sequence-navigation"
+        aria-label="Browse project artifacts"
+      >
+        <a
+          class="artifact-sequence-navigation__link"
+          href={withBase(
+            routeForEntry(previousArtifact),
+          )}
+          aria-label={`Previous: ${previousArtifact.data.title}`}
+          title={previousArtifact.data.title}
+        >
+          <span aria-hidden="true">←</span>
+        </a>
+
+        <a
+          class="artifact-sequence-navigation__link"
+          href={withBase(
+            routeForEntry(nextArtifact),
+          )}
+          aria-label={`Next: ${nextArtifact.data.title}`}
+          title={nextArtifact.data.title}
+        >
+          <span aria-hidden="true">→</span>
+        </a>
+      </nav>
+    )
   }
 
   <div class="article-body">
     <slot />
   </div>
 
-  <div class="artifact-actions">
-    {
-      artifact.data.primaryAsset &&
-      !crossword && (
+  {
+    artifact.data.primaryAsset &&
+    !crossword && (
+      <div class="artifact-actions">
         <a
           href={publicAsset(
             artifact.data.primaryAsset,
@@ -195,11 +244,7 @@ const browseAction = project
         >
           {primaryActionLabel}
         </a>
-      )
-    }
-
-    <a href={withBase(browseAction.href)}>
-      {browseAction.label}
-    </a>
-  </div>
+      </div>
+    )
+  }
 </article>
