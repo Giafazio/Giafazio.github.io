@@ -94,6 +94,21 @@ import crowSprite from "../assets/navigation/crow/Crow.png";
       window.setTimeout(resolve, milliseconds);
     });
 
+  const waitForStableNavigationLayout = async () => {
+    /*
+    * Aspettiamo il caricamento dei font e due cicli grafici:
+    * nel primo SiteHeader dispone il menù;
+    * nel secondo misuriamo le posizioni definitive.
+    */
+    await document.fonts.ready;
+
+    await new Promise<void>((resolve) => {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => resolve());
+      });
+    });
+  };
+
   const loadImage = (src: string) =>
     new Promise<HTMLImageElement>((resolve, reject) => {
       const image = new Image();
@@ -380,6 +395,12 @@ import crowSprite from "../assets/navigation/crow/Crow.png";
       cleanup();
       return;
     }
+
+    if (disposed) {
+      return;
+    }
+
+    await waitForStableNavigationLayout();
 
     if (disposed) {
       return;
