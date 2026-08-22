@@ -61,3 +61,11 @@ creationDate:
 
 addedToSite: "2026-08-22"
 ---
+
+## Podio del contest
+
+1. **I Nitti**  
+*Francesco Maria Pianese*  
+*Alessandro Cristofari*  
+*Stefano Mulas*  
+soluzione ricevuta il 22/08/2026 alle ore 17:01.
