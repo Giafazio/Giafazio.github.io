@@ -19,9 +19,9 @@ const HOME_TABLE_TAG = "home-table";
  * Gli ID assenti vengono ignorati.
  */
 const HOME_GALLERY_IDS = [
+  "mini-cruci-1", "lega-i-4",
   "esperimenti-di-portafoglio",
   "quantum-transport-rg",
-  "lega-i-4",
 ] as const;
 
 const HOME_GALLERY_MAX_ITEMS = 6;

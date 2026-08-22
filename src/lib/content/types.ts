@@ -73,6 +73,7 @@ interface LogItemBase {
   id: string;
   loggedOn: string;
   order: number | null;
+  subtitle: string | null;
   comment: string | null;
   detailsLink: LogDetailsLink | null;
 }

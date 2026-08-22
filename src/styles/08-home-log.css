@@ -234,6 +234,23 @@
   content: "";
 }
 
+.log-record__subtitle {
+  grid-column: 2 / 3;
+  min-width: 0;
+  margin-top: 0.08rem;
+
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+[data-log-id="manual:mini-cruci-1-contest"]
+.log-record__message {
+  font-weight: 700;
+}
+
 /*
  * Nella disposizione a due righe il comando
  * [+]/[-] si allinea alla seconda riga.

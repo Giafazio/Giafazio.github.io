@@ -181,7 +181,7 @@ crossword:
 projects:
   - id: games-and-riddles
     highlight: true
-    order: 0
+    order: 2
 
 creationDate:
   precision: day

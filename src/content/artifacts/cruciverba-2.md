@@ -247,7 +247,7 @@ crossword:
 projects:
   - id: games-and-riddles
     highlight: true
-    order: 1
+    order: 8
 date:
   dateEvidence: pdf-metadata-only
 creationDate:

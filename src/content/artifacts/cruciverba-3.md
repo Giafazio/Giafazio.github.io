@@ -238,7 +238,7 @@ crossword:
 projects:
   - id: games-and-riddles
     highlight: true
-    order: 2
+    order: 6
 date:
   dateEvidence: pdf-metadata-only
 creationDate:

@@ -130,6 +130,11 @@ export const logEntrySchema = z
       .min(1)
       .optional(),
 
+    subtitle: z
+      .string()
+      .min(1)
+      .optional(),
+
     /*
     * inline:
     *   Label: message

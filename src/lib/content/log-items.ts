@@ -330,7 +330,7 @@ export function getLogItems(
         language:
           logLanguageLabel(entry),
       },
-
+      subtitle: null,
       /*
       * logComment resta separato dal
       * messaggio automatico della headline.
@@ -426,6 +426,10 @@ export function getLogItems(
               entry.data.title,
 
             items,
+            
+            subtitle:
+              entry.data.subtitle ??
+              null,
 
             comment:
               entry.data.comment ??
@@ -559,6 +563,10 @@ export function getLogItems(
             ),
 
           line,
+
+          subtitle:
+            entry.data.subtitle ??
+            null,
 
           comment:
             entry.data.comment ??

@@ -11,18 +11,13 @@ projectsIndexMode: expanded
 detailSummaryContentIds:
   - cruciverba
 
-order: 1
+order: 0
 subjects: []
 tags: []
 related: []
 sourceFiles: []
 externalContents: []
 roadmap:
-  - id: mini-cruci-1
-    title: Minicruci 1
-    stage: blooming
-    statement: Piccolo cruciverba.
-
   - id: lega-i-4-x2
     title: Lega i 4 x2
     stage: seed

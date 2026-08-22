@@ -66,6 +66,7 @@ const formattedDate =
 
 <li
   class="home-log-entry log-record"
+  data-log-id={item.id}
   data-log-source={item.source}
   data-log-kind={item.kind}
 >
@@ -106,6 +107,14 @@ const formattedDate =
                 [-]
               </span>
             </span>
+
+            {
+              item.subtitle && (
+                <span class="log-record__subtitle">
+                  {item.subtitle}
+                </span>
+              )
+            }
           </summary>
 
           <div class="log-record__details-content">
@@ -278,6 +287,13 @@ const formattedDate =
                 [-]
               </span>
             </span>
+            {
+              item.subtitle && (
+                <span class="log-record__subtitle">
+                  {item.subtitle}
+                </span>
+              )
+            }
           </summary>
 
           <div class="log-record__details-content">
@@ -411,6 +427,13 @@ const formattedDate =
               )
             }
           </span>
+          {
+            item.subtitle && (
+              <span class="log-record__subtitle">
+                {item.subtitle}
+              </span>
+            )
+          }
         </div>
       )
     }

@@ -27,7 +27,7 @@ export const siteConfig = {
         weight: 0.1,
       },
       {
-        text: "Φαμπρισο",
+        text: "Φαβρίκιος",
         lang: "el",
         dir: "ltr",
         weight: 0.05,
