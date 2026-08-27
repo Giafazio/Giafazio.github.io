@@ -9,6 +9,7 @@ language: en
 subjects: []
 tags:
   - translation
+  - home-table
 related: []
 sourceFiles:
   - sources/artifacts/hey-fool/hey-fool.odt

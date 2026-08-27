@@ -9,6 +9,7 @@ language: la
 subjects: []
 tags:
   - translation
+  - home-table
 related: []
 
 sourceFiles:

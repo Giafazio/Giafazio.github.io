@@ -6,7 +6,8 @@ stage: full-grown
 draft: false
 language: it
 subjects: []
-tags: []
+tags:
+  - home-table
 related: []
 sourceFiles:
   - sources/crosswords/cruciverba-3.pdf

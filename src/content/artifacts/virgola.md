@@ -6,7 +6,8 @@ stage: full-grown
 draft: false
 language: ja
 subjects: []
-tags: []
+tags:
+  - home-table
 related: []
 
 sourceFiles:

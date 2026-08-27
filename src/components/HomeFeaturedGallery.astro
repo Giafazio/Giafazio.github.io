@@ -127,6 +127,42 @@ for (const item of items) {
       </button>
     )
   }
+  {
+    slides.length > 1 && (
+      <div
+        class="home-featured-gallery__scroll-control"
+      >
+        <div
+          class="home-featured-gallery__scrollbar"
+          style="--gallery-fill: 9px;"
+          data-gallery-scrollbar
+        >
+          <input
+            id="home-featured-gallery-range"
+            class="home-featured-gallery__range"
+            type="range"
+            min="0"
+            max="100"
+            step="0.1"
+            value="0"
+            aria-label="Browse the Gallery"
+            aria-controls="home-featured-gallery-track"
+            aria-valuetext="Beginning of the gallery"
+            data-gallery-range
+          />
+        </div>
+
+        <label
+          class="home-featured-gallery__range-label"
+          for="home-featured-gallery-range"
+        >
+          <strong aria-hidden="true">⇐</strong>
+          <span>Browse the Gallery</span>
+          <strong aria-hidden="true">⇒</strong>
+        </label>
+      </div>
+    )
+  }
 </div>
 
 <script>
@@ -159,13 +195,26 @@ for (const item of items) {
           "[data-gallery-next]",
         );
 
-      if (
-        !track ||
-        !previousButton ||
-        !nextButton
-      ) {
+      const range =
+        root.querySelector<HTMLInputElement>(
+          "[data-gallery-range]",
+        );
+
+      const scrollbar =
+        root.querySelector<HTMLElement>(
+          "[data-gallery-scrollbar]",
+        );
+
+      if (!track || !range) {
         return;
       }
+
+      const getMaximumScroll = () =>
+        Math.max(
+          0,
+          track.scrollWidth -
+            track.clientWidth,
+        );
 
       const getSlideStep = () => {
         const firstSlide =
@@ -177,12 +226,10 @@ for (const item of items) {
           return track.clientWidth;
         }
 
-        const trackStyle =
-          getComputedStyle(track);
-
         const gap =
           Number.parseFloat(
-            trackStyle.columnGap,
+            getComputedStyle(track)
+              .columnGap,
           ) || 0;
 
         return (
@@ -191,20 +238,194 @@ for (const item of items) {
         );
       };
 
-      const updateButtons = () => {
+      let snapTimer:
+        number | undefined;
+
+      let rangeIsActive = false;
+
+      const getNearestSnapPosition = () => {
         const maximumScroll =
-          track.scrollWidth -
-          track.clientWidth;
+          getMaximumScroll();
 
-        previousButton.disabled =
-          track.scrollLeft <= 1;
+        const slideStep =
+          getSlideStep();
 
-        nextButton.disabled =
-          track.scrollLeft >=
-          maximumScroll - 1;
+        if (slideStep <= 0) {
+          return 0;
+        }
+
+        return Math.min(
+          maximumScroll,
+          Math.max(
+            0,
+            Math.round(
+              track.scrollLeft /
+                slideStep,
+            ) * slideStep,
+          ),
+        );
       };
 
-      previousButton.addEventListener(
+      const snapToNearestPosition = () => {
+        if (rangeIsActive) {
+          return;
+        }
+
+        const targetPosition =
+          getNearestSnapPosition();
+
+        if (
+          Math.abs(
+            targetPosition -
+              track.scrollLeft,
+          ) <= 1
+        ) {
+          return;
+        }
+
+        track.scrollTo({
+          left: targetPosition,
+          behavior: "smooth",
+        });
+      };
+
+      const scheduleSnap = () => {
+        window.clearTimeout(
+          snapTimer,
+        );
+
+        if (rangeIsActive) {
+          return;
+        }
+
+        snapTimer =
+          window.setTimeout(
+            snapToNearestPosition,
+            180,
+          );
+      };
+
+      const updateFill = (
+        progress: number,
+      ) => {
+        if (!scrollbar) {
+          return;
+        }
+
+        const thumbRadius = 9;
+
+        const availableWidth =
+          Math.max(
+            0,
+            scrollbar.clientWidth -
+              thumbRadius * 2,
+          );
+
+        const fill =
+          thumbRadius +
+          availableWidth * progress;
+
+        scrollbar.style.setProperty(
+          "--gallery-fill",
+          `${fill}px`,
+        );
+      };
+
+      const updateControls = () => {
+        const maximumScroll =
+          getMaximumScroll();
+
+        const progress =
+          maximumScroll > 0
+            ? Math.min(
+                1,
+                Math.max(
+                  0,
+                  track.scrollLeft /
+                    maximumScroll,
+                ),
+              )
+            : 0;
+
+        const percentage =
+          progress * 100;
+
+        range.value =
+          percentage.toFixed(1);
+
+        range.setAttribute(
+          "aria-valuetext",
+          `Gallery position: ${Math.round(
+            percentage,
+          )}%`,
+        );
+
+        if (previousButton) {
+          previousButton.disabled =
+            track.scrollLeft <= 1;
+        }
+
+        if (nextButton) {
+          nextButton.disabled =
+            track.scrollLeft >=
+            maximumScroll - 1;
+        }
+
+        updateFill(progress);
+      };
+
+      range.addEventListener(
+        "pointerdown",
+        () => {
+          rangeIsActive = true;
+
+          window.clearTimeout(
+            snapTimer,
+          );
+        },
+      );
+
+      const finishRangeInteraction =
+        () => {
+          rangeIsActive = false;
+
+          window.clearTimeout(
+            snapTimer,
+          );
+
+          snapToNearestPosition();
+        };
+
+      range.addEventListener(
+        "pointerup",
+        finishRangeInteraction,
+      );
+
+      range.addEventListener(
+        "pointercancel",
+        finishRangeInteraction,
+      );
+
+      range.addEventListener(
+        "change",
+        finishRangeInteraction,
+      );
+
+      range.addEventListener(
+        "input",
+        () => {
+          const progress =
+            range.valueAsNumber / 100;
+
+          track.scrollLeft =
+            getMaximumScroll() *
+            progress;
+
+          updateFill(progress);
+        },
+      );
+
+      previousButton?.addEventListener(
         "click",
         () => {
           track.scrollBy({
@@ -214,7 +435,7 @@ for (const item of items) {
         },
       );
 
-      nextButton.addEventListener(
+      nextButton?.addEventListener(
         "click",
         () => {
           track.scrollBy({
@@ -226,11 +447,33 @@ for (const item of items) {
 
       track.addEventListener(
         "scroll",
-        updateButtons,
+        () => {
+          updateControls();
+          scheduleSnap();
+        },
         { passive: true },
       );
 
-      updateButtons();
+      const resizeObserver =
+        new ResizeObserver(
+          updateControls,
+        );
+
+      resizeObserver.observe(track);
+
+      document.addEventListener(
+        "astro:before-swap",
+        () => {
+          resizeObserver.disconnect();
+
+          window.clearTimeout(
+            snapTimer,
+          );
+        },
+        { once: true },
+      );
+
+      updateControls();
 
       root.dataset.galleryInitialized =
         "true";

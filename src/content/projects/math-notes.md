@@ -10,7 +10,8 @@ projectsIndexMode: expanded
 order: 9
 subjects:
   - mathematics
-tags: []
+tags:
+  - home-table
 related: []
 sourceFiles: []
 externalContents: []

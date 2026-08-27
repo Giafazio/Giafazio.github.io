@@ -6,7 +6,8 @@ stage: full-grown
 draft: false
 language: it
 subjects: []
-tags: []
+tags:
+  - home-table
 related: []
 sourceFiles:
   - sources/experiments/il-silenzio-della-luna/il-silenzio-della-luna.docx

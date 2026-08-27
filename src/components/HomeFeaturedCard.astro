@@ -120,7 +120,12 @@ const entryItem =
       <ProjectContents
         entries={[entryItem.entry]}
         showEmpty={false}
-        showSummary={true}
+        summaryEntryIds={
+          entryItem.entry.data
+            .showSummaryInGallery === false
+            ? []
+            : [entryItem.entry.data.id]
+        }
       />
     </div>
   ) : null

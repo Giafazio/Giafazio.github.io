@@ -9,6 +9,7 @@ language: it
 subjects: []
 tags:
   - genealogy
+  - home-table
 related: []
 sourceFiles:
   - sources/artifacts/caragiulorigin/albero-fabrizio.png
