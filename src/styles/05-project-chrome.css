@@ -121,6 +121,11 @@
   --project-border: #4d5cac;
 }
 
+[data-project="math-notes"] {
+  --project-border: #006bd2;
+  --project-title-outline: #00141f;
+}
+
 /*
  * Intestazione della singola pagina progetto.
  */

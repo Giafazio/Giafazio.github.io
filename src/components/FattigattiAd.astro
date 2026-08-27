@@ -1,0 +1,822 @@
+---
+import
+  "@fontsource-variable/pixelify-sans/wght.css";
+
+import {
+  FATTIGATTI_FACTS,
+  FATTIGATTI_FAREWELL,
+  FATTIGATTI_INITIAL_MESSAGE,
+} from "../data/fattigatti";
+---
+
+<aside
+  class="fattigatti"
+  data-fattigatti
+  data-facts={JSON.stringify(FATTIGATTI_FACTS)}
+  data-farewell={JSON.stringify(
+    FATTIGATTI_FAREWELL,
+  )}
+  data-mode="intro"
+  aria-label="FATTIGATTI Mobile"
+  hidden
+>
+  <header class="fattigatti__titlebar">
+    <span>FATTIGATTI MOBILE</span>
+
+    <button
+      class="fattigatti__close"
+      type="button"
+      data-fattigatti-close
+      aria-label="Chiudi FATTIGATTI"
+    >
+      <span aria-hidden="true">×</span>
+    </button>
+  </header>
+
+  <div
+    class="fattigatti__screen"
+    aria-live="polite"
+  >
+    <div class="fattigatti__status">
+      <span aria-hidden="true">
+        MIAO MIAO 🐈
+      </span>
+
+      <span data-fattigatti-status>
+        SERVIZIO ATTIVO
+      </span>
+    </div>
+
+    <p
+      class="fattigatti__heading"
+      data-fattigatti-heading
+    >
+      ABBONAMENTO ATTIVATO!
+    </p>
+
+    <div
+      class="fattigatti__message"
+      data-fattigatti-message
+    >{FATTIGATTI_INITIAL_MESSAGE.join("\n")}</div>
+
+    <p
+      class="fattigatti__cats"
+      aria-hidden="true"
+    >
+      :3 :3 :3 :3 :3
+    </p>
+  </div>
+
+  <footer class="fattigatti__controls">
+    <button
+      class="fattigatti__dismici"
+      type="button"
+      data-fattigatti-dismici
+      hidden
+    >
+      DISMICI
+    </button>
+  </footer>
+</aside>
+
+<style>
+  .fattigatti[hidden] {
+    display: none;
+  }
+
+  .fattigatti__close[hidden],
+  .fattigatti__dismici[hidden] {
+    display: none;
+  }
+
+  .fattigatti {
+    position: fixed;
+    right:
+      max(
+        0.9rem,
+        env(safe-area-inset-right)
+      );
+    bottom:
+      max(
+        0.9rem,
+        env(safe-area-inset-bottom)
+      );
+    z-index: 80;
+
+    box-sizing: border-box;
+    width:
+      min(
+        19rem,
+        calc(100vw - 1.5rem)
+      );
+    max-height:
+      calc(100svh - 1.5rem);
+    padding: 3px;
+
+    overflow: auto;
+
+    border: 2px solid;
+    border-color:
+      #ffffff
+      #3b3b3b
+      #3b3b3b
+      #ffffff;
+
+    background: #c0c0c0;
+
+    box-shadow:
+      5px 5px 0
+      rgb(0 0 0 / 88%);
+
+    color: #000000;
+
+    font-family:
+      "Pixelify Sans Variable",
+      monospace;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.08;
+  }
+
+  .fattigatti[data-mode="fact"]
+  .fattigatti__message {
+    display: grid;
+    place-content: center start;
+  }
+
+  .fattigatti--entering {
+    animation:
+      fattigatti-enter
+      180ms
+      steps(3, end);
+  }
+
+  .fattigatti__titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+
+    min-height: 1.7rem;
+    padding: 0.14rem 0.18rem 0.14rem 0.4rem;
+
+    background:
+      linear-gradient(
+        90deg,
+        #000080,
+        #1464c8
+      );
+
+    color: #ffffff;
+
+    font-size: 0.84rem;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    line-height: 1;
+  }
+
+  .fattigatti__close,
+  .fattigatti__dismici {
+    display: grid;
+    place-items: center;
+
+    border: 2px solid;
+    border-color:
+      #ffffff
+      #424242
+      #424242
+      #ffffff;
+
+    border-radius: 0;
+
+    background: #c0c0c0;
+    color: #000000;
+
+    font: inherit;
+    font-weight: 700;
+    line-height: 1;
+
+    cursor: pointer;
+  }
+
+  .fattigatti__close {
+    width: 1.35rem;
+    height: 1.25rem;
+    padding: 0;
+
+    font-size: 1.1rem;
+  }
+
+  .fattigatti__close:active,
+  .fattigatti__dismici:active {
+    border-color:
+      #424242
+      #ffffff
+      #ffffff
+      #424242;
+  }
+
+  .fattigatti__close:focus-visible,
+  .fattigatti__dismici:focus-visible {
+    outline: 2px solid #ffff00;
+    outline-offset: 2px;
+  }
+
+  .fattigatti__screen {
+    position: relative;
+
+    min-height: 15.2rem;
+    margin-top: 3px;
+    padding: 0.55rem 0.65rem 0.45rem;
+
+    overflow: hidden;
+
+    border: 2px solid;
+    border-color:
+      #3b3b3b
+      #ffffff
+      #ffffff
+      #3b3b3b;
+
+    background: #000000;
+    color: #ffffff;
+  }
+
+  .fattigatti__screen::after {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 2px,
+        rgb(255 255 255 / 4%) 3px,
+        transparent 4px
+      );
+
+    content: "";
+    pointer-events: none;
+  }
+
+  .fattigatti__screen > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .fattigatti__status {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+
+    margin-bottom: 0.7rem;
+    padding-bottom: 0.28rem;
+
+    border-bottom: 1px solid #00ffff;
+
+    color: #00ff45;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .fattigatti__status
+  span:first-child {
+    color: #00ffff;
+  }
+
+  .fattigatti__heading {
+    min-height: 2.2rem;
+    margin: 0 0 0.65rem;
+
+    color: #ff35e7;
+
+    font-size: 1.02rem;
+    font-weight: 700;
+    line-height: 1.05;
+    text-align: center;
+    text-shadow:
+      1px 1px 0 #00ffff;
+  }
+
+  .fattigatti[data-mode="intro"]
+  .fattigatti__heading {
+    color: #ffff00;
+    text-shadow:
+      1px 1px 0 #ff0000;
+  }
+
+  .fattigatti[data-mode="farewell"]
+  .fattigatti__controls {
+    display: none;
+  }
+
+  .fattigatti__message {
+    min-height: 9.5rem;
+
+    color: #ffffff;
+
+    font-size: 0.88rem;
+    line-height: 1.08;
+    white-space: pre-line;
+  }
+
+  .fattigatti__cats {
+    margin: 0.45rem 0 0;
+
+    color: #00ffff;
+
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.045em;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .fattigatti__controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    min-height: 2rem;
+    padding: 0.35rem 0.2rem 0.05rem;
+  }
+
+  .fattigatti__dismici {
+    min-width: 5.4rem;
+    min-height: 1.55rem;
+    padding: 0.2rem 0.6rem;
+
+    font-size: 0.78rem;
+  }
+
+  .fattigatti[data-mode="farewell"]
+  .fattigatti__heading {
+    display: none;
+  }
+
+  .fattigatti[data-mode="farewell"]
+  .fattigatti__message {
+    display: grid;
+    place-content: center;
+
+    min-height: 11.7rem;
+
+    color: #ffff00;
+
+    font-size: 1.12rem;
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: center;
+    text-shadow:
+      1px 1px 0 #ff00ff;
+  }
+
+  @keyframes fattigatti-enter {
+    0% {
+      opacity: 0;
+      transform: translate(8px, 6px);
+    }
+
+    45% {
+      opacity: 1;
+      transform: translate(-3px, -2px);
+    }
+
+    75% {
+      transform: translate(2px, 1px);
+    }
+
+    100% {
+      transform: translate(0);
+    }
+  }
+
+  @media (max-width: 38rem) {
+    .fattigatti {
+      right:
+        max(
+          0.7rem,
+          env(safe-area-inset-right)
+        );
+      bottom:
+        max(
+          0.7rem,
+          env(safe-area-inset-bottom)
+        );
+
+      width:
+        min(
+          18.5rem,
+          calc(100vw - 1.4rem)
+        );
+
+      font-size: 0.86rem;
+    }
+
+    .fattigatti__close {
+      width: 1.65rem;
+      height: 1.5rem;
+    }
+
+    .fattigatti__dismici {
+      min-height: 1.8rem;
+    }
+  }
+
+  @media (min-width: 38.01rem) {
+    .fattigatti {
+      width: 21.5rem;
+
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .fattigatti__titlebar {
+      min-height: 1.9rem;
+
+      font-size: 0.96rem;
+      font-weight: 600;
+    }
+
+    .fattigatti__close,
+    .fattigatti__dismici {
+      font-weight: 600;
+    }
+
+    .fattigatti__close {
+      width: 1.5rem;
+      height: 1.4rem;
+    }
+
+    .fattigatti__screen {
+      min-height: 16.6rem;
+      padding:
+        0.65rem
+        0.8rem
+        0.55rem;
+    }
+
+    .fattigatti__status {
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .fattigatti__heading {
+      min-height: 2.4rem;
+
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    .fattigatti__message {
+      min-height: 10.4rem;
+
+      font-size: 0.98rem;
+      font-weight: 500;
+    }
+
+    .fattigatti__cats {
+      font-size: 0.98rem;
+      font-weight: 600;
+    }
+
+    .fattigatti__controls {
+      min-height: 2.2rem;
+    }
+
+    .fattigatti__dismici {
+      min-width: 6rem;
+      min-height: 1.7rem;
+
+      font-size: 0.88rem;
+    }
+
+    .fattigatti[data-mode="farewell"]
+    .fattigatti__message {
+      min-height: 12.7rem;
+
+      font-size: 1.22rem;
+      font-weight: 600;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fattigatti--entering {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const INITIAL_DELAY = 900;
+  const RETURN_DELAY = 4000;
+  const FAREWELL_DELAY = 3000;
+
+  const shuffle = (
+    values: number[],
+  ): number[] => {
+    for (
+      let index = values.length - 1;
+      index > 0;
+      index -= 1
+    ) {
+      const otherIndex =
+        Math.floor(
+          Math.random() * (index + 1),
+        );
+
+      [
+        values[index],
+        values[otherIndex],
+      ] = [
+        values[otherIndex],
+        values[index],
+      ];
+    }
+
+    return values;
+  };
+
+  const initializeFattigattiAds = () => {
+    document
+      .querySelectorAll<HTMLElement>(
+        "[data-fattigatti]",
+      )
+      .forEach((panel) => {
+        if (
+          panel.dataset.initialized ===
+          "true"
+        ) {
+          return;
+        }
+
+        panel.dataset.initialized =
+          "true";
+
+        const status =
+          panel.querySelector<HTMLElement>(
+            "[data-fattigatti-status]",
+          );
+
+        const heading =
+          panel.querySelector<HTMLElement>(
+            "[data-fattigatti-heading]",
+          );
+
+        const message =
+          panel.querySelector<HTMLElement>(
+            "[data-fattigatti-message]",
+          );
+
+        const closeButton =
+          panel.querySelector<HTMLButtonElement>(
+            "[data-fattigatti-close]",
+          );
+
+        const dismiciButton =
+          panel.querySelector<HTMLButtonElement>(
+            "[data-fattigatti-dismici]",
+          );
+
+        if (
+          !status ||
+          !heading ||
+          !message ||
+          !closeButton ||
+          !dismiciButton
+        ) {
+          return;
+        }
+
+        const facts =
+          JSON.parse(
+            panel.dataset.facts ?? "[]",
+          ) as string[][];
+
+        const farewell =
+          JSON.parse(
+            panel.dataset.farewell ?? "[]",
+          ) as string[];
+
+        let deck: number[] = [];
+        let lastFact = -1;
+        let stopped = false;
+
+        let appearanceTimer:
+          number | undefined;
+
+        let returnTimer:
+          number | undefined;
+
+        let farewellTimer:
+          number | undefined;
+
+        const openPanel = () => {
+          panel.hidden = false;
+
+          panel.classList.remove(
+            "fattigatti--entering",
+          );
+
+          void panel.offsetWidth;
+
+          panel.classList.add(
+            "fattigatti--entering",
+          );
+        };
+
+        const refillDeck = () => {
+          deck = shuffle(
+            facts.map(
+              (_, index) => index,
+            ),
+          );
+
+          const nextIndex =
+            deck.length - 1;
+
+          if (
+            deck.length > 1 &&
+            deck[nextIndex] === lastFact
+          ) {
+            [
+              deck[0],
+              deck[nextIndex],
+            ] = [
+              deck[nextIndex],
+              deck[0],
+            ];
+          }
+        };
+
+        const takeFact = () => {
+          if (deck.length === 0) {
+            refillDeck();
+          }
+
+          const factIndex =
+            deck.pop();
+
+          if (factIndex === undefined) {
+            return [];
+          }
+
+          lastFact = factIndex;
+
+          return facts[factIndex] ?? [];
+        };
+
+        const showFact = () => {
+          if (
+            stopped 
+          ) {
+            return;
+          }
+
+          panel.dataset.mode = "fact";
+
+          status.textContent =
+            "SERVIZIO ATTIVO";
+
+          heading.textContent =
+            "NUOVO FATTOGATTO";
+
+          message.textContent =
+            takeFact().join("\n");
+
+          closeButton.hidden = false;
+          dismiciButton.hidden = false;
+
+          openPanel();
+        };
+
+        const scheduleNextFact = () => {
+          window.clearTimeout(
+            returnTimer,
+          );
+
+          returnTimer =
+            window.setTimeout(
+              showFact,
+              RETURN_DELAY,
+            );
+        };
+
+        const closeCurrentPanel = () => {
+          if (stopped) {
+            return;
+          }
+
+          panel.hidden = true;
+
+          panel.classList.remove(
+            "fattigatti--entering",
+          );
+
+          scheduleNextFact();
+        };
+
+        const unsubscribe = () => {
+          stopped = true;
+
+          window.clearTimeout(
+            appearanceTimer,
+          );
+
+          window.clearTimeout(
+            returnTimer,
+          );
+
+          panel.dataset.mode =
+            "farewell";
+
+          status.textContent =
+            "SERVIZIO DISATTIVATO";
+
+          heading.textContent = "";
+
+          message.textContent =
+            farewell.join("\n");
+
+          closeButton.hidden = true;
+          dismiciButton.hidden = true;
+
+          openPanel();
+
+          farewellTimer =
+            window.setTimeout(() => {
+              panel.hidden = true;
+            }, FAREWELL_DELAY);
+        };
+
+        const handleKeydown = (
+          event: KeyboardEvent,
+        ) => {
+          if (
+            event.key === "Escape" &&
+            !panel.hidden &&
+            !stopped
+          ) {
+            closeCurrentPanel();
+          }
+        };
+
+        closeButton.addEventListener(
+          "click",
+          closeCurrentPanel,
+        );
+
+        dismiciButton.addEventListener(
+          "click",
+          unsubscribe,
+        );
+
+        document.addEventListener(
+          "keydown",
+          handleKeydown,
+        );
+
+        appearanceTimer =
+          window.setTimeout(() => {
+            openPanel();
+          }, INITIAL_DELAY);
+
+        const cleanup = () => {
+          window.clearTimeout(
+            appearanceTimer,
+          );
+
+          window.clearTimeout(
+            returnTimer,
+          );
+
+          window.clearTimeout(
+            farewellTimer,
+          );
+
+          document.removeEventListener(
+            "keydown",
+            handleKeydown,
+          );
+
+          delete panel.dataset.initialized;
+        };
+
+        document.addEventListener(
+          "astro:before-swap",
+          cleanup,
+          { once: true },
+        );
+      });
+  };
+
+  initializeFattigattiAds();
+
+  document.addEventListener(
+    "astro:page-load",
+    initializeFattigattiAds,
+  );
+</script>

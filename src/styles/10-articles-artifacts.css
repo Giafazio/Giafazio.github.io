@@ -175,6 +175,14 @@
   margin-top: 1em;
 }
 
+.experiment-article--verse.experiment-article--left-aligned
+.article-header,
+.experiment-article--verse.experiment-article--left-aligned
+.article-body {
+  margin-left: 0;
+  margin-right: auto;
+}
+
 .experiment-article--image
 .article-header,
 .experiment-article--image

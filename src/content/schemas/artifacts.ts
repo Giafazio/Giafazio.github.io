@@ -71,6 +71,7 @@ export const artifactSchema =
       "game",
       "image",
       "font",
+      "notes",
     ]),
 
     primaryAsset: z
@@ -82,6 +83,9 @@ export const artifactSchema =
       .string()
       .min(1)
       .optional(),
+
+    showPreviewOnDetail:
+      z.boolean().default(true),
 
     previewAlt: z
       .string()

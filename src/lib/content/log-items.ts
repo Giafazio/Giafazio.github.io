@@ -105,6 +105,12 @@ function automaticLogPresentation(
             typeLabel: "Font",
             message: "New font added!",
           };
+        case "notes":
+          return {
+            type: "new-artifact",
+            typeLabel: "Notes",
+            message: "New mathematical notes added!",
+          };
       }
   }
 }
@@ -143,6 +149,9 @@ function defaultLogTypeLabel(
 
         case "font":
           return "Font";
+
+        case "notes":
+          return "Notes";
           
         case "image":
           return "Image";

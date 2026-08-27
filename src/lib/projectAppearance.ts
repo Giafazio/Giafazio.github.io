@@ -25,6 +25,9 @@ import caragiuloriginTitleTile from
 import fumettonziTitleTile from
   "../assets/navigation/tiles/maio1_5.png";
 
+import mathNotesTitleTile from
+  "../assets/navigation/tiles/maio1_7.png";
+
 const projectTitleTiles:
   Record<string, string> = {
     "games-and-riddles":
@@ -53,6 +56,9 @@ const projectTitleTiles:
 
     "fumettonzi":
       fumettonziTitleTile.src,
+
+    "math-notes":
+      mathNotesTitleTile.src,
   };
 
 export function getProjectTileStyle(

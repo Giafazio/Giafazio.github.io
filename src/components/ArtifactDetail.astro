@@ -8,6 +8,9 @@ import FourWordsGame from
 import ProjectTitleButton from
   "./ProjectTitleButton.astro";
 
+import FattigattiAd from
+  "./FattigattiAd.astro";
+
 import {
   type ArtifactEntry,
   type ProjectEntry,
@@ -42,10 +45,12 @@ const fourWordsGame =
 const gameProjectId =
   project?.data.id ?? "standalone";
 
-const primaryActionLabel =
-  project
-    ? "Open PDF"
-    : "Open file";
+const pdfAsset =
+  artifact.data.primaryAsset
+    ?.toLowerCase()
+    .endsWith(".pdf")
+    ? artifact.data.primaryAsset
+    : null;
 
 const naturalImagePreview =
   artifact.data.artifactKind === "image";
@@ -99,16 +104,13 @@ const naturalImagePreview =
         </h1>
 
         {
-          crossword &&
-          artifact.data.primaryAsset && (
+          pdfAsset && (
             <a
               class="
                 pdf-action-link
                 artifact-detail-heading__pdf
               "
-              href={publicAsset(
-                artifact.data.primaryAsset,
-              )}
+              href={publicAsset(pdfAsset)}
             >
               Apri o stampa il PDF
             </a>
@@ -164,7 +166,8 @@ const naturalImagePreview =
         projectId={gameProjectId}
         game={fourWordsGame}
       />
-    ) : artifact.data.previewAsset ? (
+    ) : artifact.data.previewAsset &&
+      artifact.data.showPreviewOnDetail !== false ? (
       <div
         class:list={[
           "artifact-preview",
@@ -235,16 +238,21 @@ const naturalImagePreview =
 
   {
     artifact.data.primaryAsset &&
-    !crossword && (
+    !pdfAsset && (
       <div class="artifact-actions">
         <a
           href={publicAsset(
             artifact.data.primaryAsset,
           )}
         >
-          {primaryActionLabel}
+          Open file
         </a>
       </div>
     )
   }
+  {
+    artifact.data.id === "virgola" && (
+      <FattigattiAd />
+    )
+}
 </article>
