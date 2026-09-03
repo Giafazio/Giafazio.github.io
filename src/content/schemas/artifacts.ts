@@ -21,10 +21,34 @@ const crosswordClue = z.object({
     .min(1),
 });
 
+const crosswordLayout = z
+  .array(
+    z.string().regex(
+      /^[.#]+$/,
+      "Ogni riga deve contenere solo punti e cancelletti.",
+    ),
+  )
+  .min(1, "La griglia deve contenere almeno una riga.")
+  .refine(
+    (rows) =>
+      rows.every((row) => row.length === rows[0]?.length),
+    {
+      message: "Tutte le righe devono avere la stessa lunghezza.",
+    },
+  )
+  .refine(
+    (rows) => rows.some((row) => row.includes(".")),
+    {
+      message: "La griglia deve contenere almeno una casella bianca.",
+    },
+  );
+
 const crosswordData = z.object({
   gridAsset: z
     .string()
     .min(1),
+
+  layout: crosswordLayout.optional(),
 
   across: z
     .array(crosswordClue)

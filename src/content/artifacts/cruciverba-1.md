@@ -20,6 +20,23 @@ previewAsset: /images/crosswords/cruciverba-1-gallery.webp
 crossword:
   gridAsset: /images/crosswords/cruciverba-1-grid.png
 
+  layout:
+    - "....#....#....."
+    - "..##......#...."
+    - "#......#....#.."
+    - "......#....#..."
+    - ".#...#..#......"
+    - "..#....#...##.."
+    - "..............."
+    - "#.........#...."
+    - "......#.......#"
+    - "....#......#..."
+    - ".............#."
+    - "...#....#...#.."
+    - ".##...#........"
+    - ".....#........."
+    - ".......#.#...#."
+
   across:
     - number: 1
       text: "Principessa guerriera."

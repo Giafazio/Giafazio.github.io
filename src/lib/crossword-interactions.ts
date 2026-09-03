@@ -1,0 +1,434 @@
+/*
+ * Comportamento interattivo dei cruciverba.
+ *
+ * Il modello della griglia viene costruito sul server; questo modulo
+ * collega nel browser caselle, parole, definizioni e controlli.
+ */
+
+type CrosswordDirection = "across" | "down";
+
+interface CrosswordWordBinding {
+  key: string;
+  direction: CrosswordDirection;
+  cells: HTMLInputElement[];
+  button: HTMLButtonElement;
+}
+
+type CellWordBindings = Partial<
+  Record<CrosswordDirection, CrosswordWordBinding>
+>;
+
+const otherDirection = (
+  direction: CrosswordDirection,
+): CrosswordDirection =>
+  direction === "across" ? "down" : "across";
+
+const initializeCrosswordReader = (reader: HTMLElement) => {
+  if (reader.dataset.crosswordReaderInitialized === "true") {
+    return;
+  }
+
+  const rows = Number(reader.dataset.crosswordRows);
+  const columns = Number(reader.dataset.crosswordColumns);
+
+  if (!rows || !columns) return;
+
+  reader.dataset.crosswordReaderInitialized = "true";
+
+  const cells = new Map<string, HTMLInputElement>();
+  const words = new Map<string, CrosswordWordBinding>();
+  const cellWords = new Map<
+    HTMLInputElement,
+    CellWordBindings
+  >();
+
+  reader
+    .querySelectorAll<HTMLInputElement>("[data-crossword-cell]")
+    .forEach((cell) => {
+      const key = cell.dataset.crosswordCell;
+      if (key) cells.set(key, cell);
+    });
+
+  /*
+   * Collega ogni definizione alle caselle appartenenti alla parola.
+   * Le chiavi sono state calcolate sul server dal layout Markdown.
+   */
+  reader
+    .querySelectorAll<HTMLButtonElement>("[data-crossword-word]")
+    .forEach((button) => {
+      const key = button.dataset.crosswordWord;
+      const direction = button.dataset
+        .crosswordDirection as CrosswordDirection | undefined;
+
+      if (!key || !direction) return;
+
+      const datasetKey =
+        direction === "across"
+          ? "crosswordAcross"
+          : "crosswordDown";
+
+      const wordCells = [...cells.values()].filter(
+        (cell) => cell.dataset[datasetKey] === key,
+      );
+
+      const word: CrosswordWordBinding = {
+        key,
+        direction,
+        cells: wordCells,
+        button,
+      };
+
+      words.set(key, word);
+
+      wordCells.forEach((cell) => {
+        const bindings = cellWords.get(cell) ?? {};
+        bindings[direction] = word;
+        cellWords.set(cell, bindings);
+      });
+    });
+
+  const directionButtons =
+    reader.querySelectorAll<HTMLButtonElement>(
+      "[data-crossword-clue-button]",
+    );
+
+  const mobileButtons =
+    reader.querySelectorAll<HTMLButtonElement>(
+      "[data-crossword-mobile-button]",
+    );
+
+  const activeClue = reader.querySelector<HTMLElement>(
+    "[data-crossword-active-clue]",
+  );
+
+  let activeCell: HTMLInputElement | null = null;
+  let toggleOnClick: HTMLInputElement | null = null;
+  let direction: CrosswordDirection = "across";
+
+  const setClueDirection = (
+    nextDirection: CrosswordDirection,
+  ) => {
+    reader.dataset.activeClues = nextDirection;
+
+    directionButtons.forEach((button) => {
+      button.setAttribute(
+        "aria-pressed",
+        String(
+          button.dataset.crosswordClueButton === nextDirection,
+        ),
+      );
+    });
+  };
+
+  const setMobilePanel = (panel: string) => {
+    reader.dataset.mobilePanel = panel;
+
+    mobileButtons.forEach((button) => {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.crosswordMobileButton === panel),
+      );
+    });
+
+    if (panel === "across" || panel === "down") {
+      setClueDirection(panel);
+    }
+  };
+
+  /*
+   * Aggiorna la riga mostrata sotto lo schema nella versione mobile.
+   * Rimane nascosta finché non viene selezionata una parola.
+   */
+  const updateActiveClue = (word: CrosswordWordBinding) => {
+    if (!activeClue) return;
+
+    const number = word.button.dataset.crosswordNumber ?? "";
+    const text =
+      word.button
+        .querySelector<HTMLElement>(
+          "[data-crossword-clue-text]",
+        )
+        ?.textContent?.trim() ?? "";
+
+    const directionLabel =
+      word.direction === "across"
+        ? "Orizzontale"
+        : "Verticale";
+
+    const directionElement =
+      activeClue.querySelector<HTMLElement>(
+        "[data-crossword-active-direction]",
+      );
+
+    const numberElement =
+      activeClue.querySelector<HTMLElement>(
+        "[data-crossword-active-number]",
+      );
+
+    const textElement =
+      activeClue.querySelector<HTMLElement>(
+        "[data-crossword-active-text]",
+      );
+
+    if (directionElement) {
+      directionElement.textContent = directionLabel;
+    }
+
+    if (numberElement) numberElement.textContent = number;
+    if (textElement) textElement.textContent = text;
+
+    activeClue.hidden = false;
+  };
+
+  const activateCell = (
+    cell: HTMLInputElement,
+    requestedDirection = direction,
+  ) => {
+    const available = cellWords.get(cell);
+    if (!available) return null;
+
+    /*
+     * Se la casella appartiene a una sola parola, viene scelta quella
+     * anche quando è stata richiesta l'altra direzione.
+     */
+    const word =
+      available[requestedDirection] ??
+      available[otherDirection(requestedDirection)];
+
+    if (!word) return null;
+
+    direction = word.direction;
+    activeCell = cell;
+
+    const selectedCells = new Set(word.cells);
+
+    cells.forEach((item) => {
+      const isSelected = selectedCells.has(item);
+      item.classList.toggle("is-in-word", isSelected);
+
+      if (isSelected) {
+        item.setAttribute("aria-describedby", word.button.id);
+      } else {
+        item.removeAttribute("aria-describedby");
+      }
+    });
+
+    words.forEach((item) => {
+      item.button.setAttribute(
+        "aria-pressed",
+        String(item === word),
+      );
+    });
+
+    setClueDirection(word.direction);
+    updateActiveClue(word);
+
+    return word;
+  };
+
+  const focusCell = (
+    cell: HTMLInputElement | null,
+    requestedDirection = direction,
+  ) => {
+    if (!cell) return;
+
+    activateCell(cell, requestedDirection);
+    cell.focus({ preventScroll: true });
+    cell.select();
+  };
+
+  /*
+   * Individua una casella vicina. Durante la digitazione ci si ferma
+   * davanti a un nero; le frecce possono invece oltrepassarlo.
+   */
+  const neighbor = (
+    cell: HTMLInputElement,
+    rowStep: number,
+    columnStep: number,
+    skipBlack = false,
+  ) => {
+    let row = Number(cell.dataset.crosswordRow) + rowStep;
+    let column =
+      Number(cell.dataset.crosswordColumn) + columnStep;
+
+    while (
+      row >= 0 &&
+      row < rows &&
+      column >= 0 &&
+      column < columns
+    ) {
+      const next = cells.get(`${row},${column}`);
+      if (next) return next;
+      if (!skipBlack) break;
+
+      row += rowStep;
+      column += columnStep;
+    }
+
+    return null;
+  };
+
+  /*
+   * Restituisce la casella precedente o successiva nella parola
+   * attualmente selezionata.
+   */
+  const alongWord = (
+    cell: HTMLInputElement,
+    step: number,
+  ) => {
+    const word = cellWords.get(cell)?.[direction];
+    if (!word) return null;
+
+    const index = word.cells.indexOf(cell);
+    return word.cells[index + step] ?? null;
+  };
+
+  cells.forEach((cell) => {
+    cell.addEventListener("pointerdown", () => {
+      toggleOnClick = activeCell === cell ? cell : null;
+    });
+
+    cell.addEventListener("pointercancel", () => {
+      toggleOnClick = null;
+    });
+
+    cell.addEventListener("focus", () => {
+      activateCell(cell);
+      cell.select();
+    });
+
+    cell.addEventListener("click", (event) => {
+      /*
+       * pointerdown avviene prima di focus: così il primo clic
+       * seleziona la casella e soltanto il secondo cambia direzione.
+       */
+      const shouldToggle =
+        event.detail === 0
+          ? activeCell === cell
+          : toggleOnClick === cell;
+
+      toggleOnClick = null;
+
+      focusCell(
+        cell,
+        shouldToggle
+          ? otherDirection(direction)
+          : direction,
+      );
+    });
+
+    cell.addEventListener("input", (event) => {
+      const inputEvent = event as InputEvent;
+      if (inputEvent.isComposing) return;
+
+      activateCell(cell);
+
+      const letters = cell.value
+        .normalize("NFC")
+        .toLocaleUpperCase("it-IT")
+        .match(/\p{L}/gu);
+
+      cell.value = letters?.[0] ?? "";
+
+      if (cell.value) {
+        /*
+         * Dopo l'ultima lettera della parola la selezione resta
+         * sulla casella appena compilata.
+         */
+        focusCell(alongWord(cell, 1) ?? cell);
+      }
+    });
+
+    cell.addEventListener("compositionend", () => {
+      cell.dispatchEvent(
+        new InputEvent("input", { bubbles: false }),
+      );
+    });
+
+    cell.addEventListener("keydown", (event) => {
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+      const arrows: Partial<
+        Record<string, readonly [number, number]>
+      > = {
+        ArrowLeft: [0, -1],
+        ArrowRight: [0, 1],
+        ArrowUp: [-1, 0],
+        ArrowDown: [1, 0],
+      };
+
+      const arrow = arrows[event.key];
+
+      if (arrow) {
+        event.preventDefault();
+
+        const [rowStep, columnStep] = arrow;
+
+        focusCell(
+          neighbor(cell, rowStep, columnStep, true) ?? cell,
+          rowStep === 0 ? "across" : "down",
+        );
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        focusCell(cell, otherDirection(direction));
+      } else if (event.key === "Backspace") {
+        event.preventDefault();
+
+        if (cell.value) {
+          cell.value = "";
+        } else {
+          const previous = alongWord(cell, -1);
+
+          if (previous) {
+            previous.value = "";
+            focusCell(previous);
+          }
+        }
+      } else if (event.key === "Delete") {
+        event.preventDefault();
+        cell.value = "";
+      }
+    });
+  });
+
+  /*
+   * Se una definizione viene scelta da mobile, rende prima visibile
+   * lo schema e soltanto dopo porta il cursore alla prima casella.
+   */
+  words.forEach((word) => {
+    word.button.addEventListener("click", () => {
+      const selectWord = () => {
+        focusCell(word.cells[0] ?? null, word.direction);
+      };
+
+      if (window.matchMedia("(max-width: 760px)").matches) {
+        setMobilePanel("grid");
+        requestAnimationFrame(selectWord);
+      } else {
+        selectWord();
+      }
+    });
+  });
+
+  directionButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const nextDirection = button.dataset
+        .crosswordClueButton as CrosswordDirection | undefined;
+
+      if (nextDirection) setClueDirection(nextDirection);
+    });
+  });
+
+  mobileButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const panel = button.dataset.crosswordMobileButton;
+      if (panel) setMobilePanel(panel);
+    });
+  });
+};
+
+export const initializeCrosswordReaders = () => {
+  document
+    .querySelectorAll<HTMLElement>("[data-crossword-reader]")
+    .forEach(initializeCrosswordReader);
+};

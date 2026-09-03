@@ -1,5 +1,9 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import {
+  buildCrosswordModel,
+  type CrosswordDirection,
+} from "../lib/crosswords";
 import { publicAsset } from "../lib/urls";
 
 type ArtifactEntry = CollectionEntry<"artifacts">;
@@ -31,6 +35,30 @@ const clueGroups = [
     panelId: downPanelId,
   },
 ] as const;
+
+const model = crossword.layout
+  ? buildCrosswordModel(crossword.layout, {
+      across: crossword.across,
+      down: crossword.down,
+    })
+  : null;
+
+const wordKeysByCell = new Map<
+  string,
+  Partial<Record<CrosswordDirection, string>>
+>();
+
+for (const word of model?.words ?? []) {
+  for (const cellKey of word.cells) {
+    const wordKeys = wordKeysByCell.get(cellKey) ?? {};
+    wordKeys[word.direction] = word.key;
+    wordKeysByCell.set(cellKey, wordKeys);
+  }
+}
+
+const cellFontSize = model
+  ? `${55 / model.columns}cqi`
+  : undefined;
 ---
 
 <section
@@ -38,6 +66,8 @@ const clueGroups = [
   data-crossword-reader="true"
   data-active-clues="across"
   data-mobile-panel="grid"
+  data-crossword-rows={model?.rows}
+  data-crossword-columns={model?.columns}
   aria-label={`Lettore di ${title}`}
 >
   <div
@@ -75,15 +105,83 @@ const clueGroups = [
       data-crossword-mobile-panel="grid"
     >
       <div class="crossword-reader__grid-frame">
-        <img
-          src={publicAsset(crossword.gridAsset)}
-          alt={`Schema vuoto di ${title}`}
-          width="1638"
-          height="1638"
-          loading="eager"
-          decoding="async"
-        />
+        <div
+          class="crossword-reader__grid-canvas"
+          style={model
+            ? `--crossword-rows: ${model.rows}; --crossword-columns: ${model.columns}; --crossword-cell-font: ${cellFontSize};`
+            : undefined}
+        >
+          <img
+            src={publicAsset(crossword.gridAsset)}
+            alt={`Schema vuoto di ${title}`}
+            width="1638"
+            height="1638"
+            loading="eager"
+            decoding="async"
+            draggable="false"
+          />
+
+          {
+            model && (
+              <div
+                class="crossword-reader__writing-grid"
+                role="group"
+                aria-label={`Caselle compilabili di ${title}`}
+              >
+                {model.cells.map((cell) => {
+                  const wordKeys =
+                    wordKeysByCell.get(cell.key) ?? {};
+
+                  return (
+                    <input
+                      type="text"
+                      class="crossword-reader__cell"
+                      maxlength="1"
+                      autocomplete="off"
+                      autocapitalize="characters"
+                      autocorrect="off"
+                      spellcheck="false"
+                      inputmode="text"
+                      enterkeyhint="enter"
+                      aria-label={`Riga ${
+                        cell.row + 1
+                      }, colonna ${cell.column + 1}${
+                        cell.number
+                          ? `, numero ${cell.number}`
+                          : ""
+                      }`}
+                      data-crossword-cell={cell.key}
+                      data-crossword-row={cell.row}
+                      data-crossword-column={cell.column}
+                      data-crossword-across={wordKeys.across}
+                      data-crossword-down={wordKeys.down}
+                      style={`grid-row: ${
+                        cell.row + 1
+                      }; grid-column: ${cell.column + 1};`}
+                    />
+                  );
+                })}
+              </div>
+            )
+          }
+        </div>
       </div>
+
+      <p
+        class="crossword-reader__active-clue"
+        data-crossword-active-clue
+        aria-live="polite"
+        hidden
+      >
+        <span data-crossword-active-direction></span>
+
+        <span
+          class="crossword-reader__active-clue-number"
+          data-crossword-active-number
+        ></span>
+
+        <span data-crossword-active-text></span>
+      </p>
 
       <figcaption>
         Schema del cruciverba. Le definizioni si trovano a fianco.
@@ -124,14 +222,30 @@ const clueGroups = [
               <ul class="crossword-reader__clue-list">
                 {group.clues.map((clue) => (
                   <li>
-                    <span
-                      class="crossword-reader__clue-number"
-                      aria-label={`Definizione ${clue.number}`}
+                    <button
+                      id={`${id}-${group.key}-${
+                        clue.number
+                      }-clue`}
+                      type="button"
+                      class="crossword-reader__clue"
+                      data-crossword-word={`${
+                        group.key
+                      }-${clue.number}`}
+                      data-crossword-direction={group.key}
+                      data-crossword-number={clue.number}
+                      aria-pressed="false"
                     >
-                      {clue.number}
-                    </span>
+                      <span
+                        class="crossword-reader__clue-number"
+                        aria-hidden="true"
+                      >
+                        {clue.number}
+                      </span>
 
-                    <span>{clue.text}</span>
+                      <span data-crossword-clue-text>
+                        {clue.text}
+                      </span>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -187,6 +301,67 @@ const clueGroups = [
     height: auto;
   }
 
+  .crossword-reader__grid-canvas {
+    position: relative;
+    container-type: inline-size;
+  }
+
+  .crossword-reader__grid-canvas img {
+    user-select: none;
+  }
+
+  .crossword-reader__writing-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-rows:
+      repeat(var(--crossword-rows), minmax(0, 1fr));
+    grid-template-columns:
+      repeat(var(--crossword-columns), minmax(0, 1fr));
+    pointer-events: none;
+  }
+
+  .crossword-reader__cell {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 0.16em 0 0;
+    margin: 0;
+    appearance: none;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #111;
+    caret-color: transparent;
+    font-family: Arial, sans-serif;
+    font-size: clamp(
+      0.72rem,
+      var(--crossword-cell-font),
+      3rem
+    );
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+    pointer-events: auto;
+    touch-action: manipulation;
+  }
+
+  .crossword-reader__cell.is-in-word {
+    background: rgb(105 190 255 / 27%);
+  }
+
+  .crossword-reader__cell:focus {
+    outline: 2px solid rgb(20 115 175 / 80%);
+    outline-offset: -2px;
+    background: rgb(75 175 245 / 38%);
+  }
+
+  .crossword-reader__active-clue {
+    display: none;
+  }
+
   .crossword-reader__grid figcaption {
     margin-top: 0.75rem;
     color: var(--muted);
@@ -218,7 +393,8 @@ const clueGroups = [
     display: none;
   }
 
-  .crossword-reader button {
+  .crossword-reader__desktop-controls button,
+  .crossword-reader__mobile-controls button {
     min-height: 2.8rem;
     padding: 0.55rem 0.8rem;
     border: 1px solid var(--rule-strong);
@@ -232,11 +408,13 @@ const clueGroups = [
     text-transform: uppercase;
   }
 
-  .crossword-reader button + button {
+  .crossword-reader__desktop-controls button + button,
+  .crossword-reader__mobile-controls button + button {
     border-left: 0;
   }
 
-  .crossword-reader button:hover {
+  .crossword-reader__desktop-controls button:hover,
+  .crossword-reader__mobile-controls button:hover {
     background: color-mix(
       in srgb,
       var(--paper-raised) 75%,
@@ -244,14 +422,16 @@ const clueGroups = [
     );
   }
 
-  .crossword-reader button:focus-visible {
+  .crossword-reader__desktop-controls button:focus-visible,
+  .crossword-reader__mobile-controls button:focus-visible {
     position: relative;
     z-index: 1;
     outline: 2px solid var(--resident);
     outline-offset: 2px;
   }
 
-  .crossword-reader button[aria-pressed="true"] {
+  .crossword-reader__desktop-controls button[aria-pressed="true"],
+  .crossword-reader__mobile-controls button[aria-pressed="true"] {
     background: var(--ink);
     color: var(--paper);
   }
@@ -267,33 +447,67 @@ const clueGroups = [
     font-weight: 500;
   }
 
-    .crossword-reader__clue-list {
+  .crossword-reader__clue-list {
     padding: 0;
     margin: 0;
     list-style: none;
-    }
+  }
 
-    .crossword-reader__clue-list li {
+  .crossword-reader__clue-list li {
+    padding: 0;
+  }
+
+  .crossword-reader__clue {
     display: grid;
     grid-template-columns: 1.9rem minmax(0, 1fr);
     align-items: baseline;
     gap: 0.45rem;
-    padding-block: 0.18rem;
+    width: 100%;
+    padding: 0.18rem 0.3rem;
+    border: 0;
+    border-left: 3px solid transparent;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
     font-size: clamp(
-    1rem,
-    calc(1.05vw + 0.08rem),
-    1.08rem
+      1rem,
+      calc(1.05vw + 0.08rem),
+      1.08rem
     );
     line-height: 1.18;
-    }
+    text-align: left;
+  }
 
-    .crossword-reader__clue-number {
+  .crossword-reader__clue:hover {
+    background: color-mix(
+      in srgb,
+      var(--resident) 12%,
+      transparent
+    );
+  }
+
+  .crossword-reader__clue:focus-visible {
+    outline: 2px solid var(--resident);
+    outline-offset: 1px;
+  }
+
+  .crossword-reader__clue[aria-pressed="true"] {
+    border-left-color: var(--resident);
+    background: color-mix(
+      in srgb,
+      var(--resident) 18%,
+      transparent
+    );
+  }
+
+  .crossword-reader__clue-number {
     color: var(--resident);
     font-family: var(--font-mono);
     font-size: 0.78rem;
     font-weight: 700;
-    }
-
+  }
 
   @media (min-width: 761px) {
     .crossword-reader[data-active-clues="across"]
@@ -353,90 +567,37 @@ const clueGroups = [
       display: block;
     }
 
-    .crossword-reader__clue-list li {
-    grid-template-columns: 1.8rem minmax(0, 1fr);
-    gap: 0.4rem;
+    .crossword-reader__active-clue:not([hidden]) {
+      display: grid;
+      grid-template-columns: auto auto minmax(0, 1fr);
+      gap: 0.35rem;
+      margin: 0.7rem 0 0;
+      padding: 0.45rem 0.55rem;
+      background: color-mix(
+        in srgb,
+        var(--resident) 12%,
+        var(--paper-raised)
+      );
+      font-size: 0.9rem;
+      line-height: 1.3;
     }
 
+    .crossword-reader__active-clue-number {
+      color: var(--resident);
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+
+    .crossword-reader__clue {
+      grid-template-columns: 1.8rem minmax(0, 1fr);
+      gap: 0.4rem;
+    }
   }
 </style>
 
 <script>
-  const initializeCrosswordReaders = () => {
-    document
-      .querySelectorAll<HTMLElement>("[data-crossword-reader]")
-      .forEach((reader) => {
-        if (reader.dataset.crosswordReaderInitialized === "true") {
-          return;
-        }
-
-        reader.dataset.crosswordReaderInitialized = "true";
-
-        const clueButtons =
-          reader.querySelectorAll<HTMLButtonElement>(
-            "[data-crossword-clue-button]",
-          );
-
-        const mobileButtons =
-          reader.querySelectorAll<HTMLButtonElement>(
-            "[data-crossword-mobile-button]",
-          );
-
-        const setClueDirection = (direction: string) => {
-          reader.dataset.activeClues = direction;
-
-          clueButtons.forEach((button) => {
-            const isActive =
-              button.dataset.crosswordClueButton === direction;
-
-            button.setAttribute(
-              "aria-pressed",
-              String(isActive),
-            );
-          });
-        };
-
-        const setMobilePanel = (panel: string) => {
-          reader.dataset.mobilePanel = panel;
-
-          mobileButtons.forEach((button) => {
-            const isActive =
-              button.dataset.crosswordMobileButton === panel;
-
-            button.setAttribute(
-              "aria-pressed",
-              String(isActive),
-            );
-          });
-
-          if (panel === "across" || panel === "down") {
-            setClueDirection(panel);
-          }
-        };
-
-        clueButtons.forEach((button) => {
-          button.addEventListener("click", () => {
-            const direction =
-              button.dataset.crosswordClueButton;
-
-            if (direction) {
-              setClueDirection(direction);
-            }
-          });
-        });
-
-        mobileButtons.forEach((button) => {
-          button.addEventListener("click", () => {
-            const panel =
-              button.dataset.crosswordMobileButton;
-
-            if (panel) {
-              setMobilePanel(panel);
-            }
-          });
-        });
-      });
-  };
+  import { initializeCrosswordReaders } from
+    "../lib/crossword-interactions";
 
   initializeCrosswordReaders();
 

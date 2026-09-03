@@ -22,6 +22,14 @@ previewAlt: "Griglia quadrata del MiniCruci 1."
 crossword:
   gridAsset: /images/crosswords/mini-cruci-1-grid.png
 
+  layout:
+    - "......"
+    - "....#."
+    - "......"
+    - "......"
+    - ".#...."
+    - "......"
+
   across:
     - number: 1
       text: "... lo stronzo."
