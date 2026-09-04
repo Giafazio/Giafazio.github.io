@@ -66,6 +66,8 @@ const cellFontSize = model
   data-crossword-reader="true"
   data-active-clues="across"
   data-mobile-panel="grid"
+  data-crossword-id={id}
+  data-crossword-layout={crossword.layout?.join("/")}
   data-crossword-rows={model?.rows}
   data-crossword-columns={model?.columns}
   aria-label={`Lettore di ${title}`}
@@ -184,7 +186,26 @@ const cellFontSize = model
       </p>
 
       <figcaption>
-        Schema del cruciverba. Le definizioni si trovano a fianco.
+        <span>
+          Schema del cruciverba. Le definizioni si trovano a fianco.
+        </span>
+
+        <span class="crossword-reader__storage-tools">
+          <span
+            data-crossword-storage-status
+            aria-live="polite"
+          >
+            I progressi vengono salvati su questo dispositivo.
+          </span>
+
+          <button
+            type="button"
+            class="crossword-reader__reset"
+            data-crossword-reset
+          >
+            Cancella schema
+          </button>
+        </span>
       </figcaption>
     </figure>
 
@@ -363,11 +384,48 @@ const cellFontSize = model
   }
 
   .crossword-reader__grid figcaption {
+    display: grid;
+    gap: 0.55rem;
     margin-top: 0.75rem;
     color: var(--muted);
     font-family: var(--font-ui);
     font-size: 0.78rem;
     line-height: 1.45;
+  }
+
+  .crossword-reader__storage-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem 0.8rem;
+  }
+
+  .crossword-reader__reset {
+    min-height: auto;
+    padding: 0.25rem 0.45rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 0;
+    background: var(--paper-raised);
+    color: var(--ink);
+    cursor: pointer;
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .crossword-reader__reset:hover {
+    background: color-mix(
+      in srgb,
+      var(--paper-raised) 75%,
+      var(--resident)
+    );
+  }
+
+  .crossword-reader__reset:focus-visible {
+    outline: 2px solid var(--resident);
+    outline-offset: 2px;
   }
 
   .crossword-reader__definitions {
@@ -586,6 +644,11 @@ const cellFontSize = model
       color: var(--resident);
       font-family: var(--font-mono);
       font-weight: 700;
+    }
+
+    .crossword-reader__storage-tools {
+      align-items: flex-start;
+      flex-direction: column;
     }
 
     .crossword-reader__clue {

@@ -14,6 +14,12 @@ interface CrosswordWordBinding {
   button: HTMLButtonElement;
 }
 
+interface StoredCrosswordProgress {
+  version: 1;
+  layout: string;
+  values: Record<string, string>;
+}
+
 type CellWordBindings = Partial<
   Record<CrosswordDirection, CrosswordWordBinding>
 >;
@@ -30,6 +36,36 @@ const initializeCrosswordReader = (reader: HTMLElement) => {
 
   const rows = Number(reader.dataset.crosswordRows);
   const columns = Number(reader.dataset.crosswordColumns);
+
+  const crosswordId = reader.dataset.crosswordId;
+  const layoutSignature = reader.dataset.crosswordLayout;
+
+  const storageKey = crosswordId
+    ? `fabrizioswebhome:crossword:${crosswordId}`
+    : null;
+
+  const storageStatus = reader.querySelector<HTMLElement>(
+    "[data-crossword-storage-status]",
+  );
+
+  const resetButton = reader.querySelector<HTMLButtonElement>(
+    "[data-crossword-reset]",
+  );
+
+  let storageAvailable = Boolean(
+    storageKey && layoutSignature,
+  );
+
+  const setStorageStatus = (message: string) => {
+    if (storageStatus) {
+      storageStatus.textContent = message;
+    }
+  };
+
+  const disableStorage = () => {
+    storageAvailable = false;
+    setStorageStatus("Salvataggio locale non disponibile.");
+  };
 
   if (!rows || !columns) return;
 
@@ -48,6 +84,135 @@ const initializeCrosswordReader = (reader: HTMLElement) => {
       const key = cell.dataset.crosswordCell;
       if (key) cells.set(key, cell);
     });
+
+  /*
+   * Accetta una sola lettera e normalizza il valore come avviene
+   * durante la normale digitazione nel cruciverba.
+   */
+  const normalizeStoredLetter = (value: unknown) => {
+    if (typeof value !== "string") return "";
+
+    return (
+      value
+        .normalize("NFC")
+        .toLocaleUpperCase("it-IT")
+        .match(/\p{L}/u)?.[0] ?? ""
+    );
+  };
+
+  /*
+   * Ripristina soltanto dati compatibili con la versione e con
+   * la struttura attuale della griglia. I dati obsoleti o corrotti
+   * vengono eliminati senza impedire l'uso del cruciverba.
+   */
+  const restoreProgress = () => {
+    if (
+      !storageAvailable ||
+      !storageKey ||
+      !layoutSignature
+    ) {
+      return;
+    }
+
+    let rawProgress: string | null;
+
+    try {
+      rawProgress = localStorage.getItem(storageKey);
+    } catch {
+      disableStorage();
+      return;
+    }
+
+    if (!rawProgress) return;
+
+    let stored: Partial<StoredCrosswordProgress>;
+
+    try {
+      stored = JSON.parse(rawProgress);
+    } catch {
+      try {
+        localStorage.removeItem(storageKey);
+      } catch {
+        disableStorage();
+      }
+
+      return;
+    }
+
+    const hasValidValues =
+      typeof stored.values === "object" &&
+      stored.values !== null &&
+      !Array.isArray(stored.values);
+
+    if (
+      stored.version !== 1 ||
+      stored.layout !== layoutSignature ||
+      !hasValidValues
+    ) {
+      try {
+        localStorage.removeItem(storageKey);
+      } catch {
+        disableStorage();
+      }
+
+      return;
+    }
+
+    Object.entries(
+      stored.values as Record<string, unknown>,
+    ).forEach(([cellKey, value]) => {
+      const cell = cells.get(cellKey);
+      const letter = normalizeStoredLetter(value);
+
+      if (cell && letter) {
+        cell.value = letter;
+      }
+    });
+  };
+
+  /*
+   * Registra soltanto le caselle compilate. Se lo schema è vuoto,
+   * elimina completamente la voce dal localStorage.
+   */
+  const saveProgress = () => {
+    if (
+      !storageAvailable ||
+      !storageKey ||
+      !layoutSignature
+    ) {
+      return;
+    }
+
+    const values: Record<string, string> = {};
+
+    cells.forEach((cell, cellKey) => {
+      if (cell.value) {
+        values[cellKey] = cell.value;
+      }
+    });
+
+    try {
+      if (Object.keys(values).length === 0) {
+        localStorage.removeItem(storageKey);
+        return;
+      }
+
+      const progress: StoredCrosswordProgress = {
+        version: 1,
+        layout: layoutSignature,
+        values,
+      };
+
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify(progress),
+      );
+    } catch {
+      disableStorage();
+    }
+  };
+
+  restoreProgress();
 
   /*
    * Collega ogni definizione alle caselle appartenenti alla parola.
@@ -329,6 +494,7 @@ const initializeCrosswordReader = (reader: HTMLElement) => {
         .match(/\p{L}/gu);
 
       cell.value = letters?.[0] ?? "";
+      saveProgress();
 
       if (cell.value) {
         /*
@@ -384,11 +550,28 @@ const initializeCrosswordReader = (reader: HTMLElement) => {
             focusCell(previous);
           }
         }
+
+        saveProgress();
       } else if (event.key === "Delete") {
         event.preventDefault();
         cell.value = "";
+        saveProgress();
       }
     });
+  });
+
+  resetButton?.addEventListener("click", () => {
+    cells.forEach((cell) => {
+      cell.value = "";
+    });
+
+    saveProgress();
+
+    if (storageAvailable) {
+      setStorageStatus(
+        "Schema cancellato. Il salvataggio automatico resta attivo.",
+      );
+    }
   });
 
   /*
