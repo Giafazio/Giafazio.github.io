@@ -11,7 +11,6 @@ subjects:
   - mathematical-analysis
 tags:
   - solutions
-  - course-notes
 related: []
 
 sourceFiles:
