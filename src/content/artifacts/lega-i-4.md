@@ -139,7 +139,7 @@ fourWordsGame:
       words:
         - Bibbia
         - RAI
-        - Palchebel
+        - Pachelbel
         - Policleto
       solution: "Canoni famosi."
 
@@ -194,6 +194,165 @@ fourWordsGame:
         - Idiota
         - Demoni
       solution: "Nei titoli di Dostoevskij."
+
+    - id: estrazioni
+      words:
+        - Lotto
+        - Radice
+        - Dente
+        - Minerali
+      solution: "Estrazioni."
+
+    - id: nulla
+      words:
+        - Osta
+        - Tenente
+        - Facente
+        - Cosmico
+        - Quaestio
+      solution: "Nulla..."
+
+    - id: tenente
+      words:
+        - Luogo
+        - Nulla
+        - Sotto
+        - Colonnello
+      solution: "...tenente..."
+
+    - id: aspettare
+      words:
+        - Attimo
+        - Secondo
+        - Momento
+        - Bambino
+      solution: "Aspettare un..."
+
+    - id: avanti
+      words:
+        - Tutta
+        - Altro
+        - Prossimo
+        - Savoia
+      solution: "Avanti..."
+
+    - id: lucio
+      words:
+        - Dalla
+        - Seneca
+        - Lupo
+        - Corsi
+      solution: "Lucio"
+
+    - id: alberto
+      words:
+        - Tomba
+        - Castagna
+        - Sordi
+        - Angela
+        - Lupo
+      solution: "Alberto"
+
+    - id: fiumilano
+      words:
+        - Lambro
+        - Seveso
+        - Merlata
+        - Olona
+      solution: "Fiumi e torrenti milanesi."
+
+    - id: colpo-di
+      words:
+        - Spugna
+        - Stato
+        - Testa
+        - Scena
+        - Coda
+        - Grazia
+      solution: "Colpo di..."
+
+    - id: artiodattili
+      words:
+        - Maiali
+        - Giraffe
+        - Delfini
+        - Pecore
+        - Ippopotami
+        - Balene
+      solution: "Sono tutti (cet)artiodattili, un ordine di mammiferi"
+
+    - id: doppio
+      words:
+        - Gioco
+        - Passo
+        - Petto
+        - Senso
+        - Nodo
+        - Cieco
+      solution: "Doppio..."
+
+    - id: chiave
+      words:
+        - Violino
+        - Basso
+        - Lettura
+        - Volta
+        - Inglese
+      solution: "Chiave (di)..."
+
+    - id: corpo
+      words:
+        - Ballo
+        - Reato
+        - Armata
+        - Celeste
+        - Libero
+        - Umano
+        - Mille balene
+      solution: "Corpo (di)..."
+
+    - id: elementalli
+      words:
+        - Stagno
+        - Calcio
+        - Mercurio
+        - Radio
+      solution: "Elementi metallici."
+
+    - id: fiat
+      words:
+        - Bravo
+        - Uno
+        - Tipo
+        - Punto
+      solution: "FIAT..."
+
+    - id: punto-di
+      words:
+        - Vista
+        - Fuga
+        - Fumo
+        - Ritiro
+        - Domanda
+        - Rugiada
+        - Partenza
+      solution: "Punto di..."
+
+    - id: canna
+      words:
+        - Organo
+        - Fucile
+        - Pesca
+        - Bambù
+      solution: "Canna (di)..."
+
+    - id: capo
+      words:
+        - treno
+        - giro
+        - lavoro
+        - Verde
+      solution: "Capo..."
 
 
 projects:

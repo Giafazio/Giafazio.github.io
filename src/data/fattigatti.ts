@@ -12,7 +12,7 @@ export const FATTIGATTI_INITIAL_MESSAGE = [
 
 export const FATTIGATTI_FACTS = [
   [
-    "Lo sapevi che",
+    "Lo sapevi che...",
     "uno su tre dei",
     "nostri abbonati",
     "è in realtà un gatto",
@@ -20,20 +20,38 @@ export const FATTIGATTI_FACTS = [
   ],
 
   [
-    "Lo sapevi che",
+    "Lo sapevi che...",
     "è meglio un gatto in un sacco",
     "che un sacco in un gatto?",
   ],
 
   [
-    "Lo sapevi che",
-    "esiste una specie",
-    "di gatti senza pelo",
-    "chiamati tutti Paolo?",
+    "Lo sapevi che...",
+    "la gatta frettolosa fa i figli cechi,",
+    "ma solo vicino Praga?",
   ],
 
   [
-    "Lo sapevi che",
+    "Lo sapevi che...",
+    "i gatti hanno gli artigli,",
+    "ma gli artigli non hanno i gatti?",
+  ],
+
+  [
+    "Lo sapevi che...",
+    "i mici hanno pochi amici,",
+    "ma se glielo dici sono felici?",
+  ],
+
+  [
+    "Lo sapevi che...",
+    "esiste una specie",
+    "di gatti senza pelo",
+    "tutti nel Peloponneso?",
+  ],
+
+  [
+    "Lo sapevi che...",
     "nell'antico Egitto",
     "i nostri amici gatti",
     "erano temuti e rispettati",
@@ -42,7 +60,7 @@ export const FATTIGATTI_FACTS = [
   ],
 
   [
-    "Lo sapevi che",
+    "Lo sapevi che...",
     "alla fiera dell'est",
     "per due soldi un topolino",
     "mio padre comprò.",
@@ -51,13 +69,13 @@ export const FATTIGATTI_FACTS = [
     "che al mercato mio padre comprò?",
   ], 
   [   
-    "Lo sapevi che",
+    "Lo sapevi che...",
     "volevo un gatto nero,",
     "mi hai dato un gatto bianco",
     "e io non ci sto più.",
   ],
   [   
-    "Lo sapevi che",
+    "Lo sapevi che...",
     "c'era una volta una gatta",
     "che aveva una macchia nera sul muso",
     "e una vecchia soffitta vicino al mare",

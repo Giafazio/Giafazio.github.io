@@ -2,7 +2,7 @@
 id: math-notes
 title: "Math Notes"
 slug: math-notes
-summary: "Solutions, course notes, and teaching materials developed through my studies and tutoring."
+summary: "Mathematical solutions, course notes, teaching materials, and annotated translations."
 stage: growing
 draft: false
 homeOverview: false
@@ -18,4 +18,4 @@ externalContents: []
 roadmap: []
 ---
 
-This project gathers mathematical solutions, course notes, and teaching materials developed through my studies and tutoring. It includes both complete collections and smaller expository works, organized by subject and origin.
+This project gathers mathematical solutions, course notes, and teaching materials developed through my studies and tutoring, alongside annotated translations of mathematical texts. It includes both complete collections and smaller expository works, organized by subject and origin.
