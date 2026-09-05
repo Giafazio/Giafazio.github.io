@@ -1,0 +1,162 @@
+---
+import { publicAsset } from "../lib/urls";
+
+const explosionSrc = publicAsset(
+  "/videos/esplosione-v2-breve.webm",
+);
+const ravenSrc = publicAsset(
+  "/images/corvo-daje-tutta-cartiglio-5.gif",
+);
+---
+
+<div
+  class="welcome-explosion-layer"
+  data-welcome-explosions
+  data-explosion-src={explosionSrc}
+  data-raven-src={ravenSrc}
+  aria-hidden="true"
+></div>
+
+<script>
+  const explosionSettings = [
+    { position: "bottom-left", delay: 0 },
+    { position: "bottom-right", delay: 170 },
+    { position: "bottom-right-delayed", delay: 500 },
+  ] as const;
+
+  const initializeWelcomeExplosions = () => {
+    const layers = document.querySelectorAll<HTMLElement>(
+      "[data-welcome-explosions]",
+    );
+
+    layers.forEach((layer) => {
+      if (layer.dataset.explosionsInitialized === "true") return;
+
+      const panel = layer.closest<HTMLElement>(".welcome-panel");
+      const featured = document.querySelector<HTMLElement>(".home-current");
+      const range = panel?.querySelector<HTMLInputElement>(
+        "[data-welcome-enthusiasm]",
+      );
+      const videoSrc = layer.dataset.explosionSrc;
+      const ravenSrc = layer.dataset.ravenSrc;
+
+      if (!panel || !featured || !range || !videoSrc) return;
+
+      let lastLevel = range.valueAsNumber;
+      let timers: number[] = [];
+      let flight: HTMLDivElement | undefined;
+
+      /* Ancora la base visibile dei video alla linea di Featured. */
+      const alignBaseline = () => {
+        const line = featured.getBoundingClientRect();
+        const layerBox = layer.getBoundingClientRect();
+        const border = Number.parseFloat(
+          getComputedStyle(featured).borderTopWidth,
+        );
+
+        layer.style.setProperty(
+          "--explosion-baseline",
+          `${line.top + border / 2 - layerBox.top}px`,
+        );
+      };
+
+      // Annulla anche il corvo, sia in volo sia ancora in attesa.
+      const clearEffects = () => {
+        timers.forEach((timer) => window.clearTimeout(timer));
+        timers = [];
+        layer.replaceChildren();
+        flight?.remove();
+      };
+
+      const scheduleRavenFlight = () => {
+        if (!ravenSrc || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        // Carica la GIF durante l'attesa, solo quando l'effetto viene attivato.
+        const raven = new Image(540, 225);
+        raven.src = ravenSrc;
+        raven.alt = "";
+
+        timers.push(window.setTimeout(() => {
+          if (range.value !== range.max) return;
+
+          const overlay = document.createElement("div");
+          overlay.className = "welcome-raven-flight";
+          overlay.setAttribute("aria-hidden", "true");
+          overlay.append(raven);
+          raven.addEventListener("animationend", () => overlay.remove(), {
+            once: true,
+          });
+          document.body.append(overlay);
+          flight = overlay;
+        }, 3500));
+      };
+
+      const playEffects = () => {
+        clearEffects();
+        alignBaseline();
+
+        explosionSettings.forEach(({ position, delay }) => {
+          const timer = window.setTimeout(() => {
+            const video = document.createElement("video");
+
+            video.className =
+              `welcome-explosion welcome-explosion--${position}`;
+            video.src = videoSrc;
+            video.muted = true;
+            video.playsInline = true;
+            video.playbackRate = 0.45;
+            video.addEventListener("ended", () => video.remove(), {
+              once: true,
+            });
+
+            // I 3,5 secondi partono dall'avvio effettivo della prima esplosione.
+            if (position === "bottom-left") {
+              video.addEventListener("playing", () => {
+                if (video.isConnected) scheduleRavenFlight();
+              }, { once: true });
+            }
+
+            layer.append(video);
+            void video.play().catch(() => video.remove());
+          }, delay);
+
+          timers.push(timer);
+        });
+      };
+
+      const handleInput = () => {
+        const level = range.valueAsNumber;
+        const maximum = Number(range.max);
+
+        if (level !== lastLevel && level === maximum) {
+          playEffects();
+        } else if (level < maximum) {
+          clearEffects();
+        }
+
+        lastLevel = level;
+      };
+
+      alignBaseline();
+      range.addEventListener("input", handleInput);
+      window.addEventListener("resize", alignBaseline);
+      layer.dataset.explosionsInitialized = "true";
+
+      document.addEventListener(
+        "astro:before-swap",
+        () => {
+          clearEffects();
+          range.removeEventListener("input", handleInput);
+          window.removeEventListener("resize", alignBaseline);
+        },
+        { once: true },
+      );
+    });
+  };
+
+  initializeWelcomeExplosions();
+  document.addEventListener(
+    "astro:page-load",
+    initializeWelcomeExplosions,
+  );
+</script>

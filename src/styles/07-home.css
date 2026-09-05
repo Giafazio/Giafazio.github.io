@@ -704,6 +704,95 @@
   }
 }
 
+/* Esplosioni attivate dal livello massimo di entusiasmo. */
+.welcome-explosion-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+
+  overflow: visible;
+  pointer-events: none;
+}
+
+.welcome-explosion {
+  --explosion-bottom-trim:
+    clamp(0.67rem, 1.4vw, 1.19rem);
+
+  position: absolute;
+  top: calc(
+    var(--explosion-baseline, 100%) +
+    var(--explosion-bottom-trim)
+  );
+
+  width: clamp(29.25rem, 60.75vw, 51.75rem);
+  height: auto;
+
+  transform: translate(-50%, -100%);
+}
+
+.welcome-explosion--bottom-left {
+  left: 9%;
+}
+
+.welcome-explosion--bottom-right {
+  left: 88%;
+}
+
+.welcome-explosion--bottom-right-delayed {
+  left: 77%;
+}
+
+@media (max-width: 720px) {
+  .welcome-explosion {
+    --explosion-bottom-trim:
+      clamp(0.52rem, 2.7vw, 0.88rem);
+
+    width: clamp(22.5rem, 117vw, 38.25rem);
+  }
+
+  .welcome-explosion--bottom-left {
+    left: 14%;
+  }
+
+  .welcome-explosion--bottom-right {
+    left: 84%;
+  }
+
+  .welcome-explosion--bottom-right-delayed {
+    left: 72%;
+  }
+}
+
+/* Il livello fisso ritaglia il volo ai bordi senza allargare la pagina. */
+.welcome-raven-flight {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.welcome-raven-flight img {
+  position: absolute;
+  top: 35vh;
+  left: 0;
+  width: clamp(240px, 35vw, 480px);
+  height: auto;
+  animation: welcome-raven-crossing 6s linear both;
+}
+
+@keyframes welcome-raven-crossing {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100vw); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-explosion-layer,
+  .welcome-raven-flight {
+    display: none;
+  }
+}
+
 .home-current {
   grid-area: current;
 
