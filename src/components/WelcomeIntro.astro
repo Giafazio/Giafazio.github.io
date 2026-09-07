@@ -4,7 +4,8 @@ import { routeFor, withBase } from "../lib/urls";
 
 const { welcome } = siteConfig;
 
-const messages = welcome.enthusiasmTexts.map(
+// Entrambe le lingue usano la stessa struttura e gli stessi sette livelli.
+const parseMessages = (texts: readonly string[]) => texts.map(
   (rawText, level) => {
     const paragraphs = rawText
       .trim()
@@ -47,8 +48,13 @@ const messages = welcome.enthusiasmTexts.map(
       );
     }
 
+    const beforeName = nameParts[0].trimEnd();
+    // Il maiuscoletto riguarda solo questi saluti, non il successivo "sono/I am".
+    const smallCapsGreeting = beforeName.match(/^(Hello World!|Ciao a Tutti!)/)?.[0] ?? "";
+
     return {
-      beforeName: nameParts[0].trimEnd(),
+      smallCapsGreeting,
+      beforeName: beforeName.slice(smallCapsGreeting.length),
       greetingPunctuation: greetingMatch[1],
       firstParagraph: greetingMatch[2].trim(),
       secondParagraph: paragraphs[1].trim(),
@@ -56,9 +62,18 @@ const messages = welcome.enthusiasmTexts.map(
   },
 );
 
+const messagesByLanguage = {
+  en: parseMessages(welcome.enthusiasmTexts),
+  it: parseMessages(welcome.enthusiasmTextsIt),
+};
+
+if (Object.values(messagesByLanguage).some((messages) => messages.length !== 7)) {
+  throw new Error("Each Welcome language must contain exactly seven levels.");
+}
+
 const initialLevel = welcome.defaultEnthusiasm;
-const initialMessage = messages[initialLevel];
-const maxLevel = messages.length - 1;
+const initialMessage = messagesByLanguage.en[initialLevel];
+const maxLevel = messagesByLanguage.en.length - 1;
 
 const nameHref = withBase(
   routeFor("fieldNotes", "aggiungi-titolo"),
@@ -68,23 +83,62 @@ const nameHref = withBase(
 <div
   class="welcome-intro"
   data-welcome-intro
-  data-welcome-messages={JSON.stringify(messages)}
+  data-welcome-messages={JSON.stringify(messagesByLanguage)}
 >
+  <fieldset
+    class="welcome-language"
+    data-welcome-language-selector
+    hidden
+  >
+    <legend class="visually-hidden">
+      <span lang="it">Lingua</span> /
+      <span lang="en">Language</span>
+    </legend>
+
+    <label lang="it">
+      <input
+        class="visually-hidden"
+        type="radio"
+        name="welcome-language"
+        value="it"
+        aria-label="Italiano"
+        data-welcome-language
+      />
+      <span>ita</span>
+    </label>
+
+    <label lang="en">
+      <input
+        class="visually-hidden"
+        type="radio"
+        name="welcome-language"
+        value="en"
+        aria-label="English"
+        data-welcome-language
+        checked
+      />
+      <span>eng</span>
+    </label>
+  </fieldset>
+
   <div class="welcome-panel__topline">
     <header class="welcome-panel__label">
       <h1 id="welcome-title">
-        <span class="welcome-panel__title">
+        <span class="welcome-panel__title" data-welcome-it="Benvenuti!">
           Welcome!
         </span>
 
-        <span class="welcome-panel__subtitle">
+        <span class="welcome-panel__subtitle" data-welcome-it="L'Ingresso">
           The Entrance
         </span>
       </h1>
     </header>
 
     <p class="welcome-copy__greeting">
-      <span data-welcome-before>
+      <span
+        class="welcome-copy__greeting-small-caps"
+        data-welcome-small-caps
+      >{initialMessage.smallCapsGreeting}</span><span data-welcome-before>
         {initialMessage.beforeName}{" "}
       </span>
 
@@ -132,25 +186,27 @@ const nameHref = withBase(
 
 <div class="welcome-copy">
   <!--
-    Tutti i testi partecipano al calcolo
-    dell'altezza, ma restano invisibili.
+    Tutti i testi, in entrambe le lingue, partecipano al calcolo
+    dell'altezza: il riquadro resta stabile anche cambiando lingua.
   -->
   <div
     class="welcome-copy__sizer"
     aria-hidden="true"
   >
     {
-      messages.map((message) => (
-        <div class="welcome-copy__sizer-message">
-          <p class="welcome-copy__paragraph">
-            {message.firstParagraph}
-          </p>
+      Object.entries(messagesByLanguage).flatMap(([language, messages]) =>
+        messages.map((message) => (
+          <div class="welcome-copy__sizer-message" lang={language}>
+            <p class="welcome-copy__paragraph">
+              {message.firstParagraph}
+            </p>
 
-          <p class="welcome-copy__paragraph">
-            {message.secondParagraph}
-          </p>
-        </div>
-      ))
+            <p class="welcome-copy__paragraph">
+              {message.secondParagraph}
+            </p>
+          </div>
+        )),
+      )
     }
   </div>
 
@@ -188,7 +244,7 @@ const nameHref = withBase(
         max={maxLevel}
         step="1"
         value={initialLevel}
-        aria-valuetext={`Enthusiasm ${initialLevel} of ${maxLevel}`}
+        aria-valuetext={`Enthusiasm Level ${initialLevel} of ${maxLevel}`}
         data-welcome-enthusiasm
       />
     </div>
@@ -196,6 +252,7 @@ const nameHref = withBase(
       <span
         class="welcome-enthusiasm__limit
           welcome-enthusiasm__limit--low"
+        data-welcome-it="Basso"
         aria-hidden="true"
       >
         Low
@@ -204,6 +261,7 @@ const nameHref = withBase(
       <span
         class="welcome-enthusiasm__limit
           welcome-enthusiasm__limit--high"
+        data-welcome-it="Alto"
         aria-hidden="true"
       >
         High
@@ -220,7 +278,7 @@ const nameHref = withBase(
           ⇐
         </strong>
 
-        <span>Enthusiasm Level</span>
+        <span data-welcome-it="Grado di Entusiasmo">Enthusiasm Level</span>
 
         <span aria-hidden="true">⇒</span>
       </label>
@@ -231,13 +289,14 @@ const nameHref = withBase(
       for="welcome-enthusiasm-range"
       data-welcome-output
     >
-      Enthusiasm {initialLevel} of {maxLevel}
+      Enthusiasm Level {initialLevel} of {maxLevel}
     </output>
   </div>
 </div>
 
 <script>
   type WelcomeMessage = {
+    smallCapsGreeting: string;
     beforeName: string;
     greetingPunctuation: string;
     firstParagraph: string;
@@ -265,9 +324,13 @@ const nameHref = withBase(
         return;
       }
 
-      const messages = JSON.parse(
+      const messagesByLanguage = JSON.parse(
         messagesData,
-      ) as WelcomeMessage[];
+      ) as Record<"it" | "en", WelcomeMessage[]>;
+
+      const smallCapsGreeting = root.querySelector<HTMLElement>(
+        "[data-welcome-small-caps]",
+      );
 
       const beforeName =
         root.querySelector<HTMLElement>(
@@ -305,6 +368,7 @@ const nameHref = withBase(
         );
 
       if (
+        !smallCapsGreeting ||
         !beforeName ||
         !greetingPunctuation ||
         !firstParagraph ||
@@ -315,9 +379,12 @@ const nameHref = withBase(
         return;
       }
 
+      let welcomeLanguage: "it" | "en" = "en";
+
       const renderMessage = (
         requestedLevel: number,
       ) => {
+        const messages = messagesByLanguage[welcomeLanguage];
         const level = Math.max(
           0,
           Math.min(
@@ -328,6 +395,7 @@ const nameHref = withBase(
 
         const message = messages[level];
 
+        smallCapsGreeting.textContent = message.smallCapsGreeting;
         beforeName.textContent =
           `${message.beforeName} `;
 
@@ -355,20 +423,63 @@ const nameHref = withBase(
           `${progress}%`,
         );
 
-        range.setAttribute(
-          "aria-valuetext",
-          `Enthusiasm ${level} of ${
-            messages.length - 1
-          }`,
-        );
+        // La descrizione accessibile segue la lingua del Welcome.
+        const valueText = welcomeLanguage === "it"
+          ? `Grado di Entusiasmo ${level} di ${messages.length - 1}`
+          : `Enthusiasm Level ${level} of ${messages.length - 1}`;
+
+        range.lang = welcomeLanguage;
+        range.setAttribute("aria-valuetext", valueText);
 
         if (output) {
-          output.textContent =
-            `Enthusiasm ${level} of ${
-              messages.length - 1
-            }`;
+          output.lang = welcomeLanguage;
+          output.textContent = valueText;
         }
       };
+
+      const panel = root.closest<HTMLElement>(".welcome-panel") ?? root;
+      const languageSelector = root.querySelector<HTMLFieldSetElement>(
+        "[data-welcome-language-selector]",
+      );
+      const languageInputs = root.querySelectorAll<HTMLInputElement>(
+        "[data-welcome-language]",
+      );
+
+      // Salva gli originali inglesi prima di tradurre, includendo About.
+      const translatedLabels = Array.from(
+        panel.querySelectorAll<HTMLElement>("[data-welcome-it]"),
+        (element) => ({
+          element,
+          en: element.textContent?.trim() ?? "",
+          it: element.dataset.welcomeIt ?? "",
+        }),
+      );
+
+      const setWelcomeLanguage = (language: "it" | "en") => {
+        welcomeLanguage = language;
+        root.lang = language;
+        panel.dataset.welcomeLanguage = language;
+
+        translatedLabels.forEach((label) => {
+          label.element.textContent = label[language];
+          label.element.lang = language;
+        });
+        languageInputs.forEach((input) => {
+          input.checked = input.value === language;
+        });
+
+        // Non emette "input": conserva il livello senza riavviare gli effetti.
+        renderMessage(range.valueAsNumber);
+        panel.dispatchEvent(new Event("welcome:language-change"));
+      };
+
+      languageInputs.forEach((input) => {
+        input.addEventListener("change", () => {
+          if (input.checked && (input.value === "it" || input.value === "en")) {
+            setWelcomeLanguage(input.value);
+          }
+        });
+      });
 
       range.addEventListener("input", () => {
         renderMessage(range.valueAsNumber);
@@ -498,7 +609,8 @@ const nameHref = withBase(
           String(intervalId);
       }
 
-      renderMessage(range.valueAsNumber);
+      setWelcomeLanguage("en");
+      if (languageSelector) languageSelector.hidden = false;
 
       root.dataset.welcomeInitialized =
         "true";

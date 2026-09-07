@@ -95,9 +95,38 @@ export const siteConfig = {
 
   This site gathers projects, thoughts, and experiments that grow out of my interests. These days, I am exploring the fields of numerical simulation and agronomy. Mathematics, music, language, and food are interests I keep returning to. I also like playing bass and occasionally tutor mathematics.`,
 
-      `HELLO WORLD! I am {name}! Tinkerer by inclination, I am a mathematician by training, driven by a curiosity that constantly leads me into new fields! I am thrilled to take what I have learned and to put it to work in the real world®!
+      `Hello World! I am {name}! Tinkerer by inclination, I am a mathematician by training, driven by a curiosity that constantly leads me into new fields! I am thrilled to take what I have learned and to put it to work in the real world®!
 
   This site is my growing collection of projects, thoughts, and experiments. These days, I am exploring the fields of numerical simulation and agronomy with much interest! My curiosity also leads me back to mathematics, music, language, and food. I love playing bass, tutor mathematics from time to time and am always looking for the next thing to learn, make, or understand!`,
+    ],
+    enthusiasmTextsIt: [
+      `..., sono {name}. Mi sono formato come matematico per ragioni che un tempo mi sembravano chiare. Sto cercando di capire se tutto ciò che ho imparato possa non essere stato uno spreco totale.
+
+Questo sito contiene alcune robe che resterebbero altrimenti sparpagliate. Per il momento, sto cercando di esplorare il mondo delle simulazioni numeriche e dell'agronomia senza troppa convinzione. Matematica, musica, linguistica e cibo non sono ancora del tutto scomparsi dai miei interessi. Talvolta suono il basso e do ripetizioni se proprio me lo chiedono.`,
+
+      `Ciao..., sono {name}. Mi sono formato come matematico ma mi interessano anche altre cose. Ora sto cercando di capire se tutto ciò che ho imparato possa avere un posto nel mondo reale, un'espressione che continuo a usare senza capirla davvero.
+
+Questo sito contiene alcuni progetti, pensieri ed esperimenti che resterebbero altrimenti sparpagliati. Per il momento, sto cercando di esplorare il mondo delle simulazioni numeriche e dell'agronomia. Matematica, musica, linguistica e cibo m'interessano con non troppa convinzione. Talvolta suono il basso e do ripetizioni.`,
+
+      `Ciao, sono {name}. Sono un matematico di formazione e curioso di natura, ma mi interessano molte cose. Ora sto cercando di capire che posto possa avere tutto ciò che ho imparato nel mondo reale.
+
+Questo sito contiene progetti, pensieri ed esperimenti su argomenti disparati. Di recente sto cercando di esplorare il mondo delle simulazioni numeriche e dell'agronomia. Matematica, musica, linguistica e cibo continuano a interessarmi. Di tanto in tanto suono il basso e do ripetizioni.`,
+
+      `Ciao, sono {name}! Sono un matematico di formazione e curioso di natura, difficilmente i miei interessi restano confinati in un singolo campo. Sono ora alla ricerca di opportunità per applicare ciò che ho imparato al mondo reale®.
+
+Questo sito raccoglie progetti, pensieri ed esperimenti su argomenti disparati che mi interessano. Di recente sto esplorando il mondo delle simulazioni numeriche e dell'agronomia. Matematica, musica, linguistica e cibo sono invece i miei interessi ricorrenti. Di tanto in tanto suono il basso e do ripetizioni.`,
+
+      `Ehilà, sono {name}! Sono un matematico di formazione e curioso di natura, difficilmente i miei interessi restano confinati in un singolo campo. Sono entusiasta di trovare possibilità di applicare ciò che ho imparato al mondo reale®.
+
+Questo sito raccoglie progetti, pensieri ed esperimenti frutto dei miei interessi. Di recente sto esplorando il mondo delle simulazioni numeriche e dell'agronomia. Matematica, musica, linguistica e cibo sono invece i miei interessi ricorrenti. Di tanto in tanto suono il basso e do ripetizioni.`,
+
+      `Ciao a tutti, sono {name}! Sono un matematico di formazione e curioso di natura, raramente i miei interessi restano fermi a lungo. Sono entusiasta di portare ciò che ho imparato fuori dall'accademia e di metterlo a frutto nel mondo reale®.
+
+Questo sito raccoglie progetti, pensieri ed esperimenti frutto dei miei interessi. Di recente sto esplorando il mondo delle simulazioni numeriche e dell'agronomia. Matematica, musica, linguistica e cibo sono invece i miei interessi ricorrenti. Mi piace suonare il basso e, di tanto in tanto, do ripetizioni.`,
+
+      `Ciao a Tutti! sono {name}! Sono un matematico di formazione e curioso di natura, guidato dalla curiosità sempre verso nuovi ambiti. Mi emoziona l'idea di mettere a frutto tutto ciò che ho imparato nel mondo reale®!
+
+Questo sito è la mia raccolta viva di progetti, pensieri ed esperimenti. Di recente, esploro con interesse il mondo delle simulazioni numeriche e dell'agronomia. Ma spesso torno anche alla matematica, alla musica, alla linguistica e al cibo. Amo suonare il basso, di tanto in tanto do ripetizioni e sono sempre alla ricerca di qualcosa di nuovo da fare o da capire!`,
     ],
   },
   welcomeStatus: "editorial-draft",

@@ -244,7 +244,7 @@
     );
 
   font-size:
-    clamp(1.9rem, 3.9vw, 3.1rem);
+    clamp(1.85rem, 3.9vw, 2.65rem);
 
   font-weight: normal;
   letter-spacing: -0.02em;

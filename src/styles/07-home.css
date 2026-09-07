@@ -62,6 +62,111 @@
     inset 0 0 0 2px var(--frame-highlight);
 }
 
+.welcome-language {
+  position: absolute;
+  top: 4.5rem;
+  right: calc(100% + 5px);
+  z-index: 1;
+
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+
+  width: max-content;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* Il selettore appare soltanto quando il suo script è pronto. */
+.welcome-language[hidden] {
+  display: none;
+}
+
+.welcome-language label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  cursor: pointer;
+}
+
+.welcome-language label > span {
+  --tab-paper: color-mix(in srgb, var(--paper-raised) 78%, var(--frame-main));
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  padding: 1px 2px 1px 4px;
+
+  /* Entrambi gli angoli esterni sono arrotondati. */
+  border-radius: 6px 0 0 6px;
+  background: var(--frame-main);
+
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-variation-settings: "MONO" 1;
+  font-variant-caps: small-caps;
+  font-size: 0.82rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.welcome-language label > span::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: 5px 0 0 5px;
+  background: var(--tab-paper);
+}
+
+.welcome-language input:checked + span {
+  --tab-paper: var(--paper-raised);
+  font-weight: bold;
+}
+
+.welcome-language label:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (min-width: 701px) {
+  .welcome-language label > span {
+    padding-left: 6px;
+  }
+}
+
+@media (max-width: 760px) {
+  /* Spazio esterno per le linguette, senza comprimere il padding del testo. */
+  .welcome-panel--language-switch {
+    margin-left: 2rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .welcome-panel--language-switch {
+    margin-left: 1rem;
+  }
+
+  .welcome-language {
+    right: calc(100% + 3px);
+    gap: 4px;
+  }
+
+  .welcome-language label > span {
+    width: 1.5rem;
+    font-size: 0.72rem;
+  }
+}
+
+@media (pointer: coarse) {
+  .welcome-language { gap: 0; }
+  .welcome-language label { min-width: 24px; min-height: 24px; }
+}
+
 .welcome-panel__topline {
   position: absolute;
   top: 0;
@@ -94,7 +199,8 @@
 .welcome-panel__label h1 {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
   gap: 0.15rem;
 
   margin: 0;
@@ -243,6 +349,10 @@
   text-wrap: balance;
 
   transform: translateY(1.6rem);
+}
+
+.welcome-copy__greeting-small-caps {
+  font-variant-caps: small-caps;
 }
 
 .welcome-intro {
