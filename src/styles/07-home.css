@@ -65,7 +65,8 @@
 .welcome-language {
   position: absolute;
   top: 4.5rem;
-  right: calc(100% + 5px);
+  /* Lascia scoperto anche il contorno esterno di 2px del Welcome. */
+  right: calc(100% + 5px + 2px);
   z-index: 1;
 
   display: grid;
@@ -123,6 +124,10 @@
   background: var(--tab-paper);
 }
 
+.welcome-language input:not(:checked) + span {
+  color: color-mix(in srgb, var(--ink) 65%, transparent);
+}
+
 .welcome-language input:checked + span {
   --tab-paper: var(--paper-raised);
   font-weight: bold;
@@ -152,7 +157,7 @@
   }
 
   .welcome-language {
-    right: calc(100% + 3px);
+    right: calc(100% + 3px + 2px);
     gap: 4px;
   }
 
@@ -220,15 +225,7 @@
   font-weight: 500;
   line-height: 1;
 
-  text-decoration: underline;
-  text-decoration-color:
-    color-mix(
-      in srgb,
-      currentColor 45%,
-      transparent
-    );
-  text-decoration-thickness: 0.07em;
-  text-underline-offset: 0.14em;
+  text-decoration: none;
 }
 
 .welcome-name:visited {
@@ -237,8 +234,7 @@
 
 .welcome-name:hover {
   color: var(--link);
-  text-decoration: underline;
-  text-decoration-color: currentColor;
+  text-decoration: none;
 }
 
 .welcome-panel__title {

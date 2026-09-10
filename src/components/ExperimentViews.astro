@@ -1,0 +1,229 @@
+---
+import EntryGallery from "./EntryGallery.astro";
+import type { ArtifactEntry, ExperimentEntry } from "../lib/content";
+interface Props { entries: (ArtifactEntry | ExperimentEntry)[]; }
+const { entries } = Astro.props;
+---
+<div data-experiment-views>
+  <div data-static-view hidden><EntryGallery entries={entries} variant="kitchen" ariaLabel="Experiments, Fragments and standalone Artifacts" /></div>
+  <div data-moving-view>
+    <div class="experiment-drift" data-experiment-drift><EntryGallery entries={entries} variant="kitchen" ariaLabel="Experiments, Fragments and standalone Artifacts in movimento" /></div>
+  </div>
+</div>
+<style>
+  .experiment-drift {
+    --drift-column-gap: 1.25rem;
+    --drift-row-gap: 2.5rem;
+    --drift-item-basis: calc(20% - var(--drift-column-gap));
+    --drift-card-padding: .7rem;
+    --drift-text-padding: .75rem;
+    padding: 1rem 1.2rem 4rem;
+  }
+
+  .experiment-drift[data-experiment-drift] :global(.entry-gallery__grid) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: var(--drift-row-gap) var(--drift-column-gap);
+  }
+  .experiment-drift[data-experiment-drift] :global(.entry-gallery__item) {
+    --tilt: -2deg;
+    --lift: 0px;
+    display: block;
+    min-width: 0;
+    flex: 0 0 var(--drift-item-basis);
+  }
+  .experiment-drift[data-experiment-drift] :global(.entry-gallery__item:nth-child(3n + 2)) {
+    --tilt: 3deg;
+    margin-top: 1.5rem;
+  }
+  .experiment-drift[data-experiment-drift] :global(.entry-gallery__item:nth-child(3n)) {
+    --tilt: -1deg;
+  }
+  .experiment-drift[data-experiment-drift] :global(.entry-gallery__card) {
+    width: 100%;
+    min-height: 0;
+    padding: var(--drift-card-padding);
+    overflow-wrap: anywhere;
+    border: 0;
+    box-shadow: none;
+    background: none;
+    transform: translateY(var(--lift)) rotate(var(--tilt));
+  }
+  .experiment-drift[data-experiment-drift] :global(.entry-gallery__card::before) { display: none; }
+  .experiment-drift[data-experiment-drift] :global(.entry-gallery__card:not(:has(img))) {
+    padding: var(--drift-text-padding);
+    background: var(--paper-raised);
+    border-left: 1px solid var(--rule);
+    border-radius: 2% 1% 4% 1%;
+  }
+  .experiment-drift[data-experiment-drift] :global(.entry-gallery__preview) {
+    order: -1;
+    aspect-ratio: auto;
+    border: 0;
+    background: none;
+    overflow: visible;
+  }
+  .experiment-drift[data-experiment-drift] :global(.entry-gallery__preview img) {
+    width: 100%;
+    height: auto;
+    max-height: 22rem;
+    object-fit: contain;
+    padding: 0;
+  }
+  .experiment-drift[data-experiment-drift] :global(.entry-gallery__title) { margin: .6rem 0; }
+  .experiment-drift[data-experiment-drift] :global(.entry-gallery__topline) { flex-wrap: wrap; gap: .2rem 1rem; }
+
+  @media (max-width: 900px) and (min-width: 551px) {
+    .experiment-drift { --drift-item-basis: calc(33.333% - var(--drift-column-gap)); }
+  }
+  @media (max-width: 550px) {
+    .experiment-drift {
+      --drift-column-gap: 1rem;
+      --drift-row-gap: 2rem;
+      --drift-item-basis: calc((100% - var(--drift-column-gap)) / 2);
+      --drift-card-padding: .35rem;
+      --drift-text-padding: .5rem;
+      padding-inline: .4rem;
+    }
+    .experiment-drift[data-experiment-drift] :global(.entry-gallery__card:not(:has(img)) .entry-gallery__title) { margin-block: .35rem; }
+    .experiment-drift[data-experiment-drift] :global(.entry-gallery__card:not(:has(img)) .entry-gallery__summary) { margin-bottom: .5rem; }
+    .experiment-drift[data-experiment-drift] :global(a[href$="/artifacts/virgola/"] .entry-gallery__preview img) { width: 75%; margin-inline: auto; }
+  }
+</style>
+<script>
+  function initializeExperimentViews() {
+    const root = document.querySelector<HTMLElement>("[data-experiment-drift]");
+    if (!root || root.dataset.initialized) return;
+    root.dataset.initialized = "true";
+    const shell = root.closest<HTMLElement>("[data-experiment-views]")!;
+    const toggle = document.querySelector<HTMLButtonElement>("[data-view-switch]")!;
+    const staticView = shell.querySelector<HTMLElement>("[data-static-view]")!;
+    const movingView = shell.querySelector<HTMLElement>("[data-moving-view]")!;
+    let cow: HTMLImageElement | null = null;
+    let cowFlight: Animation | null = null;
+    let cowDelay = 15 + Math.random() * 25;
+    const clearCow = () => {
+      cowFlight?.cancel();
+      cowFlight = null;
+      cow?.remove();
+      cow = null;
+    };
+    const launchCow = () => {
+      const sprite = new Image();
+      cow = sprite;
+      sprite.alt = "";
+      sprite.setAttribute("aria-hidden", "true");
+      sprite.style.cssText = "position:fixed;left:0;top:0;width:96px;height:auto;max-width:22vw;pointer-events:none;z-index:30;visibility:hidden;";
+      sprite.onload = () => {
+        if (cow !== sprite || movingView.hidden || reduced.matches || document.hidden) { sprite.remove(); return; }
+        const size = sprite.getBoundingClientRect();
+        const height = Math.max(0, innerHeight - size.height);
+        const phase = Math.random() * Math.PI * 2;
+        const waves = 1 + Math.random();
+        // Due onde sovrapposte danno una curva irregolare senza cambi bruschi di direzione.
+        const points = Array.from({ length: 121 }, (_, index) => {
+          const progress = index / 120;
+          const y = height * (.5 + .2 * Math.sin(progress * Math.PI * 2 * waves + phase)
+            + .08 * Math.sin(progress * Math.PI * 2 * (waves + .7) + phase * 1.3));
+          return { transform: `translate(${-size.width + (innerWidth + size.width * 2) * progress}px, ${y}px)` };
+        });
+        sprite.style.visibility = "visible";
+        cowFlight = sprite.animate(points, { duration: 7000 + Math.random() * 3000, fill: "both", easing: "linear" });
+        cowFlight.onfinish = clearCow;
+      };
+      sprite.onerror = clearCow;
+      document.body.append(sprite);
+      sprite.src = "https://onlinewahn.de/kuh24.gif";
+    };
+    toggle.addEventListener("click", () => {
+      const moving = movingView.hidden;
+      movingView.hidden = !moving;
+      staticView.hidden = moving;
+      toggle.setAttribute("aria-pressed", String(moving));
+      toggle.textContent = moving ? "Sad grid" : "I like to move it";
+      if (!moving) clearCow();
+      cowDelay = 15 + Math.random() * 25;
+      updateMotion();
+    });
+
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+    const hover = matchMedia("(hover: hover)");
+    const cards = [...root.querySelectorAll<HTMLElement>(".entry-gallery__card")].map((element, index) => ({ element, index, time: index * 3.7 }));
+    let frame: number | null = null;
+    let previous = 0;
+    let disposed = false;
+    const canAnimate = () => !disposed && !movingView.hidden && !reduced.matches && !document.hidden;
+
+    // Ogni oggetto accelera e rallenta con tempi propri; la pausa conserva la fase.
+    function tick(now: number) {
+      frame = null;
+      if (!canAnimate()) return;
+      const dt = previous ? Math.min((now - previous) / 1000, .05) : 0;
+      previous = now;
+      if (!cow) {
+        cowDelay -= dt;
+        if (cowDelay <= 0) {
+          cowDelay = 15 + Math.random() * 25;
+          launchCow();
+        }
+      }
+      renderCards(dt);
+      frame = requestAnimationFrame(tick);
+    }
+
+    function renderCards(dt: number) {
+      cards.forEach(card => {
+        const focused = card.element.contains(document.activeElement);
+        const paused = movingView.hidden || reduced.matches || document.hidden || focused;
+        const hovered = card.element.matches(":hover") && hover.matches;
+        const target = paused || hovered ? 0 : 1;
+        const speed = 4 * (.65 + .7 * (1 + Math.sin(card.time / (3 + card.index * .4) + card.index)) / 2);
+        card.time += dt * target * speed;
+        const style = getComputedStyle(card.element);
+        const lift = parseFloat(style.getPropertyValue("--lift")) || 0;
+        const tilt = parseFloat(style.getPropertyValue("--tilt")) || 0;
+        const t = card.time;
+        const scale = innerWidth <= 550 ? .45 : 1;
+
+        const phase = t / (4.5 + card.index * .6);
+        const x = scale * (12 * Math.sin(phase) + 3 * Math.sin(phase * 1.73));
+        const y = scale * 9 * Math.cos(phase * .83);
+        card.element.style.transform = reduced.matches ? `translateY(${lift}px) rotate(${tilt}deg)` : `translate(${x}px, ${lift + y}px) rotate(${tilt + .6 * Math.sin(phase * .7)}deg)`;
+      });
+    }
+
+    function updateMotion() {
+      if (canAnimate()) {
+        if (frame === null) frame = requestAnimationFrame(tick);
+        return;
+      }
+
+      if (frame !== null) cancelAnimationFrame(frame);
+      frame = null;
+      previous = 0;
+      clearCow();
+      // In movimento ridotto basta disporre gli elementi una sola volta.
+      if (!disposed && !movingView.hidden && reduced.matches) renderCards(0);
+    }
+
+    const onResize = () => {
+      if (!disposed && !movingView.hidden && reduced.matches) renderCards(0);
+    };
+    document.addEventListener("visibilitychange", updateMotion);
+    reduced.addEventListener("change", updateMotion);
+    window.addEventListener("resize", onResize);
+    updateMotion();
+    document.addEventListener("astro:before-swap", () => {
+      disposed = true;
+      updateMotion();
+      document.removeEventListener("visibilitychange", updateMotion);
+      reduced.removeEventListener("change", updateMotion);
+      window.removeEventListener("resize", onResize);
+    }, { once: true });
+
+  }
+  initializeExperimentViews();
+  document.addEventListener("astro:page-load", initializeExperimentViews);
+</script>

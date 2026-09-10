@@ -1,0 +1,35 @@
+---
+import type { PlaylistItem } from "../../../content/schemas/collections";
+import CollectionVisual from "../CollectionVisual.astro";
+import CollectionItemDetails from "../CollectionItemDetails.astro";
+import PlaylistGrid from "./PlaylistGrid.astro";
+
+interface Props { items: PlaylistItem[]; }
+const { items } = Astro.props;
+---
+
+<PlaylistGrid>
+  <ol class="collection-wall">
+    {items.map((item, index) => (
+      <li>
+        <details class="collection-tile">
+          <summary>
+            <span class="collection-tile__surface">
+              <span class="collection-tile__number" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <CollectionVisual
+                visual={item.visual}
+                title={item.title}
+                showCredit={false}
+                sizes="(max-width: 360px) 90vw, 180px"
+              />
+            </span>
+            <span class="collection-sr-only">{item.title}</span>
+          </summary>
+          <CollectionItemDetails item={item} showCredit linkInTitle />
+        </details>
+      </li>
+    ))}
+  </ol>
+</PlaylistGrid>

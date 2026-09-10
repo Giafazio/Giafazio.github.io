@@ -128,7 +128,7 @@ const titleOnlyProjects = data.publicProjects
                   </p>
 
                   {
-                    project.data.preview && (
+                    project.data.preview && project.data.id !== "esperimenti-di-portafoglio" && (
                       <figure class="project-box__preview">
                         <img
                           src={withBase(
@@ -146,6 +146,7 @@ const titleOnlyProjects = data.publicProjects
 
                   <ProjectContents
                     entries={contents}
+                    repositoryPreview={project.data.id === "esperimenti-di-portafoglio" ? project.data.preview : undefined}
                     externalContents={
                       project.data.externalContents
                     }
@@ -154,6 +155,7 @@ const titleOnlyProjects = data.publicProjects
                       project.data.detailSummaryContentIds
                     }
                     gallery
+                    presentation={project.data.id === "fumettonzi" ? "comic-gallery" : project.data.id === "poetry-collection" ? "reading-list" : "cards"}
                   />
 
                   {

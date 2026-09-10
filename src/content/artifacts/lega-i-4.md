@@ -357,6 +357,7 @@ fourWordsGame:
 
 projects:
   - id: games-and-riddles
+    group: lega-parole
     highlight: true
     order: 3
 

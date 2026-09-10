@@ -1,0 +1,44 @@
+---
+import type { CollectionItem } from "../../content/schemas/collections";
+import CreatorName from "./CreatorName.astro";
+
+interface Props {
+  items: CollectionItem[];
+  ordered: boolean;
+}
+const { items, ordered } = Astro.props;
+const List = ordered ? "ol" : "ul";
+---
+
+<List class="collection-list">
+  {items.map((item) => (
+    <li>
+      <a href={item.url}>{item.title}</a>
+      {"creator" in item && item.creator && (
+        <span class="collection-list__creator"> — <CreatorName creator={item.creator} smallCaps={item.creatorSmallCaps} /></span>
+      )}
+    </li>
+  ))}
+</List>
+
+<style>
+  .collection-list {
+    max-width: var(--reading-width);
+    margin-block-start: 0;
+    padding-inline-start: 1.6em;
+  }
+
+  .collection-list li {
+    padding-block: 0.05rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .collection-list a {
+    text-decoration: none;
+  }
+
+  .collection-list__creator {
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,43 @@
+---
+interface Props { text: string; title: string; }
+const { text, title } = Astro.props;
+const stanzas = text.split(/\n\s*\n/);
+---
+
+<verse-excerpt>
+  <blockquote tabindex="0" aria-label={`Versi di ${title}`}>
+    {stanzas.map((stanza) => <p>{stanza}</p>)}
+  </blockquote>
+</verse-excerpt>
+
+<style>
+  verse-excerpt { display: block; min-width: 0; font-style: italic; }
+  p { margin: 0; white-space: pre-line; overflow-wrap: anywhere; }
+  p + p { margin-top: 1.5em; }
+  blockquote {
+    margin: 0;
+    line-height: 1.5;
+    height: var(--stanza-height, 6lh);
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+    padding-inline-end: var(--collection-space-sm);
+  }
+  blockquote:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+</style>
+
+<script>
+  class VerseExcerpt extends HTMLElement {
+    observer?: ResizeObserver;
+    connectedCallback() {
+      const first = this.querySelector("p");
+      if (!first) return;
+      // Misura la prima strofa anche quando i versi vanno a capo su mobile.
+      this.observer = new ResizeObserver(() => {
+        this.style.setProperty("--stanza-height", `${first.getBoundingClientRect().height}px`);
+      });
+      this.observer.observe(first);
+    }
+    disconnectedCallback() { this.observer?.disconnect(); }
+  }
+  if (!customElements.get("verse-excerpt")) customElements.define("verse-excerpt", VerseExcerpt);
+</script>

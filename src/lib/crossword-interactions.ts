@@ -125,7 +125,7 @@ const initializeCrosswordReader = (reader: HTMLElement) => {
 
     if (!rawProgress) return;
 
-    let stored: Partial<StoredCrosswordProgress>;
+    let stored: unknown;
 
     try {
       stored = JSON.parse(rawProgress);
@@ -139,15 +139,19 @@ const initializeCrosswordReader = (reader: HTMLElement) => {
       return;
     }
 
-    const hasValidValues =
-      typeof stored.values === "object" &&
-      stored.values !== null &&
-      !Array.isArray(stored.values);
+    // Anche null, array e primitivi sono JSON validi, ma non salvataggi.
+    const progress =
+      typeof stored === "object" && stored !== null && !Array.isArray(stored)
+        ? stored as Partial<StoredCrosswordProgress>
+        : null;
+    const values = progress?.values;
 
     if (
-      stored.version !== 1 ||
-      stored.layout !== layoutSignature ||
-      !hasValidValues
+      progress?.version !== 1 ||
+      progress.layout !== layoutSignature ||
+      typeof values !== "object" ||
+      values === null ||
+      Array.isArray(values)
     ) {
       try {
         localStorage.removeItem(storageKey);
@@ -158,9 +162,7 @@ const initializeCrosswordReader = (reader: HTMLElement) => {
       return;
     }
 
-    Object.entries(
-      stored.values as Record<string, unknown>,
-    ).forEach(([cellKey, value]) => {
+    Object.entries(values).forEach(([cellKey, value]) => {
       const cell = cells.get(cellKey);
       const letter = normalizeStoredLetter(value);
 

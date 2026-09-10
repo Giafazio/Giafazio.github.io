@@ -1,0 +1,162 @@
+---
+import type { PlaylistItem } from "../../../content/schemas/collections";
+import CollectionVisual from "../CollectionVisual.astro";
+import CreatorName from "../CreatorName.astro";
+
+interface Props { item: PlaylistItem; }
+const { item } = Astro.props;
+const title = item.shortTitle
+  ?? (item.visual.type === "text" ? item.visual.text : undefined)
+  ?? item.title;
+---
+
+<a
+  class="playlist-cover"
+  href={item.url}
+  data-has-image={item.visual.type === "image"}
+  data-text-position={item.visual.type === "image" ? item.visual.textPosition : undefined}
+  data-text-shadow={item.visual.type === "image" && item.visual.textShadow}
+  data-text-scrim={item.visual.type === "image" && item.visual.textScrim > 0}
+  style={item.visual.type === "image" ? {
+    "--playlist-text-color": item.visual.textColor,
+    "--playlist-text-scrim": item.visual.textScrim,
+  } : undefined}
+>
+  {item.visual.type === "image" && (
+    <CollectionVisual visual={item.visual} title={title} showCredit={false} />
+  )}
+  <span class="playlist-cover__label">
+    <span class="playlist-cover__title">{title}</span>
+    {item.creator && <span class="playlist-cover__creator"><CreatorName creator={item.creator} smallCaps={item.creatorSmallCaps} /></span>}
+    <span class="playlist-cover__arrow" aria-hidden="true">↗</span>
+  </span>
+</a>
+
+<style>
+  .playlist-cover {
+    --collection-visual-border: 0;
+    --cover-glow-strength: 55%;
+    --cover-transition: 160ms;
+    --cover-scrim-fade: 0.25rem;
+    position: relative;
+    display: block;
+    aspect-ratio: 1;
+    container-type: inline-size;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+    background: var(--paper-raised);
+    color: var(--ink);
+    text-decoration: none;
+    transform: translateY(var(--cover-offset, 0px));
+    box-shadow: var(--cover-shadow, 0 0 0 transparent);
+    transition: transform var(--cover-transition) ease, box-shadow var(--cover-transition) ease;
+  }
+
+  .playlist-cover:focus-visible {
+    --cover-glow: var(--cover-glow-strength);
+    outline: 3px solid var(--focus);
+    outline-offset: 4px;
+  }
+
+  .playlist-cover__label {
+    position: absolute;
+    inset: auto 7% 7%;
+    padding: 0.6rem 1.5rem 0.6rem 0.65rem;
+    overflow-wrap: anywhere;
+  }
+
+  .playlist-cover[data-has-image="true"] .playlist-cover__label {
+    color: var(--playlist-text-color, #fff);
+  }
+
+  .playlist-cover[data-text-position="center"] .playlist-cover__label {
+    inset-block: 50% auto;
+    transform: translateY(-50%);
+  }
+
+  .playlist-cover[data-text-shadow="true"] .playlist-cover__label {
+    --playlist-text-shadow: 0 1px 2px rgb(0 0 0 / 85%), 0 0 4px rgb(0 0 0 / 45%);
+    text-shadow: var(--playlist-text-shadow);
+  }
+
+  .playlist-cover[data-text-scrim="true"] .playlist-cover__label {
+    isolation: isolate;
+  }
+
+  /* La fascia segue l'altezza del testo, con brevi sfumature sopra
+   * e sotto; l'immagine torna visibile prima del bordo inferiore. */
+  .playlist-cover[data-text-scrim="true"] .playlist-cover__label::before {
+    content: "";
+    position: absolute;
+    inset: -0.0625rem -7cqw 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(to bottom,
+      transparent,
+      rgb(0 0 0 / var(--playlist-text-scrim)) var(--cover-scrim-fade),
+      rgb(0 0 0 / var(--playlist-text-scrim)) calc(100% - var(--cover-scrim-fade)),
+      transparent);
+  }
+
+  .playlist-cover__title {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 8.8cqw, 1.75rem);
+    font-weight: 500;
+    line-height: 1.15;
+    white-space: pre-line;
+  }
+
+  .playlist-cover__creator {
+    display: block;
+    margin-top: 0.45rem;
+    font-family: var(--font-display);
+    font-size: var(--collection-creator-size);
+    line-height: var(--collection-creator-leading);
+    white-space: pre-line;
+  }
+
+  .playlist-cover__arrow {
+    position: absolute;
+    right: 0.4rem;
+    bottom: 0.5rem;
+    color: inherit;
+    font-size: 1.1em;
+    font-weight: 700;
+    -webkit-text-stroke: 0.025em currentColor;
+  }
+
+  .playlist-cover__title,
+  .playlist-cover__creator {
+    /* La luce segue il colore della traccia e conserva l'ombra di leggibilità. */
+    text-shadow:
+      var(--playlist-text-shadow, 0 0 0 transparent),
+      0 0 3px color-mix(in srgb, currentColor var(--cover-glow, 0%), transparent),
+      0 0 9px color-mix(in srgb, currentColor var(--cover-glow, 0%), transparent);
+    transition: text-shadow var(--cover-transition) ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .playlist-cover:hover {
+      --cover-glow: var(--cover-glow-strength);
+    }
+  }
+
+  .playlist-cover:active {
+    --cover-offset: 2px;
+    --cover-shadow: 0 1px 3px rgb(0 0 0 / 20%);
+    --cover-glow: var(--cover-glow-strength);
+    transition-duration: 70ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .playlist-cover {
+      transform: none;
+      transition: none;
+    }
+    .playlist-cover__title,
+    .playlist-cover__creator {
+      transition: none;
+    }
+  }
+</style>

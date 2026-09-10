@@ -8,6 +8,12 @@ import {
 } from "../../lib/content";
 import { routeFor, withBase } from "../../lib/urls";
 
+import {
+  fieldNotesForDisplay,
+  isCollectionEntry,
+  collectionKindLabels,
+} from "../../lib/content/collections";
+
 const data = await getSiteData();
 
 const atlasItems = [
@@ -16,17 +22,25 @@ const atlasItems = [
     title: entry.data.title,
     url: routeFor("projects", entry.data.slug),
     type: "Project",
+    section: "projects",
+    contentType: "project",
+    collectionKind: undefined,
+    subjects: entry.data.subjects,
     kind: "projects",
     stage: entry.data.stage,
     tags: entry.data.tags,
     language: undefined,
   })),
-  ...data.publicFieldNotes.map((entry) => ({
+  ...fieldNotesForDisplay(data).map((entry) => ({
     id: entry.data.id,
     title: entry.data.title ?? entry.data.workingLabel ?? entry.data.id,
     url: routeForEntry(entry),
     type: labelForEntry(entry),
     kind: "notes",
+    section: "field-notes",
+    contentType: entry.data.entryKind,
+    collectionKind: isCollectionEntry(entry) ? entry.data.collectionKind : undefined,
+    subjects: entry.data.subjects,
     stage: entry.data.stage,
     tags: entry.data.tags,
     language: entry.data.language,
@@ -37,6 +51,10 @@ const atlasItems = [
     url: routeForEntry(entry),
     type: labelForEntry(entry),
     kind: "experiments",
+    section: "experiments",
+    contentType: entry.data.entryKind,
+    collectionKind: undefined,
+    subjects: entry.data.subjects,
     stage: entry.data.stage,
     tags: entry.data.tags,
     language: entry.data.language,
@@ -47,6 +65,10 @@ const atlasItems = [
     url: routeForEntry(entry),
     type: labelForEntry(entry),
     kind: "artifacts",
+    section: "artifacts",
+    contentType: entry.data.artifactKind,
+    collectionKind: undefined,
+    subjects: entry.data.subjects,
     stage: entry.data.stage,
     tags: entry.data.tags,
     language: entry.data.language,
@@ -147,10 +169,18 @@ const kindFilters = [
         <li
           class="atlas-row"
           data-atlas-item
+          data-content-id={item.id}
+          data-section={item.section}
+          data-type={item.contentType}
+          data-collection-kind={item.collectionKind}
+          data-subjects={JSON.stringify(item.subjects)}
           data-kind={item.kind}
           data-tags={item.tags.join(" ")}
         >
-          <span class="atlas-type">{item.type}</span>
+          <span class="atlas-type">
+            {item.type}
+            {item.collectionKind && (" · " + collectionKindLabels[item.collectionKind])}
+          </span>
           <a class="atlas-title" href={withBase(item.url)}>{item.title}</a>
           <span class="meta">
             {item.stage}{item.language && ` · ${item.language.toUpperCase()}`}
@@ -162,119 +192,161 @@ const kindFilters = [
 </SiteLayout>
 
 <script>
-  const initializeAtlasFilters = () => {
-    const panel = document.querySelector<HTMLElement>("[data-atlas-filters]");
-
-    if (!panel || panel.dataset.initialized === "true") return;
-
-    panel.dataset.initialized = "true";
-
-    const kindButtons = Array.from(
-      panel.querySelectorAll<HTMLButtonElement>("[data-kind-filter]"),
-    );
-
-    const tagButtons = Array.from(
-      panel.querySelectorAll<HTMLButtonElement>("[data-tag-filter]"),
-    );
-
-    const entries = Array.from(
-      document.querySelectorAll<HTMLElement>("[data-atlas-item]"),
-    );
-
-    const status = panel.querySelector<HTMLElement>("[data-filter-status]");
-
-    const currentUrl = new URL(window.location.href);
-
-    const requestedKind = currentUrl.searchParams.get("kind") ?? "";
-    const requestedTag = currentUrl.searchParams.get("tag") ?? "";
-
-    let activeKind = kindButtons.some(
-      (button) => button.dataset.kindFilter === requestedKind,
-    )
-      ? requestedKind
-      : "";
-
-    let activeTag = tagButtons.some(
-      (button) => button.dataset.tagFilter === requestedTag,
-    )
-      ? requestedTag
-      : "";
-
-    const applyFilters = (updateUrl = true) => {
-      let visible = 0;
-
-      entries.forEach((entry) => {
-        const tags = (entry.dataset.tags ?? "").split(" ").filter(Boolean);
-
-        const matchesKind =
-          !activeKind || entry.dataset.kind === activeKind;
-
-        const matchesTag =
-          !activeTag || tags.includes(activeTag);
-
-        const show = matchesKind && matchesTag;
-
-        entry.hidden = !show;
-
-        if (show) visible += 1;
-      });
-
-      kindButtons.forEach((button) => {
-        button.setAttribute(
-          "aria-pressed",
-          String(button.dataset.kindFilter === activeKind),
-        );
-      });
-
-      tagButtons.forEach((button) => {
-        button.setAttribute(
-          "aria-pressed",
-          String(button.dataset.tagFilter === activeTag),
-        );
-      });
-
-      if (status) {
-        status.textContent = `${visible} ${
-          visible === 1 ? "item" : "items"
-        }`;
-      }
-
-      if (updateUrl) {
-        const url = new URL(window.location.href);
-
-        if (activeKind) {
-          url.searchParams.set("kind", activeKind);
-        } else {
-          url.searchParams.delete("kind");
-        }
-
-        if (activeTag) {
-          url.searchParams.set("tag", activeTag);
-        } else {
-          url.searchParams.delete("tag");
-        }
-
-        window.history.replaceState({}, "", url);
-      }
-    };
-
-    kindButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        activeKind = button.dataset.kindFilter ?? "";
-        applyFilters();
-      });
-    });
-
-    tagButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        activeTag = button.dataset.tagFilter ?? "";
-        applyFilters();
-      });
-    });
-
-    applyFilters(false);
+  type AtlasFilterElements = {
+    kindButtons: HTMLButtonElement[];
+    tagButtons: HTMLButtonElement[];
+    entries: HTMLElement[];
+    status: HTMLElement | null;
   };
 
-  initializeAtlasFilters();
-  document.addEventListener("astro:page-load", initializeAtlasFilters);
+  type AtlasFilterState = {
+    activeKind: string;
+    activeTag: string;
+    elements: AtlasFilterElements;
+  };
+
+  const getAtlasFilterElements = (
+    panel: HTMLElement,
+  ): AtlasFilterElements => ({
+    kindButtons: Array.from(
+      panel.querySelectorAll<HTMLButtonElement>(
+        "[data-kind-filter]",
+      ),
+    ),
+    tagButtons: Array.from(
+      panel.querySelectorAll<HTMLButtonElement>(
+        "[data-tag-filter]",
+      ),
+    ),
+    entries: Array.from(
+      document.querySelectorAll<HTMLElement>(
+        "[data-atlas-item]",
+      ),
+    ),
+    status: panel.querySelector<HTMLElement>(
+      "[data-filter-status]",
+    ),
+  });
+
+  const readFilterFromUrl = (
+    state: AtlasFilterElements,
+  ): AtlasFilterState => {
+    const currentUrl =
+      new URL(window.location.href);
+    const requestedKind =
+      currentUrl.searchParams.get("kind") ?? "";
+    const requestedTag =
+      currentUrl.searchParams.get("tag") ?? "";
+
+    return {
+      activeKind: state.kindButtons.some(
+        (button) =>
+          button.dataset.kindFilter === requestedKind
+      )
+        ? requestedKind
+        : "",
+      activeTag: state.tagButtons.some(
+        (button) =>
+          button.dataset.tagFilter === requestedTag
+      )
+        ? requestedTag
+        : "",
+      elements: state,
+    };
+  };
+
+  const applyFilterState = (
+    state: AtlasFilterState,
+    updateUrl = true,
+  ) => {
+    let visible = 0;
+
+    state.elements.entries.forEach((entry) => {
+      const tags = (entry.dataset.tags ?? "").split(" ").filter(Boolean);
+      const matchesKind =
+        !state.activeKind ||
+        entry.dataset.kind === state.activeKind;
+      const matchesTag =
+        !state.activeTag || tags.includes(state.activeTag);
+      const show = matchesKind && matchesTag;
+
+      entry.hidden = !show;
+      if (show) visible += 1;
+    });
+
+    state.elements.kindButtons.forEach((button) => {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.kindFilter === state.activeKind),
+      );
+    });
+
+    state.elements.tagButtons.forEach((button) => {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.tagFilter === state.activeTag),
+      );
+    });
+
+    if (state.elements.status) {
+      state.elements.status.textContent = `${visible} ${
+        visible === 1 ? "item" : "items"
+      }`;
+    }
+
+    if (updateUrl) {
+      const url = new URL(window.location.href);
+
+      if (state.activeKind) {
+        url.searchParams.set("kind", state.activeKind);
+      } else {
+        url.searchParams.delete("kind");
+      }
+
+      if (state.activeTag) {
+        url.searchParams.set("tag", state.activeTag);
+      } else {
+        url.searchParams.delete("tag");
+      }
+
+      // Conserva indice e posizione di scorrimento gestiti da ClientRouter.
+      window.history.replaceState(window.history.state, "", url);
+    }
+  };
+
+  const bindFilterControls = (
+    state: AtlasFilterState,
+  ) => {
+    state.elements.kindButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        state.activeKind =
+          button.dataset.kindFilter ?? "";
+        applyFilterState(state);
+      });
+    });
+
+    state.elements.tagButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        state.activeTag =
+          button.dataset.tagFilter ?? "";
+        applyFilterState(state);
+      });
+    });
+  };
+
+  const initializeAtlasFilters = (
+    panel: HTMLElement,
+  ) => {
+    const elements = getAtlasFilterElements(panel);
+    const state = readFilterFromUrl(elements);
+
+    bindFilterControls(state);
+    applyFilterState(state, false);
+  };
+
+  window.fabrizioWebhome?.initOnAstroLoad?.({
+    selector: "[data-atlas-filters]",
+    initializedAttribute: "initialized",
+    initializer: initializeAtlasFilters,
+  });
 </script>

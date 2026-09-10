@@ -347,7 +347,35 @@ for (
   }
 }
 
+// Ogni pagina Collection compare una sola volta nell'Atlas e rimane
+// raggiungibile dall'indice Field Notes, senza una seconda route omonima.
+const atlasHtml = readFileSync(join(distRoot, "atlas/index.html"), "utf8");
+const fieldNotesHtml = readFileSync(join(distRoot, "field-notes/index.html"), "utf8");
+for (const path of relativeHtmlPaths.filter(
+  (value) => /^field-notes\/[^/]+\/index\.html$/.test(value),
+)) {
+  const html = readFileSync(join(distRoot, path), "utf8");
+  const id = html.match(/data-collection-id=["']([^"']+)["']/)?.[1];
+  const slug = path.split("/")[1];
+  const href = configuredBase + "field-notes/" + slug + "/";
+  if (!id) continue;
+  const atlasRows = [...atlasHtml.matchAll(/<li\b[^>]*data-atlas-item[^>]*>/g)]
+    .map(([tag]) => tag)
+    .filter((tag) => tag.includes('data-content-id="' + id + '"'));
+  if (atlasRows.length !== 1
+    || !atlasRows[0].includes('data-section="field-notes"')
+    || !atlasRows[0].includes('data-type="collection"')) {
+    problems.add(path + " is not indexed once as a Field Notes Collection");
+  }
+  if (!fieldNotesHtml.includes('href="' + href + '"')) {
+    problems.add(path + " is missing from Field Notes");
+  }
+}
+
 const forbiddenOutputs = [
+  "previews",
+  "crow-takeoff-comparison",
+  "collections",
   "finished-things",
 ];
 

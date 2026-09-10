@@ -5,7 +5,6 @@ slug: math-notes
 summary: "Mathematical solutions, course notes, teaching materials, and annotated translations."
 stage: growing
 draft: false
-homeOverview: false
 projectsIndexMode: expanded
 order: 9
 subjects:

@@ -1,9 +1,10 @@
 ---
+import ExperimentViewSwitch from "../../components/ExperimentViewSwitch.astro";
 import EmptyState from
   "../../components/EmptyState.astro";
 
-import EntryGallery from
-  "../../components/EntryGallery.astro";
+import ExperimentViews from
+  "../../components/ExperimentViews.astro";
 
 import SectionPageHeader from
   "../../components/SectionPageHeader.astro";
@@ -36,14 +37,14 @@ const kitchenEntries = [
     subtitle="The Kitchen"
     introduction={`Standalones and variants, tests and prototypes,
 and deliberately open pieces.`}
-  />
+  >
+    <ExperimentViewSwitch slot="controls" />
+  </SectionPageHeader>
 
   {
     kitchenEntries.length > 0 ? (
-      <EntryGallery
+      <ExperimentViews
         entries={kitchenEntries}
-        variant="kitchen"
-        ariaLabel="Experiments, Fragments and standalone Artifacts"
       />
     ) : (
       <EmptyState

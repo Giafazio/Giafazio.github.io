@@ -215,12 +215,7 @@ const solutionId =
 
     background: var(--paper);
 
-    font-family:
-      var(
-        --project-title-font,
-        "Basteleur",
-        serif
-      );
+    font-family: var(--font-body);
 
     font-size:
       clamp(0.8rem, 2.1vw, 1.55rem);
@@ -341,6 +336,7 @@ const solutionId =
     .four-words-game__words li {
       min-height: 4.5rem;
       padding-inline: 0.15rem;
+      white-space: nowrap;
 
       font-size:
         clamp(0.67rem, 3.1vw, 0.95rem);
@@ -590,6 +586,41 @@ const solutionId =
         const storageKey =
           `four-words-game:${gameId}:v2`;
 
+        const fitMobileWords = () => {
+          if (!gameElement.isConnected) return;
+
+          // Riparte dalla misura CSS: le parole che entrano restano inalterate.
+          wordElements.forEach((word) => word.style.removeProperty("font-size"));
+          if (!window.matchMedia("(max-width: 560px)").matches) return;
+
+          const range = document.createRange();
+          wordElements.forEach((word) => {
+            const style = getComputedStyle(word);
+            const availableWidth = word.clientWidth
+              - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+            range.selectNodeContents(word);
+            const textWidth = range.getBoundingClientRect().width;
+
+            if (availableWidth > 0 && textWidth > availableWidth) {
+              const fontSize = parseFloat(style.fontSize) * availableWidth / textWidth;
+              word.style.fontSize = `${Math.floor(fontSize * 100) / 100}px`;
+            }
+          });
+        };
+
+        let wordFitFrame = 0;
+        const scheduleWordFit = () => {
+          cancelAnimationFrame(wordFitFrame);
+          wordFitFrame = requestAnimationFrame(fitMobileWords);
+        };
+        const wordResizeObserver = new ResizeObserver(scheduleWordFit);
+        wordResizeObserver.observe(gameElement);
+        void document.fonts.ready.then(scheduleWordFit);
+        document.addEventListener("astro:before-swap", () => {
+          wordResizeObserver.disconnect();
+          cancelAnimationFrame(wordFitFrame);
+        }, { once: true });
+
         let order =
           shuffleRoundIds(
             roundIds,
@@ -720,6 +751,8 @@ const solutionId =
                 visibleWords[index] ?? "";
             },
           );
+
+          fitMobileWords();
 
           progressElement.textContent =
             `${position + 1} / ${order.length}`;

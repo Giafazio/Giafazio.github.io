@@ -78,16 +78,16 @@ projects:
     summary: "A digital typeface developed from handwriting, with many ligatures and an open-source production workflow."
 
   - id: poetry-collection
-    title: "Poetry collection (untitled)"
-    working_title: true
+    title: "Di versi simili"
+    working_title: false
     slug: poetry-collection
     status: planned
     stage: seed
     draft: false
     home_overview: true
     projects_index_mode: expanded
-    summary_status: factual-placeholder
-    summary: "A collection in formation; its name, index and public contents have not yet been established."
+    summary_status: verified
+    summary: "Poesie dei tempi di scuola, parodie lunatiche e traduzioni."
 
   - id: esperimenti-di-portafoglio
     title: "Esperimenti di portafoglio"

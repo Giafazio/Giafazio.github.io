@@ -11,6 +11,7 @@ import {
 
 export const projectRelation = z.object({
   id: stableId,
+  group: stableId.optional(),
   highlight: z.boolean().default(false),
   order: z.number().int().nonnegative().optional(),
 });

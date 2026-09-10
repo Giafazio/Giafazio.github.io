@@ -1,5 +1,6 @@
 ---
 import crowSprite from "../assets/navigation/crow/Crow.png";
+
 ---
 
 <div
@@ -60,14 +61,14 @@ import crowSprite from "../assets/navigation/crow/Crow.png";
   const IDLE_FRAMES = [1, 2, 3, 4] as const;
   const IDLE_DURATIONS = [130, 170, 140, 200] as const;
 
-  const TAKEOFF_START_FRAMES = [40, 40] as const;
-  const TAKEOFF_START_DURATIONS = [220, 130] as const;
+  const TAKEOFF_START_FRAMES = [34, 35] as const;
+  const TAKEOFF_START_DURATIONS = [220, 100] as const;
 
   const TAKEOFF_END_FRAMES = [36, 37] as const;
-  const TAKEOFF_END_DURATIONS = [130, 130] as const;
+  const TAKEOFF_END_DURATIONS = [100, 100] as const;
 
   const FLY_FRAMES = [38, 39, 40, 41, 42, 43] as const;
-  const FLY_DURATIONS = [140, 140, 140, 140, 140, 140] as const;
+  const FLY_DURATIONS = [100, 100, 100, 100, 100, 100] as const;
 
   const LANDING_FRAMES = [44, 34] as const;
   const LANDING_DURATIONS = [140, 190] as const;
@@ -252,6 +253,8 @@ import crowSprite from "../assets/navigation/crow/Crow.png";
     };
 
     const flyBetween = async (from: Point, to: Point) => {
+      if (disposed) return;
+
       const deltaX = to.x - from.x;
       const deltaY = to.y - from.y;
       const distance = Math.hypot(deltaX, deltaY);
@@ -281,16 +284,18 @@ import crowSprite from "../assets/navigation/crow/Crow.png";
 
       try {
         await animation.finished;
+
+        if (!disposed) {
+          placeCrow(to);
+        }
       } catch {
         return;
       } finally {
+        // La posizione finale resta nello stile, non in un effetto persistente.
+        animation.cancel();
         if (movementAnimation === animation) {
           movementAnimation = null;
         }
-      }
-
-      if (!disposed) {
-        placeCrow(to);
       }
     };
 
@@ -439,6 +444,9 @@ import crowSprite from "../assets/navigation/crow/Crow.png";
 
     await playFrameSequence(TAKEOFF_START_FRAMES, TAKEOFF_START_DURATIONS);
 
+    // Durante il decollo il nodo può essere già passato alla pagina successiva.
+    if (disposed) return;
+
     const flightPromise = flyBetween(originPoint, targetPoint);
 
     await playFrameSequence(TAKEOFF_END_FRAMES, TAKEOFF_END_DURATIONS);
@@ -451,6 +459,8 @@ import crowSprite from "../assets/navigation/crow/Crow.png";
 
     placeCrow(getPerchPoint(activeButton));
     await playFrameSequence(LANDING_FRAMES, LANDING_DURATIONS);
+
+    if (disposed) return;
 
     isFlying = false;
     setFacing("left");

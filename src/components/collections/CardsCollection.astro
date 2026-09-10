@@ -1,0 +1,17 @@
+---
+import type { CollectionItem } from "../../content/schemas/collections";
+import CollectionVisual from "./CollectionVisual.astro";
+import CollectionItemDetails from "./CollectionItemDetails.astro";
+
+interface Props { items: CollectionItem[]; }
+const { items } = Astro.props;
+---
+
+<ul class="collection-cards">
+  {items.map((item) => (
+    <li class="collection-card" data-has-visual={item.visual.type !== "none"}>
+      <CollectionVisual visual={item.visual} title={item.title} sizes="128px" />
+      <CollectionItemDetails item={item} />
+    </li>
+  ))}
+</ul>

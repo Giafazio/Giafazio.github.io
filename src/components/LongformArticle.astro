@@ -118,10 +118,9 @@ const metadata = [
   }
 
   .longform-header {
-    width: min(100%, var(--article-wide));
     margin: 0 auto clamp(1.8rem, 4vw, 2.8rem);
     padding-bottom: clamp(1.1rem, 2.5vw, 1.7rem);
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--rule);
   }
 
   .longform-header__topline {
@@ -203,7 +202,6 @@ const metadata = [
 
   .longform-toc a:hover {
     color: var(--link);
-    text-decoration: underline;
   }
 
   .longform-body {
@@ -283,8 +281,8 @@ const metadata = [
   .longform-body .probability-axiom {
     margin-block: 0.45rem;
     padding-block: 0.35rem;
-    border-block: 1px solid var(--line);
-    font-family: var(--font-serif);
+    border-block: 1px solid var(--rule);
+    font-family: var(--font-body);
     font-size: clamp(1.2rem, 1.7vw, 1.5rem);
     font-style: italic;
     text-align: center;

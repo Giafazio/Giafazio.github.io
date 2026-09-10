@@ -1,13 +1,16 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
-import { withBase } from "../lib/urls";
+import SectionPageHeader from "../components/SectionPageHeader.astro";
 ---
 
-<SiteLayout title="Page not found" currentSection="home">
-  <div class="article-header">
-    <p class="eyebrow">404</p>
-    <h1>This room is not here.</h1>
-    <p>The address may have changed, or the content may still be a private draft.</p>
-    <p><a href={withBase("/")}>Return to HomeLog</a></p>
+<SiteLayout title="Error 404" currentSection="home">
+  <SectionPageHeader
+    title="Error 404"
+    introduction="This room is not here."
+  />
+  <div class="information-page">
+    <div class="information-page__section information-page__section--wide">
+      <p>The address may have changed, or the content may still be a private draft.</p>
+    </div>
   </div>
 </SiteLayout>

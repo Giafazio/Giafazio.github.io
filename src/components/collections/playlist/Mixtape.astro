@@ -1,0 +1,39 @@
+---
+import type { PlaylistItem } from "../../../content/schemas/collections";
+import PlaylistCover from "./PlaylistCover.astro";
+import CollectionItemDetails from "../CollectionItemDetails.astro";
+import VerseExcerpt from "./VerseExcerpt.astro";
+import "../../../styles/collection-mixtape.css";
+
+interface Props { items: PlaylistItem[]; }
+const { items } = Astro.props;
+---
+
+<ol class="collection-mixtape">
+  {items.map((item, index) => (
+    <li
+      class="collection-mixtape__track"
+      data-has-lyrics={Boolean(item.lyricsExcerpt)}
+      data-has-visual={item.visual.type !== "none"}
+    >
+      {item.visual.type !== "none" && (
+        <div class="collection-mixtape__visual">
+          <PlaylistCover item={item} />
+        </div>
+      )}
+      <CollectionItemDetails
+        item={item}
+        number={index + 1}
+        showCredit
+        separateCreator
+        showLink={item.visual.type === "none"}
+        showLyrics={false}
+      />
+      {item.lyricsExcerpt && (
+        <div class="collection-mixtape__below-lyrics">
+          <VerseExcerpt text={item.lyricsExcerpt} title={item.title} />
+        </div>
+      )}
+    </li>
+  ))}
+</ol>

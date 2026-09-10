@@ -1,4 +1,6 @@
+import type { SchemaContext } from "astro:content";
 import { z } from "astro/zod";
+import { curatedCollectionSchema } from "./collections";
 
 import {
   slug,
@@ -9,7 +11,7 @@ import {
   projectRelation,
 } from "./shared";
 
-export const fieldNoteSchema =
+const writtenFieldNoteSchema =
   datedContentFields.extend({
     slug: slug.nullable(),
 
@@ -58,3 +60,9 @@ export const fieldNoteSchema =
       .array(projectRelation)
       .default([]),
   });
+
+export const fieldNoteSchema = (context: SchemaContext) =>
+  z.discriminatedUnion("entryKind", [
+    writtenFieldNoteSchema,
+    curatedCollectionSchema(context),
+  ]);

@@ -296,6 +296,53 @@
   line-height: 1.25;
 }
 
+.project-content-card__title--artifact {
+  font-family: var(--font-display);
+  overflow-wrap: anywhere;
+}
+
+.project-content-grid--comic-gallery .project-content-card__link {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  justify-content: flex-start;
+}
+
+.project-content-grid--comic-gallery {
+  grid-auto-columns: calc((100% - .9rem) * .3125);
+}
+
+.project-content-grid--comic-gallery .comic-square {
+  border: 1px solid color-mix(in srgb, var(--project-border) 35%, transparent);
+}
+
+.project-content-grid--reading-list > li + li {
+  border-top: 1px solid color-mix(in srgb, var(--project-border) 35%, transparent);
+}
+
+@media (max-width: 700px) {
+  .project-content-grid--comic-gallery { grid-auto-columns: 62.5%; }
+}
+
+.project-content-grid--reading-list {
+  display: block;
+  max-height: 18rem;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+}
+
+.project-content-grid--reading-list .project-content-card__link {
+  min-height: 0;
+  height: auto;
+  padding: .65rem .25rem;
+  gap: .35rem;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
 .project-content-card__summary {
   display: block;
 

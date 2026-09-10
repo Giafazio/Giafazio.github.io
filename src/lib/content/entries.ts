@@ -1,3 +1,5 @@
+import { isCollectionEntry } from "./collections";
+
 import {
   routeFor,
 } from "../urls";
@@ -88,6 +90,8 @@ export function routeForEntry(
 export function labelForEntry(
   entry: PublishableEntry,
 ): string {
+  if (isCollectionEntry(entry)) return "Collection";
+
   if ("artifactKind" in entry.data) {
     return (
       `Artifact · ` +

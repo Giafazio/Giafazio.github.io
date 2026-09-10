@@ -12,8 +12,6 @@ import { siteConfig, type SiteSection } from "../data/site";
 import "@fontsource-variable/alegreya/wght.css";
 import "@fontsource-variable/alegreya/wght-italic.css";
 
-import "@fontsource-variable/vollkorn/wght.css";
-
 /* East Asian fonts */
 import "@fontsource/ma-shan-zheng/400.css";
 import "@fontsource/kaisei-decol/700.css";
@@ -72,7 +70,7 @@ const fullTitle = title ? `${title} — ${siteConfig.name}` : siteConfig.name;
   lang={lang}
   transition:animate="none"
 >
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -84,12 +82,89 @@ const fullTitle = title ? `${title} — ${siteConfig.name}` : siteConfig.name;
     <meta name="theme-color" content="#0b2135" media="(prefers-color-scheme: dark)" />
     <title>{fullTitle}</title>
     <script is:inline>document.documentElement.classList.add("has-js");</script>
+    <script is:inline>
+      (function () {
+        const hasFunction = (value) =>
+          typeof value === "function";
+
+        const hasInitialized = (root, attribute) =>
+          root.dataset[attribute] === "true";
+
+        const markInitialized = (root, attribute) => {
+          root.dataset[attribute] = "true";
+        };
+
+        const runOnce = (selector, initializer, initializedAttribute) => {
+          document
+            .querySelectorAll(selector)
+            .forEach((root) => {
+              if (
+                hasInitialized(
+                  root,
+                  initializedAttribute,
+                )
+              ) {
+                return;
+              }
+
+              initializer(root);
+              markInitialized(
+                root,
+                initializedAttribute,
+              );
+            });
+        };
+
+        window.fabrizioWebhome = window
+          .fabrizioWebhome || {};
+
+        window.fabrizioWebhome.initOnAstroLoad =
+          ({
+            selector,
+            initializer,
+            initializedAttribute = "initialized",
+            onPageLoad,
+            onBeforeSwap,
+          }) => {
+            if (
+              typeof selector !== "string" ||
+              !hasFunction(initializer)
+            ) {
+              return;
+            }
+
+            const launch = () =>
+              runOnce(
+                selector,
+                initializer,
+                initializedAttribute,
+              );
+
+            launch();
+
+            document.addEventListener(
+              "astro:page-load",
+              onPageLoad ?? launch,
+              { passive: true },
+            );
+
+            if (hasFunction(onBeforeSwap)) {
+              // Come page-load, la pulizia deve valere a ogni visita.
+              document.addEventListener(
+                "astro:before-swap",
+                onBeforeSwap,
+                { passive: true },
+              );
+            }
+          };
+      })();
+    </script>
     <ClientRouter fallback="swap" />
   </head>
-<body
-  data-section={currentSection}
-  style={`--site-decoration-image: url("${siteDecorationUrl}")`}
->
+  <body
+    data-section={currentSection}
+    style={`--site-decoration-image: url("${siteDecorationUrl}")`}
+  >
     <div id="top" class="site-shell">
       <SiteHeader currentSection={currentSection} />
       <main id="main-content" class:list={["site-main", contentClass]}>

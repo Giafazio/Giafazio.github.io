@@ -267,6 +267,7 @@ crossword:
 
 projects:
   - id: games-and-riddles
+    group: cruciverba
     highlight: true
     order: 8
 date:

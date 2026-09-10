@@ -15,21 +15,29 @@ import {
   getSiteData,
 } from "../../lib/content";
 
+import { fieldNotesForDisplay } from "../../lib/content/collections";
+
 const data = await getSiteData();
+// La playlist apre questo indice; gli altri contenuti conservano il loro ordine.
+const entries = [...fieldNotesForDisplay(data)].sort((a, b) =>
+  Number(b.data.id === "passi-sparsi-tra-spicchi-di-mondi") -
+  Number(a.data.id === "passi-sparsi-tra-spicchi-di-mondi"),
+);
 ---
 
 <SiteLayout title="Field Notes & Thoughts" currentSection="field-notes">
   <SectionPageHeader
     title="Field Notes & Thoughts"
     subtitle="The Living Room"
-    introduction="An index for notes about this site and Thoughts
-  about stuff that attract my attention."
+    introduction="A place for notes about this site, Thoughts
+  about stuff that attract my attention
+  and Collections of things I like."
   />
 
   {
-    data.publicFieldNotes.length > 0 ? (
+    entries.length > 0 ? (
       <EntryGallery
-        entries={data.publicFieldNotes}
+        entries={entries}
         variant="living-room"
         ariaLabel="Field Notes and Thoughts"
       />

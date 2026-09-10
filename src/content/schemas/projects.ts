@@ -15,9 +15,6 @@ export const projectSchema =
     title: z.string().min(1),
     slug,
 
-    homeOverview:
-      z.boolean().default(false),
-
     projectsIndexMode: z
       .enum([
         "expanded",
@@ -27,6 +24,13 @@ export const projectSchema =
 
     artifactSequence:
       z.boolean().default(false),
+
+    contentGroups: z.array(z.object({
+      id: stableId,
+      title: z.string().min(1),
+    })).default([]),
+
+    sidebarContentIds: z.array(stableId).default([]),
 
     detailSummaryContentIds:
       z.array(stableId).default([]),

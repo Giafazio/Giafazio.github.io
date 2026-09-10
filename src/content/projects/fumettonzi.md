@@ -6,7 +6,6 @@ summary: "Fumetti realizzati durante gli anni del liceo, a mano o direttamente i
 
 stage: full-grown
 draft: false
-homeOverview: false
 projectsIndexMode: expanded
 artifactSequence: true
 

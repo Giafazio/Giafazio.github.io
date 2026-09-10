@@ -1,12 +1,16 @@
 ---
 id: poetry-collection
-title: Poetry collection (untitled)
+title: Di versi simili
 slug: poetry-collection
-summary: A collection in formation; its name has not yet been established.
-stage: seedling
+summary: Poesie dei tempi di scuola, parodie lunatiche e traduzioni.
+stage: blooming
 draft: false
-homeOverview: true
 projectsIndexMode: expanded
+contentGroups:
+  - id: poesie
+    title: Poesie
+  - id: traduzioni
+    title: Traduzioni
 order: 5
 subjects: []
 tags: []
@@ -15,5 +19,3 @@ sourceFiles: []
 externalContents: []
 roadmap: []
 ---
-
-The technical identifier is stable while the title and the public shape of the collection remain open.

@@ -5,7 +5,6 @@ slug: caragiulorigin
 summary: "Una ricerca sulle origini del cognome Caragiulo e della mia famiglia."
 stage: growing
 draft: false
-homeOverview: false
 projectsIndexMode: expanded
 order: 7
 subjects: []

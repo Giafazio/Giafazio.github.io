@@ -6,6 +6,9 @@ import type {
 function creationDateSortKey(
   date: CreationDate,
 ): string {
+  // Le Collections senza data seguono i contenuti datati.
+  if (!date) return "";
+
   switch (date.precision) {
     case "day":
       return date.value;
@@ -55,6 +58,8 @@ export function formatCreationDate(
   date: CreationDate,
   locale = "en-GB",
 ): string {
+  if (!date) return "";
+
   if (date.precision === "year") {
     return date.value;
   }

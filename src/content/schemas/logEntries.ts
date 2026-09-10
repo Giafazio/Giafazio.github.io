@@ -17,6 +17,7 @@ const logEntryType = z.enum([
   "new-project",
   "new-note",
   "new-thought",
+  "new-collection",
   "new-experiment",
   "new-fragment",
   "new-artifact",

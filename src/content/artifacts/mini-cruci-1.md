@@ -60,6 +60,7 @@ crossword:
 
 projects:
   - id: games-and-riddles
+    group: cruciverba
     highlight: true
     order: 0
 
@@ -76,4 +77,9 @@ addedToSite: "2026-08-22"
 *Francesco Maria Pianese*  
 *Alessandro Cristofari*  
 *Stefano Mulas*  
-soluzione ricevuta il 22/08/2026 alle ore 17:01.
+
+Soluzione ricevuta il 22/08/2026 alle ore 17:01.
+
+2. **Lolloquellollo & Gabriele**
+
+Soluzione ricevuta il 10/09/2026 alle ore 16:07.

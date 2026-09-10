@@ -303,318 +303,380 @@ const nameHref = withBase(
     secondParagraph: string;
   };
 
-  const initializeWelcomeIntro = () => {
-    const welcomeIntros =
-      document.querySelectorAll<HTMLElement>(
-        "[data-welcome-intro]",
-      );
+  type WelcomeIntroElements = {
+    root: HTMLElement;
+    smallCapsGreeting: HTMLElement;
+    beforeName: HTMLElement;
+    greetingPunctuation: HTMLElement;
+    firstParagraph: HTMLElement;
+    secondParagraph: HTMLElement;
+    enthusiasmBar: HTMLElement;
+    range: HTMLInputElement;
+    output: HTMLOutputElement | null;
+    panel: HTMLElement;
+    languageSelector: HTMLFieldSetElement | null;
+    languageInputs: NodeListOf<HTMLInputElement>;
+    translatedLabels: Array<{
+      element: HTMLElement;
+      en: string;
+      it: string;
+    }>;
+    nameVariants: HTMLElement[];
+  };
 
-    welcomeIntros.forEach((root) => {
-      if (
-        root.dataset.welcomeInitialized ===
-        "true"
-      ) {
-        return;
-      }
+  const getWelcomeIntroElements = (
+    root: HTMLElement,
+  ): WelcomeIntroElements | null => {
+    const messagesData =
+      root.dataset.welcomeMessages;
 
-      const messagesData =
-        root.dataset.welcomeMessages;
+    if (!messagesData) {
+      return null;
+    }
 
-      if (!messagesData) {
-        return;
-      }
-
-      const messagesByLanguage = JSON.parse(
-        messagesData,
-      ) as Record<"it" | "en", WelcomeMessage[]>;
-
-      const smallCapsGreeting = root.querySelector<HTMLElement>(
+    const smallCapsGreeting =
+      root.querySelector<HTMLElement>(
         "[data-welcome-small-caps]",
       );
 
-      const beforeName =
-        root.querySelector<HTMLElement>(
-          "[data-welcome-before]",
-        );
+    const beforeName =
+      root.querySelector<HTMLElement>(
+        "[data-welcome-before]",
+      );
 
-      const greetingPunctuation =
-        root.querySelector<HTMLElement>(
-          "[data-welcome-greeting-punctuation]",
-        );
+    const greetingPunctuation =
+      root.querySelector<HTMLElement>(
+        "[data-welcome-greeting-punctuation]",
+      );
 
-      const firstParagraph =
-        root.querySelector<HTMLElement>(
-          "[data-welcome-first]",
-        );
+    const firstParagraph =
+      root.querySelector<HTMLElement>(
+        "[data-welcome-first]",
+      );
 
-      const secondParagraph =
-        root.querySelector<HTMLElement>(
-          "[data-welcome-second]",
-        );
-      
-      const enthusiasmBar =
-        root.querySelector<HTMLElement>(
-          "[data-welcome-enthusiasm-bar]",
-        );
+    const secondParagraph =
+      root.querySelector<HTMLElement>(
+        "[data-welcome-second]",
+      );
 
-      const range =
-        root.querySelector<HTMLInputElement>(
-          "[data-welcome-enthusiasm]",
-        );
+    const enthusiasmBar =
+      root.querySelector<HTMLElement>(
+        "[data-welcome-enthusiasm-bar]",
+      );
 
-      const output =
-        root.querySelector<HTMLOutputElement>(
-          "[data-welcome-output]",
-        );
+    const range =
+      root.querySelector<HTMLInputElement>(
+        "[data-welcome-enthusiasm]",
+      );
 
-      if (
-        !smallCapsGreeting ||
-        !beforeName ||
-        !greetingPunctuation ||
-        !firstParagraph ||
-        !secondParagraph ||
-        !enthusiasmBar ||
-        !range
-      ) {
-        return;
-      }
+    const output =
+      root.querySelector<HTMLOutputElement>(
+        "[data-welcome-output]",
+      );
 
-      let welcomeLanguage: "it" | "en" = "en";
+    const panel =
+      root.closest<HTMLElement>(".welcome-panel") ??
+      root;
 
-      const renderMessage = (
-        requestedLevel: number,
-      ) => {
-        const messages = messagesByLanguage[welcomeLanguage];
-        const level = Math.max(
-          0,
-          Math.min(
-            messages.length - 1,
-            Math.round(requestedLevel),
-          ),
-        );
-
-        const message = messages[level];
-
-        smallCapsGreeting.textContent = message.smallCapsGreeting;
-        beforeName.textContent =
-          `${message.beforeName} `;
-
-        greetingPunctuation.textContent =
-          message.greetingPunctuation;
-
-        firstParagraph.textContent =
-          message.firstParagraph;
-
-        secondParagraph.textContent =
-          message.secondParagraph;
-
-        range.value = String(level);
-
-        const progress =
-          messages.length > 1
-            ? (
-                level /
-                (messages.length - 1)
-              ) * 100
-            : 0;
-
-        enthusiasmBar.style.setProperty(
-          "--enthusiasm-progress",
-          `${progress}%`,
-        );
-
-        // La descrizione accessibile segue la lingua del Welcome.
-        const valueText = welcomeLanguage === "it"
-          ? `Grado di Entusiasmo ${level} di ${messages.length - 1}`
-          : `Enthusiasm Level ${level} of ${messages.length - 1}`;
-
-        range.lang = welcomeLanguage;
-        range.setAttribute("aria-valuetext", valueText);
-
-        if (output) {
-          output.lang = welcomeLanguage;
-          output.textContent = valueText;
-        }
-      };
-
-      const panel = root.closest<HTMLElement>(".welcome-panel") ?? root;
-      const languageSelector = root.querySelector<HTMLFieldSetElement>(
+    const languageSelector =
+      root.querySelector<HTMLFieldSetElement>(
         "[data-welcome-language-selector]",
       );
-      const languageInputs = root.querySelectorAll<HTMLInputElement>(
+
+    const languageInputs =
+      root.querySelectorAll<HTMLInputElement>(
         "[data-welcome-language]",
       );
 
-      // Salva gli originali inglesi prima di tradurre, includendo About.
-      const translatedLabels = Array.from(
-        panel.querySelectorAll<HTMLElement>("[data-welcome-it]"),
-        (element) => ({
-          element,
-          en: element.textContent?.trim() ?? "",
-          it: element.dataset.welcomeIt ?? "",
-        }),
-      );
+    if (
+      !smallCapsGreeting ||
+      !beforeName ||
+      !greetingPunctuation ||
+      !firstParagraph ||
+      !secondParagraph ||
+      !enthusiasmBar ||
+      !range
+    ) {
+      return null;
+    }
 
-      const setWelcomeLanguage = (language: "it" | "en") => {
-        welcomeLanguage = language;
-        root.lang = language;
-        panel.dataset.welcomeLanguage = language;
+    const translatedLabels = Array.from(
+      panel.querySelectorAll<HTMLElement>(
+        "[data-welcome-it]",
+      ),
+      (element) => ({
+        element,
+        en: element.textContent?.trim() ?? "",
+        it: element.dataset.welcomeIt ?? "",
+      }),
+    );
 
-        translatedLabels.forEach((label) => {
-          label.element.textContent = label[language];
-          label.element.lang = language;
-        });
-        languageInputs.forEach((input) => {
-          input.checked = input.value === language;
-        });
+    const nameVariants = Array.from(
+      root.querySelectorAll<HTMLElement>(
+        "[data-welcome-name-variant]",
+      ),
+    );
 
-        // Non emette "input": conserva il livello senza riavviare gli effetti.
-        renderMessage(range.valueAsNumber);
-        panel.dispatchEvent(new Event("welcome:language-change"));
-      };
+    return {
+      root,
+      smallCapsGreeting,
+      beforeName,
+      greetingPunctuation,
+      firstParagraph,
+      secondParagraph,
+      enthusiasmBar,
+      range,
+      output,
+      panel,
+      languageSelector,
+      languageInputs,
+      translatedLabels,
+      nameVariants,
+    };
+  };
 
-      languageInputs.forEach((input) => {
-        input.addEventListener("change", () => {
-          if (input.checked && (input.value === "it" || input.value === "en")) {
-            setWelcomeLanguage(input.value);
-          }
-        });
-      });
+  const createWelcomeIntroState = (
+    messagesByLanguage: Record<"it" | "en", WelcomeMessage[]>,
+    elements: WelcomeIntroElements,
+  ) => {
+    let welcomeLanguage: "it" | "en" = "en";
 
-      range.addEventListener("input", () => {
-        renderMessage(range.valueAsNumber);
-      });
+    const setWelcomeLanguage = (
+      language: "it" | "en",
+    ) => {
+      welcomeLanguage = language;
+      elements.root.lang = language;
+      elements.panel.dataset.welcomeLanguage = language;
+    };
 
-      const nameVariants = Array.from(
-        root.querySelectorAll<HTMLElement>(
-          "[data-welcome-name-variant]",
+    const render = (requestedLevel: number) => {
+      const messages = messagesByLanguage[welcomeLanguage];
+      const level = Math.max(
+        0,
+        Math.min(
+          messages.length - 1,
+          Math.round(requestedLevel),
         ),
       );
+      const message = messages[level];
 
-      /*
-      * Le varianti sono inizialmente display:none:
-      * chiediamo quindi esplicitamente al browser
-      * di caricare i font necessari prima
-      * del primo passaggio del mouse.
-      */
-      const warmNameFonts = () => {
-        const fontRequests =
-          nameVariants.flatMap((variant) => {
-            const sample =
-              variant.textContent?.trim();
+      elements.smallCapsGreeting.textContent =
+        message.smallCapsGreeting;
+      elements.beforeName.textContent =
+        `${message.beforeName} `;
+      elements.greetingPunctuation.textContent =
+        message.greetingPunctuation;
+      elements.firstParagraph.textContent =
+        message.firstParagraph;
+      elements.secondParagraph.textContent =
+        message.secondParagraph;
+      elements.range.value = String(level);
 
-            if (!sample) {
-              return [];
-            }
+      const progress =
+        messages.length > 1
+          ? (level / (messages.length - 1)) * 100
+          : 0;
 
-            const style =
-              getComputedStyle(variant);
-
-            const fontDescriptor = [
-              style.fontStyle,
-              style.fontWeight,
-              "1em",
-              style.fontFamily,
-            ].join(" ");
-
-            return [
-              document.fonts.load(
-                fontDescriptor,
-                sample,
-              ),
-            ];
-          });
-
-        void Promise.allSettled(
-          fontRequests,
-        );
-      };
-
-      warmNameFonts();
-
-      const showName = (index: number) => {
-        nameVariants.forEach(
-          (variant, variantIndex) => {
-            variant.classList.toggle(
-              "is-active",
-              variantIndex === index,
-            );
-          },
-        );
-      };
-
-      const nameWeights = nameVariants.map(
-        (variant) => {
-          const weight = Number(
-            variant.dataset.welcomeNameWeight,
-          );
-
-          return Number.isFinite(weight) &&
-            weight > 0
-            ? weight
-            : 0;
-        },
+      elements.enthusiasmBar.style.setProperty(
+        "--enthusiasm-progress",
+        `${progress}%`,
       );
 
-      const totalNameWeight =
-        nameWeights.reduce(
-          (total, weight) =>
-            total + weight,
-          0,
-        );
+      const valueText = welcomeLanguage === "it"
+        ? `Grado di Entusiasmo ${level} di ${messages.length - 1}`
+        : `Enthusiasm Level ${level} of ${messages.length - 1}`;
 
-      const chooseWeightedName = () => {
-        let draw =
-          Math.random() * totalNameWeight;
+      elements.range.lang = welcomeLanguage;
+      elements.range.setAttribute(
+        "aria-valuetext",
+        valueText,
+      );
 
-        for (
-          let index = 0;
-          index < nameWeights.length;
-          index += 1
-        ) {
-          draw -= nameWeights[index];
+      if (elements.output) {
+        elements.output.lang = welcomeLanguage;
+        elements.output.textContent = valueText;
+      }
+    };
 
-          if (draw < 0) {
-            return index;
-          }
+    const applyLanguage = (language: "it" | "en") => {
+      setWelcomeLanguage(language);
+
+      elements.translatedLabels.forEach((label) => {
+        label.element.textContent = label[language];
+        label.element.lang = language;
+      });
+
+      elements.languageInputs.forEach((input) => {
+        input.checked = input.value === language;
+      });
+
+      render(elements.range.valueAsNumber);
+      elements.panel.dispatchEvent(
+        new Event("welcome:language-change"),
+      );
+    };
+
+    return {
+      setWelcomeLanguage: applyLanguage,
+      renderMessage: render,
+      get language() {
+        return welcomeLanguage;
+      },
+    };
+  };
+
+  const warmNameFonts = (
+    elements: WelcomeIntroElements,
+  ) => {
+    const fontRequests = elements.nameVariants.flatMap(
+      (variant) => {
+        const sample = variant.textContent?.trim();
+
+        if (!sample) {
+          return [];
         }
 
-        return Math.max(
-          0,
-          nameWeights.length - 1,
+        const style = getComputedStyle(variant);
+
+        return [
+          document.fonts.load(
+            `${style.fontStyle} ${style.fontWeight} 1em ${style.fontFamily}`,
+            sample,
+          ),
+        ];
+      },
+    );
+
+    void Promise.allSettled(fontRequests);
+  };
+
+  const createNameRotation = (
+    elements: WelcomeIntroElements,
+    root: HTMLElement,
+  ) => {
+    const nameWeights = elements.nameVariants.map(
+      (variant) => {
+        const weight = Number(
+          variant.dataset.welcomeNameWeight,
         );
-      };
 
-      const reducedMotion =
-        window.matchMedia(
-          "(prefers-reduced-motion: reduce)",
-        ).matches;
+        return Number.isFinite(weight) &&
+          weight > 0
+          ? weight
+          : 0;
+      },
+    );
 
-      if (
-        nameVariants.length > 1 &&
-        totalNameWeight > 0 &&
-        !reducedMotion
+    const totalNameWeight = nameWeights.reduce(
+      (total, weight) => total + weight,
+      0,
+    );
+
+    const reducedMotion =
+      window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+    if (
+      elements.nameVariants.length <= 1 ||
+      totalNameWeight <= 0 ||
+      reducedMotion
+    ) {
+      return;
+    }
+
+    const chooseWeightedName = () => {
+      let draw = Math.random() * totalNameWeight;
+
+      for (
+        let index = 0;
+        index < nameWeights.length;
+        index += 1
       ) {
-        const intervalId =
-          window.setInterval(
-            () => {
-              showName(
-                chooseWeightedName(),
-              );
-            },
-            3000,
-          );
+        draw -= nameWeights[index];
 
-        root.dataset.welcomeNameInterval =
-          String(intervalId);
+        if (draw < 0) {
+          return index;
+        }
       }
 
-      setWelcomeLanguage("en");
-      if (languageSelector) languageSelector.hidden = false;
+      return Math.max(
+        0,
+        elements.nameVariants.length - 1,
+      );
+    };
 
-      root.dataset.welcomeInitialized =
-        "true";
+    const showName = (index: number) => {
+      elements.nameVariants.forEach(
+        (variant, variantIndex) => {
+          variant.classList.toggle(
+            "is-active",
+            variantIndex === index,
+          );
+        },
+      );
+    };
+
+    const intervalId = window.setInterval(() => {
+      showName(chooseWeightedName());
+    }, 3000);
+
+    root.dataset.welcomeNameInterval =
+      String(intervalId);
+  };
+
+  const initializeWelcomeIntro = (
+    root: HTMLElement,
+  ) => {
+    const messagesData = JSON.parse(
+      root.dataset.welcomeMessages ?? "{}",
+    ) as Record<"it" | "en", WelcomeMessage[]>;
+
+    const elements = getWelcomeIntroElements(root);
+
+    if (!elements) {
+      return;
+    }
+
+    const state = createWelcomeIntroState(
+      messagesData,
+      elements,
+    );
+
+    elements.languageInputs.forEach((input) => {
+      input.addEventListener("change", () => {
+        if (
+          input.checked &&
+          (input.value === "it" || input.value === "en")
+        ) {
+          state.setWelcomeLanguage(input.value);
+        }
+      });
     });
+
+    elements.range.addEventListener("input", () => {
+      state.renderMessage(
+        elements.range.valueAsNumber,
+      );
+    });
+
+    if (typeof window.requestIdleCallback === "function") {
+      window.requestIdleCallback(() => {
+        void warmNameFonts(elements);
+      }, { timeout: 1200 });
+    } else {
+      window.setTimeout(() => {
+        void warmNameFonts(elements);
+      }, 250);
+    }
+
+    createNameRotation(elements, root);
+
+    state.setWelcomeLanguage("en");
+
+    if (elements.languageSelector) {
+      elements.languageSelector.hidden = false;
+    }
   };
 
   const clearWelcomeNameIntervals = () => {
@@ -624,28 +686,21 @@ const nameHref = withBase(
       )
       .forEach((root) => {
         const intervalId = Number(
-          root.dataset
-            .welcomeNameInterval,
+          root.dataset.welcomeNameInterval,
         );
 
         if (Number.isFinite(intervalId)) {
           window.clearInterval(intervalId);
         }
 
-        delete root.dataset
-          .welcomeNameInterval;
+        delete root.dataset.welcomeNameInterval;
       });
   };
 
-  initializeWelcomeIntro();
-
-  document.addEventListener(
-    "astro:before-swap",
-    clearWelcomeNameIntervals,
-  );
-
-  document.addEventListener(
-    "astro:page-load",
-    initializeWelcomeIntro,
-  );
+  window.fabrizioWebhome?.initOnAstroLoad?.({
+    selector: "[data-welcome-intro]",
+    initializedAttribute: "welcomeInitialized",
+    initializer: initializeWelcomeIntro,
+    onBeforeSwap: clearWelcomeNameIntervals,
+  });
 </script>

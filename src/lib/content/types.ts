@@ -32,6 +32,7 @@ export type CreationDate =
 export type AutomaticLogType =
   | "new-note"
   | "new-thought"
+  | "new-collection"
   | "new-experiment"
   | "new-fragment"
   | "new-artifact";

@@ -1,0 +1,15 @@
+---
+import type { CollectionEntry } from "astro:content";
+import ProjectTitleButton from "./ProjectTitleButton.astro";
+interface Props { project: CollectionEntry<"projects"> }
+const { project } = Astro.props;
+---
+<header class="project-detail-header project-detail-header--project" data-project={project.data.id}>
+  <div class="project-detail-header__heading">
+    <h1><ProjectTitleButton project={project} variant="heading" linked={false} /></h1>
+    <p class="meta project-detail-header__stage">{project.data.stage}</p>
+  </div>
+  <div class="project-detail-header__copy">
+    <p class="about-copy">{project.data.summary}</p>
+  </div>
+</header>

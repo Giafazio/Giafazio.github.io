@@ -42,6 +42,11 @@
   --reading-width: 72ch;
   --gutter: clamp(1rem, 4vw, 4rem);
   --section-gap: clamp(3.5rem, 7vw, 6rem);
+  --motion-tile-size: 64px;
+  --motion-tile-separator: 2px;
+  --motion-tile-inner-end: calc(var(--motion-tile-size) - var(--motion-tile-separator));
+  --motion-tile-shift: calc(-1 * var(--motion-tile-size));
+  --motion-tile-duration: 12s;
   --site-decoration-width: 650px;
   --site-decoration-top: 120px;
   --site-decoration-right: -120px;

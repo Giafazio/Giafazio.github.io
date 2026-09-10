@@ -1,4 +1,7 @@
 ---
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { imageMetadata } from "astro/assets/utils";
 import CrosswordReader from
   "./CrosswordReader.astro";
 
@@ -54,6 +57,19 @@ const pdfAsset =
 
 const naturalImagePreview =
   artifact.data.artifactKind === "image";
+
+// Reserve the image's height before fragment navigation, including on a cold load.
+const sequenceImageSize = project?.data.artifactSequence && artifact.data.previewAsset
+  ? await imageMetadata(await readFile(join(process.cwd(), "public", artifact.data.previewAsset)))
+  : undefined;
+
+function sequenceHref(entry: ArtifactEntry): string {
+  const href = withBase(routeForEntry(entry));
+  return entry.data.previewAsset && entry.data.showPreviewOnDetail !== false
+    && !entry.data.crossword && !entry.data.fourWordsGame
+    ? `${href}#artifact-image`
+    : href;
+}
 ---
 
 <article
@@ -120,6 +136,8 @@ const naturalImagePreview =
 
       <p class="meta artifact-detail-heading__meta">
         {artifact.data.artifactKind}
+        {artifact.data.translation && " · Translation"}
+        {artifact.data.medium && ` · ${artifact.data.medium}`}
         {" · "}
         {artifact.data.stage}
 
@@ -169,6 +187,7 @@ const naturalImagePreview =
     ) : artifact.data.previewAsset &&
       artifact.data.showPreviewOnDetail !== false ? (
       <div
+        id="artifact-image"
         class:list={[
           "artifact-preview",
 
@@ -181,6 +200,8 @@ const naturalImagePreview =
         ]}
       >
         <img
+          width={sequenceImageSize?.width}
+          height={sequenceImageSize?.height}
           src={publicAsset(
             artifact.data.previewAsset,
           )}
@@ -194,6 +215,7 @@ const naturalImagePreview =
             artifact.data.previewPosition ??
             "50% 50%"
           };`}
+          loading="lazy"
           decoding="async"
         />
       </div>
@@ -209,9 +231,7 @@ const naturalImagePreview =
       >
         <a
           class="artifact-sequence-navigation__link"
-          href={withBase(
-            routeForEntry(previousArtifact),
-          )}
+          href={sequenceHref(previousArtifact)}
           aria-label={`Previous: ${previousArtifact.data.title}`}
           title={previousArtifact.data.title}
         >
@@ -220,9 +240,7 @@ const naturalImagePreview =
 
         <a
           class="artifact-sequence-navigation__link"
-          href={withBase(
-            routeForEntry(nextArtifact),
-          )}
+          href={sequenceHref(nextArtifact)}
           aria-label={`Next: ${nextArtifact.data.title}`}
           title={nextArtifact.data.title}
         >
@@ -256,3 +274,21 @@ const naturalImagePreview =
     )
 }
 </article>
+
+<script>
+  // ClientRouter can restore the old scroll position after resolving the fragment.
+  async function revealSequenceImage() {
+    if (window.location.hash !== "#artifact-image") return;
+    const target = document.getElementById("artifact-image");
+    const image = target?.querySelector("img");
+    if (image) {
+      image.loading = "eager";
+      await image.decode().catch(() => {});
+    }
+    if (target?.isConnected && window.location.hash === "#artifact-image") {
+      target.scrollIntoView({ behavior: "instant", block: "start" });
+    }
+  }
+  document.addEventListener("astro:page-load", revealSequenceImage);
+  void revealSequenceImage();
+</script>

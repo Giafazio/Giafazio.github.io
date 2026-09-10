@@ -1,0 +1,82 @@
+---
+import type { PlaylistData } from "../../../content/schemas/collections";
+import CollectionHeader from "../CollectionHeader.astro";
+import ListCollection from "../ListCollection.astro";
+import Mixtape from "./Mixtape.astro";
+import RecordWall from "./RecordWall.astro";
+
+interface Props {
+  collection: PlaylistData;
+}
+const { collection } = Astro.props;
+const views = [
+  { id: "mixtape", label: "Mixtape", component: Mixtape },
+  { id: "wall", label: "Record Wall", component: RecordWall },
+  { id: "list", label: "List", component: ListCollection },
+];
+---
+
+<playlist-views>
+  <CollectionHeader collection={collection}>
+    <div class="playlist-view-controls" role="group" aria-label="Visualizzazioni della playlist" hidden>
+      {views.map(({ id, label }) => (
+        <button type="button" data-view={id} aria-pressed={collection.display === id}
+          aria-controls={`${collection.id}-${id}`}>
+          {label}
+        </button>
+      ))}
+    </div>
+  </CollectionHeader>
+  <slot />
+  {views.map(({ id, component: View }) => (
+    <div id={`${collection.id}-${id}`} data-view-panel={id} hidden={collection.display !== id}>
+      <View items={collection.items} ordered />
+    </div>
+  ))}
+</playlist-views>
+
+<style>
+  playlist-views { display: block; }
+  playlist-views:has([data-view-panel="list"]:not([hidden])) > :global(.article-header) {
+    margin-bottom: var(--collection-space-lg);
+  }
+  [hidden] { display: none !important; }
+  .playlist-view-controls { display: flex; flex-wrap: wrap; gap: var(--collection-space-sm) 1.5rem; }
+  button {
+    padding: var(--collection-space-xs) 0;
+    border: 0;
+    background: transparent;
+    color: var(--link);
+    font: inherit;
+    cursor: pointer;
+  }
+  button[aria-pressed="true"] { font-weight: 700; }
+  button:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+</style>
+
+<script>
+  class PlaylistViews extends HTMLElement {
+    connectedCallback() {
+      this.querySelector<HTMLElement>(".playlist-view-controls")!.hidden = false;
+      this.addEventListener("click", this.onClick);
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener("click", this.onClick);
+    }
+
+    private onClick = (event: MouseEvent) => {
+      const button = event.target instanceof Element
+        ? event.target.closest<HTMLButtonElement>("button[data-view]") : null;
+      if (!button) return;
+      const view = button.dataset.view;
+      this.querySelectorAll<HTMLButtonElement>("button[data-view]").forEach((control) => {
+        control.setAttribute("aria-pressed", String(control.dataset.view === view));
+      });
+      this.querySelectorAll<HTMLElement>("[data-view-panel]").forEach((panel) => {
+        panel.hidden = panel.dataset.viewPanel !== view;
+      });
+    };
+  }
+  if (!customElements.get("playlist-views")) customElements.define("playlist-views", PlaylistViews);
+</script>

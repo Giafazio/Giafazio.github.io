@@ -11,6 +11,7 @@ related: []
 sourceFiles:
   - sources/artifacts/fumettonzi/uomo_lasagna.png
 artifactKind: image
+medium: Handrawn
 projects:
   - id: fumettonzi
     order: 9

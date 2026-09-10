@@ -6,8 +6,14 @@ summary: Crosswords, word games and small riddles that can live on paper or, whe
 
 stage: growing
 draft: false
-homeOverview: true
 projectsIndexMode: expanded
+contentGroups:
+  - id: cruciverba
+    title: Cruciverba
+  - id: lega-parole
+    title: Lega Parole
+sidebarContentIds:
+  - cruciverba
 detailSummaryContentIds:
   - cruciverba
 

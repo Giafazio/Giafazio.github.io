@@ -82,6 +82,8 @@ export const artifactSchema =
   datedContentFields.extend({
     title: z.string().min(1),
     slug,
+    translation: z.boolean().default(false),
+    medium: z.enum(["MS Paint", "Handrawn"]).optional(),
 
     language: z
       .string()

@@ -236,12 +236,7 @@
 .artifact-detail-heading__title {
   margin: 0;
 
-  font-family:
-    var(
-      --project-title-font,
-      "Basteleur",
-      serif
-    );
+  font-family: var(--font-display);
 
   font-size:
     clamp(1.85rem, 3.9vw, 2.65rem);
@@ -393,7 +388,7 @@
 
 .project-title-button__base {
   position: absolute;
-  inset: 0 0 -64px;
+  inset: 0 0 var(--motion-tile-shift);
   z-index: 0;
 
   pointer-events: none;
@@ -404,16 +399,16 @@
     linear-gradient(
       to right,
       transparent 0,
-      transparent 62px,
-      #ffffff 62px,
-      #ffffff 64px
+      transparent var(--motion-tile-inner-end),
+      #ffffff var(--motion-tile-inner-end),
+      #ffffff var(--motion-tile-size)
     ),
     linear-gradient(
       to bottom,
       transparent 0,
-      transparent 62px,
-      #ffffff 62px,
-      #ffffff 64px
+      transparent var(--motion-tile-inner-end),
+      #ffffff var(--motion-tile-inner-end),
+      #ffffff var(--motion-tile-size)
     ),
     linear-gradient(
       rgb(0 0 0 / 0.16),
@@ -430,17 +425,17 @@
   background-position: center center;
 
   background-size:
-    64px 64px,
-    64px 64px,
+    var(--motion-tile-size) var(--motion-tile-size),
+    var(--motion-tile-size) var(--motion-tile-size),
     100% 100%,
-    64px 64px;
+    var(--motion-tile-size) var(--motion-tile-size);
 
   image-rendering: crisp-edges;
   image-rendering: pixelated;
 
   animation:
     project-title-background-rise
-    12s
+    var(--motion-tile-duration)
     linear
     infinite;
 
@@ -469,7 +464,7 @@
 
   to {
     transform:
-      translate3d(0, -64px, 0);
+      translate3d(0, var(--motion-tile-shift), 0);
   }
 }
 

@@ -1,0 +1,21 @@
+---
+interface Props {
+  creator: string;
+  smallCaps?: string[];
+}
+const { creator, smallCaps = [] } = Astro.props;
+// I nomi sono testo letterale, mai HTML o espressioni regolari editoriali.
+const names = smallCaps.map((name) => name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+const parts = names.length ? creator.split(new RegExp(`(${names.join("|")})`, "u")) : [creator];
+---
+
+{parts.map((part) => smallCaps.includes(part)
+  ? <span class="creator-small-caps">{part}</span>
+  : part)}
+
+<style>
+  .creator-small-caps {
+    font-variant-caps: small-caps;
+    text-transform: none;
+  }
+</style>

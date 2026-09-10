@@ -1,0 +1,23 @@
+---
+import type { CuratedCollectionData } from "../../content/schemas/collections";
+import { formatCreationDate } from "../../lib/content";
+import { collectionKindLabels } from "../../lib/content/collections";
+
+interface Props { collection: CuratedCollectionData; }
+const { collection } = Astro.props;
+---
+
+<header class="article-header">
+  <p class="meta">
+    Collections
+    {" · "}
+    {collectionKindLabels[collection.collectionKind]}
+    {collection.creationDate && ` · ${formatCreationDate(collection.creationDate)}`}
+    {" · "}
+    {collection.stage}
+    {collection.draft && " · Draft preview"}
+  </p>
+  <h1>{collection.title}</h1>
+  <slot />
+  {collection.summary && <p class="collection-header__summary">{collection.summary}</p>}
+</header>

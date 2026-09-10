@@ -1,0 +1,93 @@
+---
+import tile from "../assets/navigation/tiles/maio1_3.png";
+---
+<button type="button" class="view-switch" data-motion-tile style={`--button-tile: url("${tile.src}")`} data-view-switch aria-pressed="true">Sad grid</button>
+
+<style>
+  .view-switch {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin: 0;
+    box-sizing: border-box;
+    width: max-content;
+    white-space: nowrap;
+    padding: .5rem 1rem;
+    border: 4px solid #5a3b26;
+    border-radius: 0;
+    background: #fff;
+    color: #fff;
+    font-family: "Basteleur", serif;
+    font-weight: normal;
+    cursor: pointer;
+    -webkit-text-stroke: 2px rgb(0 0 0 / .95);
+    paint-order: stroke fill;
+    text-shadow: 0 0 3px #000, 0 0 6px rgb(0 0 0 / .9);
+  }
+  /* Riserva la larghezza della scritta più lunga anche nello stato Sad grid. */
+  .view-switch::after {
+    content: "I like to move it";
+    display: block;
+    height: 0;
+    visibility: hidden;
+  }
+  /* Stessa tile e stessa traslazione verticale dei menu, dietro al testo. */
+  .view-switch::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 var(--motion-tile-shift);
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, transparent var(--motion-tile-inner-end), white var(--motion-tile-inner-end)),
+      linear-gradient(to bottom, transparent var(--motion-tile-inner-end), white var(--motion-tile-inner-end)),
+      var(--button-tile);
+    background-size: var(--motion-tile-size) var(--motion-tile-size);
+    background-position: center;
+    image-rendering: pixelated;
+    filter: brightness(.84);
+    animation: tile-travel var(--motion-tile-duration) linear infinite, tile-light 4s ease-in-out infinite;
+    animation-play-state: paused, paused;
+  }
+  .view-switch[aria-pressed="false"]::before {
+    animation-play-state: paused, running;
+  }
+  @keyframes tile-travel { to { transform: translateY(var(--motion-tile-shift)); } }
+  @keyframes tile-light {
+    0%, 70%, 100% { filter: brightness(.84); }
+    82% { filter: brightness(1.3); }
+  }
+  @media (max-width: 600px) {
+    .view-switch {
+      padding: .3rem .55rem;
+      font-size: .8rem;
+      line-height: 1.2;
+      width: 6rem;
+      white-space: normal;
+      height: calc(2lh + .6rem + 6px);
+      border-width: 3px;
+    }
+    .view-switch::after { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .view-switch[aria-pressed="false"]::before { animation: none; }
+  }
+</style>
+
+<script>
+  import { initializeTileMotion } from "../lib/tile-motion";
+
+  function initializeMotionTileButton() {
+    const button = document.querySelector<HTMLButtonElement>("[data-motion-tile]");
+    if (!button) return;
+    initializeTileMotion(button, {
+      getAnimation: () => button.getAnimations({ subtree: true }).find(
+        animation => animation instanceof CSSAnimation && animation.animationName.includes("tile-travel"),
+      ),
+      enabled: () => button.getAttribute("aria-pressed") === "false",
+      observedAttributes: ["aria-pressed"],
+    });
+  }
+  initializeMotionTileButton();
+  document.addEventListener("astro:page-load", initializeMotionTileButton);
+</script>

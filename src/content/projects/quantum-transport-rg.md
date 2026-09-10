@@ -5,7 +5,6 @@ slug: quantum-transport-rg
 summary: "Rigorous approaches to quantum transport, edge modes and disordered systems through multiscale analysis and renormalization-group methods."
 stage: growing
 draft: false
-homeOverview: false
 projectsIndexMode: expanded
 order: 3
 subjects: []

@@ -16,6 +16,7 @@ artifactKind: poem
 
 projects:
   - id: poetry-collection
+    group: poesie
     order: 1
 
 creationDate:
@@ -26,10 +27,7 @@ updated: "2026-08-19"
 addedToSite: "2026-08-19"
 ---
 
-<p class="poem-date">
-  Maggio 2012<br />
-  <small>Rivisto nel marzo 2015 e nell’agosto 2026</small>
-</p>
+
 
 <div class="poem-text">
   <p>
@@ -60,3 +58,8 @@ addedToSite: "2026-08-19"
     proprio alla vita di cui è figlio.
   </p>
 </div>
+
+<p class="poem-date">
+  Maggio 2012.<br />
+  <small>Rivisto nel marzo 2015 e nell’agosto 2026.</small>
+</p>

@@ -11,6 +11,7 @@ related: []
 sourceFiles:
   - sources/artifacts/fumettonzi/013.png
 artifactKind: image
+medium: MS Paint
 projects:
   - id: fumettonzi
     order: 6

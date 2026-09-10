@@ -1,0 +1,103 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionVisual } from "../../content/schemas/collections";
+
+interface Props {
+  visual?: CollectionVisual;
+  title: string;
+  showCredit?: boolean;
+  sizes?: string;
+}
+
+const {
+  visual,
+  title,
+  showCredit = true,
+  sizes = "(max-width: 600px) 90vw, 320px",
+} = Astro.props;
+
+// Le miniature più piccole non vengono ingrandite durante l’ottimizzazione.
+const imageWidth = visual?.type === "image" ? Math.min(900, visual.asset.width) : 900;
+const imageWidths = [240, 480, imageWidth]
+  .filter((width, index, widths) => width <= imageWidth && widths.indexOf(width) === index);
+---
+
+{
+  visual?.type === "image" && (
+    <span class="collection-visual">
+      <span class="collection-visual__image">
+        <Image
+          src={visual.asset}
+          alt={visual.alt}
+          width={imageWidth}
+          widths={imageWidths}
+          sizes={sizes}
+          loading="lazy"
+          style={{
+            "object-fit": visual.fit,
+            "object-position": visual.position,
+          }}
+        />
+      </span>
+      {showCredit && visual.credit && (
+        <span class="collection-visual__credit">{visual.credit}</span>
+      )}
+    </span>
+  )
+}
+{
+  visual?.type === "text" && (
+    <span class="collection-visual collection-visual--text">
+      <span class="collection-visual__text">{visual.text ?? title}</span>
+    </span>
+  )
+}
+
+<style>
+  .collection-visual {
+    display: block;
+    min-width: 0;
+    color: var(--ink);
+  }
+
+  .collection-visual__image {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border: var(--collection-visual-border, 1px solid var(--rule));
+    background: var(--paper);
+  }
+
+  .collection-visual__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .collection-visual__credit {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--muted);
+    font-size: var(--collection-credit-size, 0.8rem);
+    line-height: 1.35;
+  }
+
+  .collection-visual--text {
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    aspect-ratio: 1;
+    padding: var(--collection-visual-padding, 1rem);
+    border: var(--collection-visual-border, 1px solid var(--rule));
+    background: var(--paper);
+  }
+
+  .collection-visual__text {
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 11cqw, 1.8rem);
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+</style>

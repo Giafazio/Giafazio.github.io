@@ -1,0 +1,108 @@
+.collection-mixtape {
+  --mixtape-cover-size: 18rem;
+  --mixtape-track-gap: clamp(0.525rem, 1.05vw, 0.7875rem);
+  --mixtape-details-gap: clamp(1.25rem, 3vw, 2rem);
+  --mixtape-lyrics-gap: var(--collection-space-md);
+  --mixtape-overlap: 55px;
+
+  display: grid;
+  width: 100%;
+  gap: var(--mixtape-track-gap);
+  margin: 0;
+  padding: 0;
+}
+
+.collection-mixtape > li::marker { content: ""; }
+
+.collection-mixtape__track {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: minmax(0, var(--mixtape-cover-size)) minmax(0, 1fr);
+  grid-template-areas: "visual details";
+  align-items: center;
+  gap: var(--mixtape-details-gap);
+}
+
+/* L'alternanza visiva conserva l'ordine di lettura. */
+.collection-mixtape__track:where(:nth-child(even)) {
+  grid-template-columns: minmax(0, 1fr) minmax(0, var(--mixtape-cover-size));
+  grid-template-areas: "details visual";
+}
+
+.collection-mixtape__visual { grid-area: visual; min-width: 0; }
+.collection-mixtape__track > .collection-item__details { grid-area: details; }
+
+.collection-mixtape__track:where(:nth-child(even)[data-has-visual="true"]) > .collection-item__details {
+  justify-self: end;
+}
+
+.collection-mixtape__track:where([data-has-visual="false"]) {
+  padding-block-start: var(--collection-space-lg);
+  border-top: 1px solid var(--rule);
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "details";
+}
+
+.collection-mixtape__track[data-has-lyrics="true"] {
+  grid-template-areas: "visual details" "lyrics .";
+  row-gap: var(--mixtape-lyrics-gap);
+}
+
+.collection-mixtape__track[data-has-lyrics="true"]:nth-child(even) {
+  grid-template-areas: "details visual" ". lyrics";
+}
+
+.collection-mixtape__below-lyrics { grid-area: lyrics; min-width: 0; }
+
+@media (min-width: 1000px) {
+  /* Due quadrati consecutivi si sovrappongono di 55 px in altezza. */
+  .collection-mixtape__track[data-has-visual="true"] + .collection-mixtape__track[data-has-visual="true"] {
+    margin-block-start: calc(0px - var(--mixtape-overlap) - var(--mixtape-track-gap));
+  }
+
+  /* I versi usano lo spazio sotto il quadrato senza allungare la riga. */
+  .collection-mixtape__track[data-has-lyrics="true"][data-has-visual="true"] {
+    height: var(--mixtape-cover-size);
+    min-height: 0;
+    grid-template-rows: var(--mixtape-cover-size) 0;
+    row-gap: 0;
+  }
+
+  .collection-mixtape__track[data-has-lyrics="true"][data-has-visual="true"] > .collection-mixtape__below-lyrics {
+    align-self: start;
+    margin-top: var(--mixtape-lyrics-gap);
+    /* Riceve il puntatore sopra l'area trasparente della traccia successiva. */
+    z-index: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .collection-mixtape {
+    --mixtape-cover-size: 20rem;
+    --mixtape-details-gap: 1rem;
+  }
+
+  .collection-mixtape__track {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "visual" "details";
+    row-gap: var(--mixtape-details-gap);
+  }
+
+  .collection-mixtape__visual,
+  .collection-mixtape__below-lyrics {
+    width: min(100%, var(--mixtape-cover-size));
+  }
+
+  .collection-mixtape__track > .collection-item__details { justify-self: stretch; }
+
+  .collection-mixtape__track[data-has-lyrics="true"],
+  .collection-mixtape__track[data-has-lyrics="true"]:nth-child(even) {
+    grid-template-areas: "visual" "lyrics" "details";
+    row-gap: var(--mixtape-lyrics-gap);
+  }
+
+  .collection-mixtape__track:where([data-has-visual="false"]) {
+    grid-template-areas: "details";
+  }
+}

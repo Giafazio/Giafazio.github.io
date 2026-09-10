@@ -1,7 +1,7 @@
 ---
 interface Props {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   introduction?: string;
 }
 
@@ -19,18 +19,22 @@ const introductionLines = introduction
   : [];
 ---
 
-<header class="section-page-header">
+<header class:list={["section-page-header", { "section-page-header--controls": Astro.slots.has("controls") }]}>
   <div class="section-page-header__heading">
     <h1>
       <span class="section-page-header__title">
         {title}
       </span>
 
-      <span class="section-page-header__subtitle">
-        {subtitle}
-      </span>
+      {subtitle && (
+        <span class="section-page-header__subtitle">
+          {subtitle}
+        </span>
+      )}
     </h1>
   </div>
+
+  <slot name="controls" />
 
   {
     introduction && (
@@ -52,3 +56,19 @@ const introductionLines = introduction
     )
   }
 </header>
+
+<style>
+  .section-page-header--controls {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 1rem;
+  }
+  .section-page-header--controls .section-page-header__introduction {
+    width: min(100%, 38rem);
+    min-width: 0;
+  }
+  @media (max-width: 600px) {
+    .section-page-header--controls { column-gap: .6rem; }
+  }
+</style>

@@ -5,7 +5,6 @@ slug: esperimenti-di-portafoglio
 summary: A modular, reproducible Python project for exploratory portfolio analysis.
 stage: full-grown
 draft: false
-homeOverview: false
 projectsIndexMode: expanded
 order: 2
 preview:

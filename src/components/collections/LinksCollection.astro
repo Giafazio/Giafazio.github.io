@@ -1,0 +1,22 @@
+---
+import type { CuratedCollectionData } from "../../content/schemas/collections";
+import CollectionVisual from "./CollectionVisual.astro";
+import CollectionItemDetails from "./CollectionItemDetails.astro";
+
+type LinksData = Extract<CuratedCollectionData, { collectionKind: "links" }>;
+interface Props { items: LinksData["items"]; }
+const { items } = Astro.props;
+---
+
+<ul class="collection-bookmarks">
+  {items.map((item) => (
+    <li class="collection-bookmark">
+      {item.visual.type !== "none" && (
+        <div class="collection-bookmark__visual">
+          <CollectionVisual visual={item.visual} title={item.title} sizes="96px" />
+        </div>
+      )}
+      <CollectionItemDetails item={item} showSource />
+    </li>
+  ))}
+</ul>

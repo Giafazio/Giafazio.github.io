@@ -1,4 +1,5 @@
 ---
+import ComicSquare from "./ComicSquare.astro";
 import type {
   CollectionEntry,
 } from "astro:content";
@@ -16,8 +17,10 @@ type ExternalContent =
 
 interface Props {
   gallery?: boolean;
+  presentation?: "cards" | "comic-gallery" | "reading-list";
   entries: PublishableEntry[];
   externalContents?: ExternalContent[];
+  repositoryPreview?: CollectionEntry<"projects">["data"]["preview"];
   projectId?: string;
   showEmpty?: boolean;
   showSummary?: boolean;
@@ -27,9 +30,11 @@ interface Props {
 const {
   entries,
   externalContents = [],
+  repositoryPreview,
   projectId,
   showEmpty = true,
   gallery = false,
+  presentation = "cards",
   showSummary = false,
   summaryEntryIds = [],
 } = Astro.props;
@@ -67,6 +72,9 @@ const localContents = entries.map(
 
     return {
       id: entry.data.id,
+      isArtifact: "artifactKind" in entry.data,
+      translation: "artifactKind" in entry.data && entry.data.translation,
+      medium: "artifactKind" in entry.data ? entry.data.medium : undefined,
 
       title:
         entry.data.title ??
@@ -126,12 +134,15 @@ const elsewhereContents =
   externalContents.map(
     (content) => ({
       id: `external:${content.href}`,
+      isArtifact: false,
+      translation: false,
+      medium: undefined,
       title: content.title,
       kind: content.kind,
       stage: content.stage,
       language: content.language,
 
-      preview: undefined,
+      preview: content.kind === "repository" ? repositoryPreview?.asset : undefined,
       wordPreview: undefined,
       previewRendering: "auto" as const,
 
@@ -172,7 +183,7 @@ const projectContents = [
 });
 
 const isScrollableGallery =
-  gallery && projectContents.length > 2;
+  gallery && presentation !== "reading-list" && projectContents.length > 2;
 ---
 
 {
@@ -180,13 +191,14 @@ const isScrollableGallery =
     <ul
       class:list={[
         "project-content-grid",
+        `project-content-grid--${presentation}`,
         {
           "project-content-grid--gallery":
             isScrollableGallery,
         },
       ]}
       tabindex={
-        isScrollableGallery
+        isScrollableGallery || presentation === "reading-list"
           ? "0"
           : undefined
       }
@@ -205,10 +217,12 @@ const isScrollableGallery =
             class="project-content-card__link"
             href={withBase(content.href)}
           >
+            {presentation === "comic-gallery" && content.preview && <ComicSquare id={content.id} src={content.preview} />}
             <span
               class:list={[
                 "project-content-card__title",
                 {
+                  "project-content-card__title--artifact": content.isArtifact,
                   "project-content-card__title--repository":
                     content.kind === "repository",
 
@@ -234,7 +248,7 @@ const isScrollableGallery =
                 )
             }
             {
-              content.preview && (
+              presentation !== "comic-gallery" && content.preview && (
                 <span
                   class:list={[
                     "project-content-card__preview",
@@ -248,7 +262,7 @@ const isScrollableGallery =
                     src={withBase(
                       content.preview,
                     )}
-                    alt=""
+                    alt={content.elsewhere ? repositoryPreview?.alt ?? "" : ""}
                     loading="lazy"
                     decoding="async"
                   />
@@ -276,6 +290,8 @@ const isScrollableGallery =
             
             <span class="meta project-content-card__meta">
               {content.kind}
+              {content.translation && " · Translation"}
+              {content.medium && ` · ${content.medium}`}
               {" · "}
               {content.stage}
 

@@ -1,0 +1,10 @@
+.eyebrow,
+.meta,
+.tag,
+.atlas-type {
+  font-family: var(--font-mono);
+  font-size: 0.77rem;
+  letter-spacing: 0.035em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}

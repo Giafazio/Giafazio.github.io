@@ -1,10 +1,11 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import ProjectContents from "../../components/ProjectContents.astro";
+import ComicGallery from "../../components/ComicGallery.astro";
 import SiteLayout from "../../layouts/SiteLayout.astro";
 import { getProjectContents, getSiteData } from "../../lib/content";
-import ProjectTitleButton from
-  "../../components/ProjectTitleButton.astro";
+import ProjectHeader from
+  "../../components/ProjectHeader.astro";
 
 
 
@@ -23,6 +24,11 @@ interface Props {
 const { project } = Astro.props;
 const data = await getSiteData();
 const contents = getProjectContents(data, project.data.id);
+const sidebarIds = project.data.sidebarContentIds ?? [];
+const sidebarEntries = contents.filter((entry) => sidebarIds.includes(entry.data.id));
+const mainEntries = contents.filter((entry) => !sidebarIds.includes(entry.data.id));
+const groups = project.data.contentGroups ?? [];
+const ungrouped = mainEntries.filter((entry) => !entry.data.projects.find((relation) => relation.id === project.data.id)?.group);
 ---
 
 <SiteLayout
@@ -32,42 +38,26 @@ const contents = getProjectContents(data, project.data.id);
 >
   
   <article data-project={project.data.id}>
-    <header
-      class="project-detail-header project-detail-header--project"
-      data-project={project.data.id}
-    >
-      <div class="project-detail-header__heading">
-        <h1>
-          <ProjectTitleButton
-            project={project}
-            variant="heading"
-            linked={false}
-          />
-        </h1>
-        <p class="meta project-detail-header__stage">
-          {project.data.stage}
-        </p>
-      </div>
+    <ProjectHeader project={project} />
 
-      <div class="project-detail-header__copy">
-  
-        <p class="about-copy">
-          {project.data.summary}
-        </p>
-      </div>
-    </header>
-
-      <div
+      {project.data.id === "fumettonzi" ? <ComicGallery entries={contents} initialDisplay="mixtape" /> : <div
         class={
-          project.data.roadmap.length > 0
+          project.data.roadmap.length > 0 || sidebarEntries.length > 0
             ? "project-page-sections project-page-sections--with-growing"
             : "project-page-sections"
         }
       >
-        <section
-          class="project-page-contents"
-          aria-labelledby="project-contents-title"
-        >
+        <div class="project-page-contents">
+        {groups.map((group) => (
+          <section class="project-content-section" aria-labelledby={`group-${group.id}`}>
+            <h2 class="project-page-section-title" id={`group-${group.id}`}>{group.title}</h2>
+            <ProjectContents
+              entries={mainEntries.filter((entry) => entry.data.projects.some((relation) => relation.id === project.data.id && relation.group === group.id))}
+              projectId={project.data.id}
+            />
+          </section>
+        ))}
+        {(groups.length === 0 || ungrouped.length > 0 || project.data.externalContents.length > 0) && <section aria-labelledby="project-contents-title">
           <h2
             class="project-page-section-title"
             id="project-contents-title"
@@ -76,7 +66,8 @@ const contents = getProjectContents(data, project.data.id);
           </h2>
 
           <ProjectContents
-            entries={contents}
+            entries={ungrouped}
+            repositoryPreview={project.data.id === "esperimenti-di-portafoglio" ? project.data.preview : undefined}
             externalContents={
               project.data.externalContents
             }
@@ -85,8 +76,10 @@ const contents = getProjectContents(data, project.data.id);
               project.data.detailSummaryContentIds
             }
           />
-        </section>
+        </section>}
+        </div>
 
+        <div class="project-page-sidebar">
         {
           project.data.roadmap.length > 0 && (
             <aside
@@ -118,7 +111,9 @@ const contents = getProjectContents(data, project.data.id);
             </aside>
           )
         }
-      </div>
+        {sidebarEntries.length > 0 && <ProjectContents entries={sidebarEntries} projectId={project.data.id} showSummary />}
+        </div>
+      </div>}
 
   </article>
 </SiteLayout>

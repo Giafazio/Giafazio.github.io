@@ -7,6 +7,8 @@ import {
   join,
 } from "node:path";
 
+import { isCollectionEntry } from "../collections";
+
 import {
   routeFor,
 } from "../../urls";
@@ -115,6 +117,19 @@ export function validateSiteData(data: SiteData): void {
 
       validateLanguage(language, id);
 
+      if (isCollectionEntry(entry)) {
+        const ownHost = new URL(import.meta.env.SITE).hostname.replace(/^www\./, "");
+        entry.data.items.forEach((item, index) => {
+          const targetHost = new URL(item.url).hostname.replace(/^www\./, "");
+          if (targetHost === ownHost) {
+            throw new Error(
+              "Collection " + id + ", item " + (index + 1)
+              + ": use an external resource, not a page of this site",
+            );
+          }
+        });
+      }
+
       const url = canonicalUrl(collection, entry);
       if (!draft && !url) {
         throw new Error(`Public entry ${id} has no canonical slug`);
@@ -165,6 +180,22 @@ export function validateSiteData(data: SiteData): void {
         throw new Error(
           `Public entry ${entry.data.id} points to draft project ${relation.id}`,
         );
+      }
+      if (relation.group && !(project.data.contentGroups ?? []).some((group) => group.id === relation.group)) {
+        throw new Error(`Entry ${entry.data.id} points to missing group ${relation.group} in ${relation.id}`);
+      }
+    }
+  }
+
+  for (const project of data.projects) {
+    const groupIds = (project.data.contentGroups ?? []).map((group) => group.id);
+    if (new Set(groupIds).size !== groupIds.length) {
+      throw new Error(`Duplicate content group in ${project.data.id}`);
+    }
+    for (const id of project.data.sidebarContentIds ?? []) {
+      const entry = relatedContent.find((item) => item.data.id === id);
+      if (!entry || !entry.data.projects.some((relation) => relation.id === project.data.id)) {
+        throw new Error(`Sidebar entry ${id} must belong to project ${project.data.id}`);
       }
     }
   }

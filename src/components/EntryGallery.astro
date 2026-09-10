@@ -14,6 +14,11 @@ import {
 import { withBase } from "../lib/urls";
 
 import { Image } from "astro:assets";
+import CollectionVisual from "./collections/CollectionVisual.astro";
+import {
+  isCollectionEntry,
+  collectionKindLabels,
+} from "../lib/content/collections";
 
 type GalleryEntry =
   | FieldNoteEntry
@@ -62,6 +67,8 @@ const languageLabel = (
                 entry.data.fourWordsGame,
               );
 
+        const collection = isCollectionEntry(entry) ? entry.data : undefined;
+
         const experimentPreview =
           entry.collection === "experiments"
             ? entry.data.preview
@@ -99,6 +106,7 @@ const languageLabel = (
               <span class="entry-gallery__topline">
                 <span class="meta">
                   {labelForEntry(entry)}
+                  {collection && (" · " + collectionKindLabels[collection.collectionKind])}
                 </span>
 
                 <span class="meta">
@@ -109,6 +117,12 @@ const languageLabel = (
               <h2 class="entry-gallery__title">
                 {title}
               </h2>
+
+              {collection?.preview && collection.preview.type !== "none" && (
+                <span class="entry-gallery__collection-preview">
+                  <CollectionVisual visual={collection.preview} title={title} />
+                </span>
+              )}
 
               {
                 experimentPreview && (
@@ -171,16 +185,16 @@ const languageLabel = (
                 )
               }
 
-              <span
+              {(entry.data.creationDate || entry.data.language || isInteractive) && (<span
                 class="meta entry-gallery__footer"
               >
-                <span>
+                {entry.data.creationDate && (<span>
                   {
                     formatCreationDate(
                       entry.data.creationDate,
                     )
                   }
-                </span>
+                </span>)}
 
                 {
                   entry.data.language && (
@@ -199,7 +213,7 @@ const languageLabel = (
                     <span>Interactive</span>
                   )
                 }
-              </span>
+              </span>)}
             </a>
           </li>
         );
@@ -241,7 +255,7 @@ const languageLabel = (
 
     flex:
       0 1
-      calc(33.333333% - 1rem);
+      calc((100% - 3 * var(--entry-gallery-gap)) / 4);
 
     min-width: 0;
   }
@@ -335,6 +349,11 @@ const languageLabel = (
     line-height: 1.15;
   }
 
+  .entry-gallery__collection-preview {
+    display: block;
+    margin-bottom: 0.9rem;
+  }
+
   .entry-gallery__preview {
     display: block;
     overflow: hidden;
@@ -402,7 +421,7 @@ const languageLabel = (
 
   @media (max-width: 600px) {
     .entry-gallery__item {
-      flex-basis: 100%;
+      flex-basis: calc((100% - var(--entry-gallery-gap)) / 2);
     }
   }
 

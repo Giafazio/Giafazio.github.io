@@ -107,6 +107,35 @@ Il Log di HomeLog è generato interrogando questa collezione:
 3. ordine per `sort_date`, quindi record senza data;
 4. visualizzazione di tipo, titolo e `written_label` compatto.
 
+### 5.1 Collections
+
+Una Collection è un contenuto di Field Notes & Thoughts con `entryKind: collection`: raccoglie elementi esterni. L’Atlas indicizza soltanto la pagina Collection; un futuro Path può riferirsi alla pagina, mai ai suoi singoli elementi. Le raccolte si trovano nell’indice Field Notes & Thoughts e nell’Atlas e usano gli URL `/field-notes/<slug>/`, come le altre note. Non esistono pagine sotto `/collections/`.
+
+Per crearne una, aggiungi un Markdown in `src/content/field-notes/collections/`, usando `passi-sparsi-tra-spicchi-di-mondi.md` come esempio per le playlist. Il corpo contiene l’introduzione facoltativa; il frontmatter contiene `items`. Questa sottosezione usa i nomi degli schemi Astro correnti: `id`, `slug`, `title`, `entryKind`, `collectionKind` e `stage` sono obbligatori. Per le sole Collections, `summary` e `creationDate` sono facoltativi e, se assenti, non vengono mostrati. Quando presente, `creationDate` contiene `precision` e `value`; le Collections senza data seguono i contenuti datati negli ordinamenti per creazione. `addedToSite` serve per i contenuti pubblici. Si riusano `language`, `updated`, `draft`, `subjects`, `tags`, `related`, `projects`, `sourceFiles` e le opzioni del Log. Il tag esistente `home-table` rende il contenuto candidabile ai Featured; non si introduce un campo `featured` separato.
+
+| `collectionKind` | `display` supportati | Default |
+|---|---|---|
+| `playlist` | `mixtape`, `wall`, `list` | `mixtape` |
+| `places`, `shops` | `cards`, `list` | `cards` |
+| `links` | `bookmarks`, `list` | `bookmarks` |
+| `endorsements`, `other` | `cards`, `list` | `cards` |
+
+Aggiungi gli elementi nell’array `items`, nell’ordine desiderato: `title` e `url` HTTP(S) esterno sono obbligatori; `note` e `visual` sono facoltativi. Le playlist ammettono `shortTitle`, `creator`, `year` intero e `mediaKind: music | video`; places/shops `area` e `category`; links `source`; endorsements `category`. In Mixtape, il quadrato è un link al video: mostra `shortTitle` (o il titolo completo se assente) e `creator`, mentre `title` resta nei dettagli accanto. Cambiare `display` non richiede modifiche agli elementi. `list` mostra soltanto i titoli collegati e l’eventuale creator nelle playlist, senza apertura multipla.
+
+Per mettere in maiuscoletto solo alcuni nomi, aggiungi `creatorSmallCaps`, un array di porzioni esatte di `creator` (esempio: `creatorSmallCaps: ["Zaz"]`); il testo originale rimane leggibile e ricercabile in tutte le viste.
+
+Per i titoli multilingua, `titleLines` è un array ordinato: prima il testo nell’alfabeto originale, poi quello latino; i dettagli mostrano ciascuno su una riga e l’artista sotto in Mixtape. `title` rimane il testo completo per le viste compatte. Per forzare gli a capo sul quadrato, scrivi `shortTitle` come blocco YAML `|-`, con una riga per ogni riga desiderata.
+
+Nelle playlist, `album` è facoltativo e contiene `title`, `year` intero e un eventuale `source` (URL della fonte, conservato nei dati ma non mostrato). Titolo e anno dell’album compaiono sulla stessa riga nei dettagli, con l’anno tra parentesi; `album.year` indica l’uscita dell’album e resta distinto dall’eventuale `year` del brano. Per «passi sparsi tra spicchi di mondi» si cerca il primo album che contiene il brano eseguito dall’interprete del video, incluse raccolte e colonne sonore; per le esecuzioni live può essere l’album in studio. Non si sostituiscono dati mancanti con quelli dell’autore originale o di un EP.
+
+`lyricsExcerpt` può contenere versi scelti dall’autore del sito; `note` resta il commento personale. Sono campi indipendenti e facoltativi: omettili finché non hai un testo, oppure usa blocchi YAML `|-` per conservare gli a capo. In Mixtape i versi compaiono in corsivo sotto il quadrato: una riga vuota separa le strofe e l’area mostra la prima, con scorrimento verticale per le successive, anche da tastiera. Le altre viste mostrano i versi nei dettagli dopo l’album; `list` rimane essenziale e non li mostra.
+
+`visual` accetta `{ type: image, asset, alt, credit?, fit?, position?, textColor?, textPosition?, textShadow? }`, `{ type: text, text? }` oppure `{ type: none }`, che è il default. `asset` è un’immagine locale relativa al Markdown: artwork e foto evocative hanno lo stesso trattamento. `alt` è obbligatorio per le immagini, vuoto soltanto se decorative; `fit` vale `contain` oppure `cover`. In Mixtape, `visual.textColor` sceglie il colore del testo sovrapposto all’immagine: usa un valore esadecimale fra virgolette, ad esempio `textColor: "#1c1c1c"`; se omesso, è bianco (`#fff`). `textPosition: center` sposta le scritte al centro verticale, mantenendo l’allineamento a sinistra; il default è `bottom`. `textShadow: true` aggiunge una lieve ombra scura alle scritte; il default è `false`. Queste opzioni riguardano il testo nel quadrato Mixtape, non i dettagli accanto. `preview` usa lo stesso schema per l’anteprima negli indici; non compare nell’intestazione della Collection.
+
+Per le immagini Mixtape, `visual.textScrim` regola una fascia nera orizzontale dietro l’intero blocco di testo: numero da `0` (default, disattivata) a `1` (nero pieno sotto le scritte), per esempio `textScrim: 0.7`. La fascia segue l’altezza del testo, con brevi sfumature sopra e sotto, e non modifica il file immagine. Si può abbinare al testo bianco e alla posizione predefinita in basso.
+
+`COLLECTION_PREVIEW=1` include le Collections in bozza nelle rispettive pagine Field Notes, nell’indice e nell’Atlas per l’anteprima. Le build di pubblicazione devono escludere questa opzione. Le pagine di prova dei versi e delle visualizzazioni sono state eliminate: si usa la pagina reale. Nelle playlist il selettore sotto il titolo permette di alternare Mixtape, Record Wall e List senza ricaricare la pagina; `display` determina la vista iniziale. Le regole della Mixtape sono raccolte in `src/styles/collection-mixtape.css`: le variabili iniziali controllano misura dei quadrati, spaziatura, versi e sovrapposizione desktop (55 px). Le misure condivise tra viste risiedono in `src/styles/collections.css`. Gli elementi restano nel frontmatter; MDX, file dati separati e `display: map` non sono implementati.
+
 ## 6. Projects
 
 Campi specifici:
@@ -237,6 +266,35 @@ Per testi come *La signorina Probabilita*:
 5. la build GitHub Pages non compila LaTeX e non dipende da Pandoc: versiona l'output web già verificato.
 
 ## 13. Stato dei dati reali
+
+### Sezioni nelle pagine dei progetti
+
+`contentGroups` nel progetto definisce sezioni ordinate (`id`, `title`).
+La relazione `projects` di ciascun contenuto può indicare `group`, valido solo
+all'interno di quel progetto. Gli elementi senza gruppo restano visibili in
+Contents; l'indice generale Projects conserva la propria presentazione.
+`sidebarContentIds` sposta nella colonna laterale della pagina del progetto
+le schede indicate, mostrando titolo e summary con link alla pagina originale.
+I riferimenti ai gruppi e ai contenuti laterali sono validati durante la build.
+
+Le traduzioni poetiche usano `artifactKind: poem`, gruppo `traduzioni`, corpo
+italiano e collegamento all'originale su Wikisource. I documenti sorgente restano
+in `sources/artifacts/poem-translations`; non sono convertiti durante la build.
+`primaryAsset` collega la copia PDF in `public/files/poem-translations`,
+mostrando l'azione «Apri o stampa il PDF» nella pagina della traduzione.
+
+I fumetti possono indicare `medium: MS Paint` oppure `medium: Handrawn`.
+Il componente `ComicSquare` condivide i ritagli tra Record Wall e
+la galleria orizzontale di Fumettonzi nell'indice Projects. Nello stesso indice,
+Di versi simili usa una lista verticale scorrevole di titoli e metadati,
+senza schede interne.
+La pagina Fumettonzi usa `ComicGallery`:
+Mixtape iniziale e Record Wall selezionabile senza cambiare pagina.
+
+Le prove concluse sono archiviate localmente in
+`sources/development-archive/2026-09-cleanup`, fuori dalle route e dalla build.
+La selezione della homepage usa il tag `home-table`; il vecchio campo
+`homeOverview`, non utilizzato, è stato rimosso.
 
 Il file `content-registry.yaml` è il registro corrente. Distingue:
 

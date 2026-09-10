@@ -1,0 +1,88 @@
+<collection-playlist-grid><slot /></collection-playlist-grid>
+
+<script>
+  class PlaylistGrid extends HTMLElement {
+    private frame = 0;
+    private observer?: ResizeObserver;
+
+    connectedCallback() {
+      this.dataset.enhanced = "";
+      this.addEventListener("toggle", this.onToggle, true);
+      this.addEventListener("keydown", this.onKeydown);
+      this.observer = new ResizeObserver(this.scheduleLayout);
+      this.observer.observe(this);
+      this.querySelectorAll("summary, .collection-item__details").forEach(
+        (element) => this.observer?.observe(element),
+      );
+      this.scheduleLayout();
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener("toggle", this.onToggle, true);
+      this.removeEventListener("keydown", this.onKeydown);
+      this.observer?.disconnect();
+      cancelAnimationFrame(this.frame);
+      this.frame = 0;
+    }
+
+    private onToggle = (event: Event) => {
+      const selected = event.target;
+      if (selected instanceof HTMLDetailsElement && selected.open) {
+        this.querySelectorAll<HTMLDetailsElement>("details[open]").forEach(
+          (details) => {
+            if (details !== selected) details.open = false;
+          },
+        );
+      }
+      this.scheduleLayout();
+    };
+
+    private onKeydown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      const selected = this.querySelector<HTMLDetailsElement>("details[open]");
+      if (!selected) return;
+      selected.open = false;
+      selected.querySelector("summary")?.focus();
+      event.preventDefault();
+    };
+
+    private scheduleLayout = () => {
+      if (this.frame) return;
+      this.frame = requestAnimationFrame(() => {
+        this.frame = 0;
+        this.layout();
+      });
+    };
+
+    private layout() {
+      const grid = this.querySelector("ol");
+      if (!grid) return;
+      const items = Array.from(grid.children) as HTMLLIElement[];
+      items.forEach((item) => item.style.removeProperty("padding-bottom"));
+
+      const selected = grid.querySelector<HTMLDetailsElement>("details[open]");
+      const item = selected?.closest("li");
+      const summary = selected?.querySelector("summary");
+      const panel = selected?.querySelector<HTMLElement>(".collection-item__details");
+      if (!item || !summary || !panel) return;
+
+      // Il dettaglio resta nel suo <details>, anche nell'ordine di lettura.
+      // Riserviamo spazio sotto l'intera riga senza spostare le tessere.
+      const selectedRect = summary.getBoundingClientRect();
+      const rowBottom = Math.max(...items.map((sibling) => {
+        const rect = sibling.querySelector("summary")!.getBoundingClientRect();
+        return Math.abs(rect.top - selectedRect.top) < 2 ? rect.bottom : 0;
+      }));
+      const gap = parseFloat(getComputedStyle(grid).rowGap) || 16;
+      const top = rowBottom - grid.getBoundingClientRect().top + gap;
+      panel.style.top = `${Math.round(top)}px`;
+      item.style.paddingBottom = `${Math.ceil(
+        rowBottom - selectedRect.bottom + gap + panel.getBoundingClientRect().height,
+      )}px`;
+    }
+  }
+
+  if (!customElements.get("collection-playlist-grid")) {
+    customElements.define("collection-playlist-grid", PlaylistGrid);
+  }
+</script>

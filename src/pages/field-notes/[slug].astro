@@ -1,8 +1,15 @@
 ---
 import {
   render,
-  type CollectionEntry,
 } from "astro:content";
+
+import {
+  isWrittenFieldNote,
+  isCollectionEntry,
+  fieldNotesForDisplay,
+} from "../../lib/content/collections";
+import type { FieldNoteEntry } from "../../lib/content/types";
+import CollectionContent from "../../components/collections/CollectionContent.astro";
 
 import LongformArticle from "../../components/LongformArticle.astro";
 import SiteLayout from "../../layouts/SiteLayout.astro";
@@ -17,22 +24,23 @@ import { publicAsset } from "../../lib/urls";
 export async function getStaticPaths() {
   const data = await getSiteData();
 
-  return data.publicFieldNotes.map((entry) => ({
+  return fieldNotesForDisplay(data).map((entry) => ({
     params: { slug: entry.data.slug },
     props: { entry },
   }));
 }
 
 interface Props {
-  entry: CollectionEntry<"fieldNotes">;
+  entry: FieldNoteEntry;
 }
 
 const { entry } = Astro.props;
+const note = isWrittenFieldNote(entry) ? entry.data : undefined;
 const { Content, headings } = await render(entry);
 
 const pageTitle =
   entry.data.title ??
-  entry.data.workingLabel ??
+  note?.workingLabel ??
   "Untitled";
 
 const kindLabel =
@@ -41,27 +49,32 @@ const kindLabel =
     : "Thought";
 
 const isLongform =
-  entry.data.presentation === "longform";
+  note?.presentation === "longform";
 ---
 
 <SiteLayout
   title={pageTitle}
+  description={isCollectionEntry(entry) ? entry.data.summary : undefined}
   currentSection="field-notes"
   lang={entry.data.language ?? "en"}
-  contentClass={entry.data.hyphenate ? "hyphenated-content" : ""}
+  contentClass={note?.hyphenate ? "hyphenated-content" : ""}
 >
   {
-    isLongform ? (
+    isCollectionEntry(entry) ? (
+      <CollectionContent collection={entry.data} hasIntroduction={Boolean(entry.body?.trim())}>
+        {entry.body?.trim() && <Content />}
+      </CollectionContent>
+    ) : note && (isLongform ? (
       <LongformArticle
         title={pageTitle}
         kindLabel={kindLabel}
         language={entry.data.language ?? "en"}
         stage={entry.data.stage}
-        authorialCredit={entry.data.authorialCredit}
-        authorialDateLabel={entry.data.authorialDateLabel}
-        pdfAsset={entry.data.pdfAsset}
+        authorialCredit={note.authorialCredit}
+        authorialDateLabel={note.authorialDateLabel}
+        pdfAsset={note.pdfAsset}
         headings={headings}
-        showTableOfContents={entry.data.showTableOfContents}
+        showTableOfContents={note.showTableOfContents}
       >
         <Content />
       </LongformArticle>
@@ -70,7 +83,7 @@ const isLongform =
         <header class="article-header">
           <p class="meta">
             {kindLabel}
-            {` · ${formatCreationDate(entry.data.creationDate)}`}
+            {` · ${formatCreationDate(note.creationDate)}`}
           </p>
 
           <h1>{pageTitle}</h1>
@@ -82,7 +95,7 @@ const isLongform =
             "article-body",
             {
               "article-body--indented":
-                entry.data.indentParagraphs,
+                note.indentParagraphs,
             },
           ]}
         >
@@ -90,15 +103,15 @@ const isLongform =
         </div>
 
         {
-          entry.data.pdfAsset && (
+          note.pdfAsset && (
             <p class="artifact-actions">
-              <a href={publicAsset(entry.data.pdfAsset)}>
+              <a href={publicAsset(note.pdfAsset)}>
                 Apri il PDF
               </a>
             </p>
           )
         }
       </article>
-    )
+    ))
   }
 </SiteLayout>

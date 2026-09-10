@@ -16,6 +16,13 @@
     clamp(1.65rem, 2.8vw, 2.2rem);
 }
 
+.project-content-section + .project-content-section { margin-top: 2rem; }
+.project-page-contents .project-content-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+}
+.project-page-sidebar { display: grid; gap: 1.25rem; align-content: start; }
+.project-page-sidebar:empty { display: none; }
+
 .growing-next {
   padding: 1rem 1.1rem 1.15rem;
 

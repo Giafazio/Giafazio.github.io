@@ -27,6 +27,7 @@ const MANUAL_LOG_TYPE_LABELS = {
   "new-project": "Project",
   "new-note": "Note",
   "new-thought": "Thought",
+  "new-collection": "Collection",
   "new-experiment": "Experiment",
   "new-fragment": "Fragment",
   "new-artifact": "Artifact",
@@ -46,6 +47,13 @@ function automaticLogPresentation(
 ): AutomaticLogPresentation {
   switch (entry.collection) {
     case "fieldNotes":
+      if (entry.data.entryKind === "collection") {
+        return {
+          type: "new-collection",
+          typeLabel: "Collection",
+          message: "New collection added.",
+        };
+      }
       return entry.data.entryKind === "site-note"
         ? {
             type: "new-note",
@@ -126,6 +134,7 @@ function defaultLogTypeLabel(
         : "Project";
 
     case "fieldNotes":
+      if (entry.data.entryKind === "collection") return "Collection";
       return entry.data.entryKind === "thought"
         ? "Thought"
         : "Note";

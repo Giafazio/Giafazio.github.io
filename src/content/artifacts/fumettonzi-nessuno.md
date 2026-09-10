@@ -11,6 +11,7 @@ related: []
 sourceFiles:
   - sources/artifacts/fumettonzi/nessuno.png
 artifactKind: image
+medium: Handrawn
 projects:
   - id: fumettonzi
     order: 1

@@ -1,0 +1,35 @@
+---
+import PlaylistViews from "./playlist/PlaylistViews.astro";
+import CollectionHeader from "./CollectionHeader.astro";
+import ListCollection from "./ListCollection.astro";
+import CardsCollection from "./CardsCollection.astro";
+import LinksCollection from "./LinksCollection.astro";
+import type { CuratedCollectionData } from "../../content/schemas/collections";
+import "../../styles/collections.css";
+
+interface Props { collection: CuratedCollectionData; hasIntroduction: boolean; }
+const { collection, hasIntroduction } = Astro.props;
+const layouts = { cards: CardsCollection, bookmarks: LinksCollection, list: ListCollection };
+// Le playlist gestiscono tutte le loro viste nel selettore dedicato.
+const CollectionItems = collection.collectionKind !== "playlist"
+  ? layouts[collection.display] : undefined;
+---
+
+<article
+  class="field-note-article collection-page"
+  data-collection-id={collection.id}
+  data-collection-kind={collection.collectionKind}
+  data-collection-display={collection.display}
+>
+  {collection.collectionKind === "playlist" ? (
+    <PlaylistViews collection={collection}>
+      {hasIntroduction && <div class="article-body collection-introduction"><slot /></div>}
+    </PlaylistViews>
+  ) : CollectionItems && (
+    <>
+      <CollectionHeader collection={collection} />
+      {hasIntroduction && <div class="article-body collection-introduction"><slot /></div>}
+      <CollectionItems items={collection.items} ordered={false} />
+    </>
+  )}
+</article>

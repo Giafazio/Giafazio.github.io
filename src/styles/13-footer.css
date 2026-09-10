@@ -49,20 +49,12 @@
 .site-footer__name-link,
 .site-footer__name-link:visited {
   color: inherit;
-  text-decoration: underline;
-  text-decoration-color:
-    color-mix(
-      in srgb,
-      currentColor 45%,
-      transparent
-    );
-  text-decoration-thickness: 0.07em;
-  text-underline-offset: 0.14em;
+  text-decoration: none;
 }
 
 .site-footer__name-link:hover {
   color: var(--link);
-  text-decoration-color: currentColor;
+  text-decoration: none;
 }
 
 .site-footer__links {

@@ -5,4 +5,4 @@ tmp/
 .astro/
 .DS_Store
 *.log
-
+/AGENTS.md

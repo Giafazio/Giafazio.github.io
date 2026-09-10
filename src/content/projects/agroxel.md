@@ -5,7 +5,6 @@ slug: agroxel
 summary: A spatial numerical modelling project for agroecological processes; the current specification concerns the climate-hydrology module 0.1a.
 stage: seedling
 draft: false
-homeOverview: true
 projectsIndexMode: expanded
 order: 4
 subjects: []

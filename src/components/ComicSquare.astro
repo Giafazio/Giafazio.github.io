@@ -1,0 +1,30 @@
+---
+import { withBase } from "../lib/urls";
+interface Props { id: string; src: string }
+const { id, src } = Astro.props;
+// Square viewports in source-image pixels; the original assets stay untouched.
+const wallCrops: Record<string, { width: number; height: number; x: number; y: number; size: number; paddingTop?: number }> = {
+  "fumettonzi-nessuno": { width: 3328, height: 4718, x: 1015, y: 1947, size: 915 },
+  "fumettonzi-007": { width: 391, height: 151, x: 103, y: 63, size: 82 },
+  "fumettonzi-008": { width: 948, height: 177, x: 119, y: 6, size: 165 },
+  "fumettonzi-009": { width: 776, height: 225, x: 30, y: 25, size: 200 },
+  "fumettonzi-010": { width: 280, height: 225, x: 1, y: 78, size: 145 },
+  "fumettonzi-013": { width: 520, height: 202, x: 14, y: 47, size: 170, paddingTop: 15 },
+  "fumettonzi-014": { width: 520, height: 202, x: 164, y: 10, size: 89 },
+  "fumettonzi-015": { width: 411, height: 300, x: 83, y: 54, size: 108 },
+  "fumettonzi-uomo-lasagna": { width: 2439, height: 3546, x: 1545, y: 1280, size: 630 },
+};
+const crop = wallCrops[id];
+const padding = crop?.paddingTop ?? 0;
+---
+{crop ? (
+  <svg class="comic-square" viewBox={`0 0 ${crop.size} ${crop.size}`} aria-hidden="true" focusable="false">
+    {padding > 0 && <rect width={crop.size} height={crop.size} fill="white" />}
+    <svg y={padding} width={crop.size} height={crop.size - padding} viewBox={`${crop.x} ${crop.y} ${crop.size} ${crop.size - padding}`} overflow="hidden">
+      <image href={withBase(src)} width={crop.width} height={crop.height} />
+    </svg>
+  </svg>
+) : <img class="comic-square" src={withBase(src)} alt="" loading="lazy" />}
+<style>
+  .comic-square { display: block; width: 100%; aspect-ratio: 1; overflow: hidden; }
+</style>

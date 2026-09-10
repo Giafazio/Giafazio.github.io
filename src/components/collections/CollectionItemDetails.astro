@@ -1,0 +1,93 @@
+---
+import type { CollectionItem } from "../../content/schemas/collections";
+import CreatorName from "./CreatorName.astro";
+
+interface Props {
+  item: CollectionItem;
+  number?: number;
+  showCredit?: boolean;
+  showSource?: boolean;
+  showLink?: boolean;
+  linkInTitle?: boolean;
+  separateCreator?: boolean;
+  showLyrics?: boolean;
+}
+
+const {
+  item, number,
+  showCredit = false,
+  showSource = false,
+  showLink = true,
+  linkInTitle = false,
+  separateCreator = false,
+  showLyrics = true,
+} = Astro.props;
+const creator = "creator" in item ? item.creator : undefined;
+const creatorSmallCaps = "creatorSmallCaps" in item ? item.creatorSmallCaps : undefined;
+const titleLines = "titleLines" in item ? item.titleLines : undefined;
+const album = "album" in item ? item.album : undefined;
+const lyricsExcerpt = "lyricsExcerpt" in item ? item.lyricsExcerpt : undefined;
+
+const metadata = [
+  "year" in item ? item.year : undefined,
+  "category" in item ? item.category : undefined,
+  "area" in item ? item.area : undefined,
+  showSource
+    ? ("source" in item ? item.source : undefined) ?? new URL(item.url).hostname
+    : undefined,
+].filter((value) => value !== undefined);
+
+const credit = showCredit && item.visual.type === "image"
+  ? item.visual.credit
+  : undefined;
+---
+
+<div class="collection-item__details" data-numbered={number !== undefined}>
+  <div class="collection-item__heading">
+    {number !== undefined && (
+      <span class="collection-number" aria-hidden="true">
+        {String(number).padStart(2, "0")}
+      </span>
+    )}
+    <h2 class="collection-item__title" data-leading-corner-quote={!titleLines && item.title.startsWith("「")}>
+      {titleLines
+        ? titleLines.map((line, index) => (
+          <span class="collection-item__title-line">
+            <bdi dir="auto">{line}</bdi>
+            {showLink && linkInTitle && index === titleLines.length - 1 && (
+              <a class="collection-item__title-link" href={item.url} aria-label={item.title}>
+                <span aria-hidden="true">↗</span>
+              </a>
+            )}
+          </span>
+        ))
+        : item.title}
+      {showLink && linkInTitle && !titleLines && (
+        <a class="collection-item__title-link" href={item.url} aria-label={item.title}>
+          <span aria-hidden="true">↗</span>
+        </a>
+      )}
+    </h2>
+  </div>
+  {separateCreator && creator && <p class="collection-item__creator"><CreatorName creator={creator} smallCaps={creatorSmallCaps} /></p>}
+  {(!separateCreator && creator || metadata.length > 0) && (
+    <p class="meta collection-item__metadata">
+      {!separateCreator && creator && <span class="collection-item__metadata-creator"><CreatorName creator={creator} smallCaps={creatorSmallCaps} /></span>}
+      {!separateCreator && creator && metadata.length > 0 && " · "}
+      {metadata.join(" · ")}
+    </p>
+  )}
+  {album && (
+    <p class="collection-item__album">
+      {album.title} (<time datetime={String(album.year)}>{album.year}</time>)
+    </p>
+  )}
+  {showLyrics && lyricsExcerpt && <blockquote class="collection-item__lyrics">{lyricsExcerpt}</blockquote>}
+  {item.note && <p class="collection-item__note">{item.note}</p>}
+  {credit && <p class="collection-credit">{credit}</p>}
+  {showLink && !linkInTitle && <p class="collection-item__link">
+    <a href={item.url}>
+      {item.title}<span aria-hidden="true"> ↗</span>
+    </a>
+  </p>}
+</div>
