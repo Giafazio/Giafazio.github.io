@@ -18,6 +18,8 @@ export function initializeTileMotion(
   const events = new AbortController();
   let timer: number | undefined;
   let disposed = false;
+  let pointerInside = false;
+  let keyboardFocused = false;
 
   const reset = () => {
     window.clearTimeout(timer);
@@ -38,7 +40,7 @@ export function initializeTileMotion(
 
     const animation = getAnimation();
     if (!animation) return;
-    if (button.matches(":hover, :focus-visible")) {
+    if (pointerInside || keyboardFocused) {
       animation.updatePlaybackRate(1);
       animation.play();
       return;
@@ -61,9 +63,24 @@ export function initializeTileMotion(
     timer = window.setTimeout(reset, (duration - position) / FINISH_PLAYBACK_RATE);
   };
 
-  for (const event of ["pointerenter", "pointerleave", "focus", "blur"]) {
-    button.addEventListener(event, update, { signal: events.signal });
-  }
+  // Lo stato :hover può aggiornarsi dopo l'evento del puntatore.
+  // Usa gli eventi stessi, come prima dell'unificazione del movimento.
+  button.addEventListener("pointerenter", () => {
+    pointerInside = true;
+    update();
+  }, { signal: events.signal });
+  button.addEventListener("pointerleave", () => {
+    pointerInside = false;
+    update();
+  }, { signal: events.signal });
+  button.addEventListener("focus", () => {
+    keyboardFocused = button.matches(":focus-visible");
+    update();
+  }, { signal: events.signal });
+  button.addEventListener("blur", () => {
+    keyboardFocused = false;
+    update();
+  }, { signal: events.signal });
   reduced.addEventListener("change", update, { signal: events.signal });
 
   const observer = observedAttributes.length ? new MutationObserver(update) : null;
