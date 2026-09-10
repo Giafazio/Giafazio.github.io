@@ -1,80 +1,22 @@
-type HeaderBackground = {
-  src: string;
-  position: string;
-  desktopPosition: string;
-};
-let selectedHeaderBackground: HeaderBackground | null = null;
-const applyHeaderBackground = (header: HTMLElement, background: HeaderBackground) => {
-  header.style.setProperty("--header-background", `url("${background.src}")`);
-  header.style.setProperty("--header-background-position", background.position);
-  header.style.setProperty("--header-background-desktop-position", background.desktopPosition);
-};
-const initializeRandomHeaderBackground = () => {
-  const headers = document.querySelectorAll<HTMLElement>("[data-header-backgrounds]");
-  headers.forEach((header) => {
-    if (header.dataset
-      .randomBackgroundInitialized ===
-      "true") {
-      return;
-    }
-    let backgrounds: HeaderBackground[] = [];
-    try {
-      backgrounds = JSON.parse(header.dataset.headerBackgrounds ??
-        "[]") as HeaderBackground[];
-    }
-    catch {
-      backgrounds = [];
-    }
-    if (backgrounds.length === 0) {
-      return;
-    }
-    /*
-    * La variabile resta valorizzata durante
-    * la navigazione interna di Astro.
-    * Una ricarica completa esegue invece
-    * una nuova estrazione.
-    */
-    const selectedBackgroundIsAvailable = selectedHeaderBackground
-      ? backgrounds.some((background) => background.src ===
-        selectedHeaderBackground?.src)
-      : false;
-    if (!selectedBackgroundIsAvailable) {
-      const randomIndex = Math.floor(Math.random() *
-        backgrounds.length);
-      selectedHeaderBackground =
-        backgrounds[randomIndex] ??
-          null;
-    }
-    if (!selectedHeaderBackground) {
-      return;
-    }
-    applyHeaderBackground(header, selectedHeaderBackground);
-    const homeLink = header.querySelector<HTMLAnchorElement>(".webhome-header__title");
-    homeLink?.addEventListener("click", (event) => {
-      if (event.defaultPrevented || event.button !== 0
-        || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
-        return;
-      }
-      const alternatives = backgrounds.filter((background) => background.src !== selectedHeaderBackground?.src);
-      const nextBackground = alternatives[Math.floor(Math.random() * alternatives.length)];
-      if (nextBackground) {
-        selectedHeaderBackground = nextBackground;
-        applyHeaderBackground(header, nextBackground);
-      }
-      // In Home preserviamo il DOM e lo stato dei componenti.
-      // Dalle altre pagine il link resta gestito dal router di Astro.
-      if (homeLink.pathname === window.location.pathname
-        && homeLink.search === window.location.search) {
-        event.preventDefault();
-        window.scrollTo({ top: 0, left: 0 });
-      }
-    });
-    header.dataset
-      .randomBackgroundInitialized =
-      "true";
-  });
-};
-const PARALLAX_RATE = 0.16;
+import type { TransitionBeforeSwapEvent } from "astro:transitions/client";
+
+let menuScroll: { left: number; top: number } | null = null;
+document.addEventListener("astro:before-swap", (event) => {
+  // Leggiamo la posizione appena prima dello swap, anche se il caricamento è lento.
+  // Avanti/indietro e gli altri link mantengono la gestione dello scroll di Astro.
+  menuScroll = event.navigationType !== "traverse"
+    && event.sourceElement?.closest("[data-nav-button]")
+    ? { left: window.scrollX, top: window.scrollY }
+    : null;
+});
+// La fase capture precede i normali listener che posizionano sfondo e corvo:
+// Astro ha già azzerato lo scroll, ma il browser non ha ancora mostrato la pagina.
+document.addEventListener("astro:after-swap", () => {
+  if (!menuScroll) return;
+  window.scrollTo({ ...menuScroll, behavior: "instant" });
+  menuScroll = null;
+}, { capture: true });
+
 const TREMOR_MIN_DELAY_MS = 5000;
 const TREMOR_MAX_DELAY_MS = 13000;
 const TREMOR_MIN_DURATION_MS = 650;
@@ -83,7 +25,7 @@ const TREMOR_X_PX = 1.4;
 const TREMOR_Y_PX = 1;
 const TREMOR_ROTATION_DEG = 0.04;
 const randomBetween = (minimum: number, maximum: number) => minimum + Math.random() * (maximum - minimum);
-const initializeHeaderBackgroundMotion = () => {
+const initializeHeaderTremor = () => {
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const banners = document.querySelectorAll<HTMLElement>("[data-header-banner]");
   banners.forEach((banner) => {
@@ -93,46 +35,13 @@ const initializeHeaderBackgroundMotion = () => {
     }
     banner.dataset.backgroundMotionInitialized =
       "true";
-    const track = banner.querySelector<HTMLElement>("[data-header-background-track]");
     const image = banner.querySelector<HTMLElement>("[data-header-background-image]");
-    if (!track || !image || reducedMotion) {
+    if (!image || reducedMotion) {
       return;
     }
-    let parallaxFrame: number | null = null;
     let tremorTimer: number | null = null;
     let tremorAnimation: Animation | null = null;
     let disposed = false;
-    let lastMovement = NaN;
-    const applyParallax = () => {
-      parallaxFrame = null;
-      if (disposed) {
-        return;
-      }
-      /*
-      * Coordinata del bordo inferiore del banner
-      * rispetto all'intero documento.
-      */
-      const bannerBottomInDocument = banner.getBoundingClientRect().bottom +
-        window.scrollY;
-      /*
-      * Il movimento viene limitato soltanto quando
-      * il banner è ormai interamente uscito dallo schermo.
-      */
-      const relevantScroll = Math.min(Math.max(window.scrollY, 0), bannerBottomInDocument);
-      const movement = -relevantScroll * PARALLAX_RATE;
-      if (Number.isNaN(lastMovement) ||
-        Math.abs(lastMovement - movement) > 0.25) {
-        track.style.setProperty("--header-parallax-y", `${movement}px`);
-        lastMovement = movement;
-      }
-    };
-    const requestParallaxUpdate = () => {
-      if (parallaxFrame !== null) {
-        return;
-      }
-      parallaxFrame =
-        window.requestAnimationFrame(applyParallax);
-    };
     function scheduleTremor() {
       if (disposed) {
         return;
@@ -189,11 +98,6 @@ const initializeHeaderBackgroundMotion = () => {
         return;
       }
       disposed = true;
-      window.removeEventListener("scroll", requestParallaxUpdate);
-      window.removeEventListener("resize", requestParallaxUpdate);
-      if (parallaxFrame !== null) {
-        window.cancelAnimationFrame(parallaxFrame);
-      }
       if (tremorTimer !== null) {
         window.clearTimeout(tremorTimer);
       }
@@ -202,10 +106,7 @@ const initializeHeaderBackgroundMotion = () => {
         tremorAnimation.cancel();
       }
     }
-    window.addEventListener("scroll", requestParallaxUpdate, { passive: true });
-    window.addEventListener("resize", requestParallaxUpdate, { passive: true });
     document.addEventListener("astro:before-swap", cleanup, { once: true });
-    applyParallax();
     scheduleTremor();
   });
 };
@@ -228,9 +129,10 @@ const initializeAdaptiveNavigationLayout = () => {
       "true";
     let layoutFrame: number | null = null;
     let disposed = false;
+    let navigationFontReady = false;
     const applyLayout = () => {
       layoutFrame = null;
-      if (disposed ||
+      if (disposed || !navigationFontReady ||
         !header.isConnected) {
         return;
       }
@@ -238,6 +140,8 @@ const initializeAdaptiveNavigationLayout = () => {
       * Ogni misurazione parte dalla
       * configurazione a una riga.
       */
+      // Misura e visibilità cambiano nello stesso ciclo, senza mostrare lo stato provvisorio.
+      navigation.dataset.navigationLayoutReady = "true";
       navigation.classList.remove("webhome-nav--two-rows");
       /*
       * Sommiamo le larghezze effettive dei pulsanti
@@ -279,8 +183,24 @@ const initializeAdaptiveNavigationLayout = () => {
     */
     resizeObserver.observe(banner);
     window.addEventListener("resize", requestLayoutUpdate, { passive: true });
-    document.fonts.ready.then(requestLayoutUpdate);
-    const cleanup = () => {
+    const onNavigationFontReady = () => {
+      navigationFontReady = true;
+      requestLayoutUpdate();
+    };
+    // Attendiamo solo il font dei tasti; in caso d'errore resta utilizzabile il fallback.
+    void document.fonts.load('28px "Basteleur"').then(onNavigationFontReady, onNavigationFontReady);
+    const cleanup = (event: TransitionBeforeSwapEvent) => {
+      // Conserva le righe del menù anche prima del primo layout della nuova pagina.
+      const nextNavigation = event.newDocument.querySelector<HTMLElement>(".webhome-nav");
+      nextNavigation?.classList.toggle(
+        "webhome-nav--two-rows",
+        navigation.classList.contains("webhome-nav--two-rows"),
+      );
+      if (nextNavigation && navigation.hasAttribute("data-navigation-layout-ready")) {
+        // L'attributo mantiene il menù visibile durante lo swap; solo "true"
+        // indica che i font e la misurazione della nuova pagina sono pronti.
+        nextNavigation.dataset.navigationLayoutReady = "pending";
+      }
       disposed = true;
       resizeObserver.disconnect();
       window.removeEventListener("resize", requestLayoutUpdate);
@@ -292,9 +212,9 @@ const initializeAdaptiveNavigationLayout = () => {
     requestLayoutUpdate();
   });
 };
-initializeRandomHeaderBackground();
-initializeHeaderBackgroundMotion();
+initializeHeaderTremor();
 initializeAdaptiveNavigationLayout();
-document.addEventListener("astro:page-load", initializeRandomHeaderBackground);
-document.addEventListener("astro:page-load", initializeHeaderBackgroundMotion);
+document.addEventListener("astro:after-swap", initializeHeaderTremor);
+document.addEventListener("astro:after-swap", initializeAdaptiveNavigationLayout);
+document.addEventListener("astro:page-load", initializeHeaderTremor);
 document.addEventListener("astro:page-load", initializeAdaptiveNavigationLayout);

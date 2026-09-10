@@ -57,77 +57,49 @@ import crowSprite from "../assets/navigation/crow/Crow.png";
   const FRAME_SIZE = 64;
   const FRAME_COUNT = 56;
   const LAST_SECTION_KEY = "fabrizios-webhome:crow-last-section";
+  const LANDING_APPROACH_MS = 150;
 
   const IDLE_FRAMES = [1, 2, 3, 4] as const;
   const IDLE_DURATIONS = [130, 170, 140, 200] as const;
-
   const TAKEOFF_START_FRAMES = [34, 35] as const;
   const TAKEOFF_START_DURATIONS = [220, 100] as const;
-
   const TAKEOFF_END_FRAMES = [36, 37] as const;
   const TAKEOFF_END_DURATIONS = [100, 100] as const;
-
   const FLY_FRAMES = [38, 39, 40, 41, 42, 43] as const;
   const FLY_DURATIONS = [100, 100, 100, 100, 100, 100] as const;
-
   const LANDING_FRAMES = [44, 34] as const;
   const LANDING_DURATIONS = [140, 190] as const;
 
-  /* Coordinate del corvo fermo nel fotogramma 64 × 64. */
+  // Coordinate del corvo fermo nel fotogramma 64 × 64 e margini sul tasto.
   const IDLE_VISIBLE_RIGHT = 47;
   const IDLE_FOOT_LINE = 47;
-
-  /* Posizione finale: bordo superiore destro del tasto attivo. */
   const PERCH_RIGHT_INSET = 4;
-
-  /*
-  * La linea dei piedi viene collocata 1 px dentro
-  * il bordo superiore del tasto.
-  */
   const PERCH_TOP_OFFSET = 1;
 
-  type Point = {
-    x: number;
-    y: number;
-  };
-
-  const wait = (milliseconds: number) =>
-    new Promise<void>((resolve) => {
-      window.setTimeout(resolve, milliseconds);
-    });
-
-  const waitForStableNavigationLayout = async () => {
-    /*
-    * Aspettiamo il caricamento dei font e due cicli grafici:
-    * nel primo SiteHeader dispone il menù;
-    * nel secondo misuriamo le posizioni definitive.
-    */
-    await document.fonts.ready;
-
-    await new Promise<void>((resolve) => {
-      window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => resolve());
-      });
-    });
+  type Point = { x: number; y: number };
+  type CrowPhase = "idle" | "takeoff" | "flight" | "landing";
+  type CrowController = {
+    element: HTMLElement;
+    readonly navigation: HTMLElement | null;
+    bind: (navigation: HTMLElement, section: string) => void;
+    requestDestination: (section: string) => void;
+    prepareNavigation: () => void;
+    dispose: () => void;
   };
 
   const loadImage = (src: string) =>
     new Promise<HTMLImageElement>((resolve, reject) => {
       const image = new Image();
-
       image.addEventListener("load", () => resolve(image), { once: true });
-      image.addEventListener(
-        "error",
-        () => reject(new Error(`Unable to load crow sprite: ${src}`)),
-        { once: true },
-      );
-
+      image.addEventListener("error", () => reject(
+        new Error(`Unable to load crow sprite: ${src}`),
+      ), { once: true });
       image.src = src;
     });
 
   const readPreviousSection = () => {
     try {
-      return window.sessionStorage.getItem(LAST_SECTION_KEY);
+      return sessionStorage.getItem(LAST_SECTION_KEY);
     } catch {
       return null;
     }
@@ -135,75 +107,48 @@ import crowSprite from "../assets/navigation/crow/Crow.png";
 
   const rememberSection = (section: string) => {
     try {
-      window.sessionStorage.setItem(LAST_SECTION_KEY, section);
+      sessionStorage.setItem(LAST_SECTION_KEY, section);
     } catch {
-      /* L'animazione resta utilizzabile anche senza sessionStorage. */
+      // L'animazione resta utilizzabile anche senza sessionStorage.
     }
   };
 
-  const initializeNavigationCrows = () => {
-    const navigationElements = document.querySelectorAll<HTMLElement>(
-      "[data-crow-navigation]",
-    );
-
-    navigationElements.forEach((navigationElement) => {
-      if (navigationElement.dataset.crowInitialized === "true") {
-        return;
-      }
-
-      navigationElement.dataset.crowInitialized = "true";
-      void setupNavigationCrow(navigationElement);
-    });
-  };
-
-  const setupNavigationCrow = async (navigationElement: HTMLElement) => {
-    const crowElement = navigationElement.querySelector<HTMLElement>(
-      "[data-navigation-crow]",
-    );
-    const spriteElement = navigationElement.querySelector<HTMLElement>(
-      "[data-navigation-crow-sprite]",
-    );
-    const activeButton = navigationElement.querySelector<HTMLAnchorElement>(
-      '[data-nav-button][aria-current="page"]',
-    );
-
-    if (!crowElement || !spriteElement || !activeButton) {
-      return;
-    }
-
-    const currentSection = activeButton.dataset.section;
-    const spriteSrc = crowElement.dataset.spriteSrc;
-
-    if (!currentSection || !spriteSrc) {
-      return;
-    }
-
-    const previousSection = readPreviousSection();
-    rememberSection(currentSection);
-
-    const navigationButtons = Array.from(
-      navigationElement.querySelectorAll<HTMLAnchorElement>("[data-nav-button]"),
-    );
-
-    const previousButton = previousSection
-      ? navigationButtons.find(
-          (button) => button.dataset.section === previousSection,
-        ) ?? null
-      : null;
-
+  const createNavigationCrow = (
+    crowElement: HTMLElement,
+    spriteElement: HTMLElement,
+    initialSection: string,
+    spriteSrc: string,
+  ): CrowController => {
+    let navigationElement: HTMLElement | null = null;
+    let requestedSection = initialSection;
+    let perchedSection = readPreviousSection() ?? initialSection;
+    let flightSection = initialSection;
+    let phase: CrowPhase = "idle";
     let disposed = false;
-    let frameSequenceToken = 0;
+    let running = false;
+    let layoutReady = false;
+    let spriteLoaded = false;
+    const layoutWaiters = new Set<() => void>();
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
     let movementAnimation: Animation | null = null;
-    let isFlying = false;
-    let currentFrame: number = IDLE_FRAMES[0];
+    let movementDuration = 0;
+    let frameSequenceToken = 0;
+    let frameTimer: number | null = null;
+    let finishFrameWait: (() => void) | null = null;
+    let repositionFrame: number | null = null;
 
     const stopFrameSequence = () => {
       frameSequenceToken += 1;
+      if (frameTimer !== null) clearTimeout(frameTimer);
+      frameTimer = null;
+      const finish = finishFrameWait;
+      finishFrameWait = null;
+      finish?.();
     };
 
-    const setFrame = (frameIndex: number) => {
-      currentFrame = frameIndex;
-      spriteElement.style.backgroundPosition = `${-frameIndex * FRAME_SIZE}px 0`;
+    const setFrame = (frame: number) => {
+      spriteElement.style.backgroundPosition = `${-frame * FRAME_SIZE}px 0`;
     };
 
     const playFrameSequence = async (
@@ -212,261 +157,310 @@ import crowSprite from "../assets/navigation/crow/Crow.png";
       loop = false,
     ) => {
       stopFrameSequence();
-      const sequenceToken = frameSequenceToken;
-
+      const token = frameSequenceToken;
       do {
         for (let index = 0; index < frames.length; index += 1) {
-          if (disposed || sequenceToken !== frameSequenceToken) {
-            return;
-          }
-
+          if (disposed || token !== frameSequenceToken) return;
           setFrame(frames[index]);
-          await wait(durations[index] ?? durations[durations.length - 1] ?? 100);
+          await new Promise<void>((resolve) => {
+            finishFrameWait = resolve;
+            frameTimer = window.setTimeout(() => {
+              frameTimer = null;
+              finishFrameWait = null;
+              resolve();
+            }, durations[index] ?? 100);
+          });
         }
-      } while (loop && !disposed && sequenceToken === frameSequenceToken);
+      } while (loop && !disposed && token === frameSequenceToken);
     };
 
-    const getPerchPoint = (button: HTMLElement): Point => {
-      const navigationRect = navigationElement.getBoundingClientRect();
-      const buttonRect = button.getBoundingClientRect();
+    const playFlightFrames = async () => {
+      const takeoff = playFrameSequence(TAKEOFF_END_FRAMES, TAKEOFF_END_DURATIONS);
+      const token = frameSequenceToken;
+      await takeoff;
+      if (!disposed && token === frameSequenceToken) {
+        void playFrameSequence(FLY_FRAMES, FLY_DURATIONS, true);
+      }
+    };
 
+    const getPerchPoint = (section: string): Point | null => {
+      const button = Array.from(
+        navigationElement?.querySelectorAll<HTMLElement>("[data-nav-button]") ?? [],
+      ).find((entry) => entry.dataset.section === section);
+      if (!button || !navigationElement) return null;
+      const navRect = navigationElement.getBoundingClientRect();
+      const buttonRect = button.getBoundingClientRect();
+      // Il clic abbassa il tasto di 2px: la meta resta sul bordo nella posizione di riposo.
+      const press = new DOMMatrixReadOnly(getComputedStyle(button).transform);
       return {
-        x:
-          buttonRect.right -
-          navigationRect.left -
-          PERCH_RIGHT_INSET -
-          IDLE_VISIBLE_RIGHT,
-        y:
-          buttonRect.top -
-          navigationRect.top -
-          IDLE_FOOT_LINE +
-          PERCH_TOP_OFFSET,
+        x: Math.round(buttonRect.right - navRect.left - press.m41 - PERCH_RIGHT_INSET - IDLE_VISIBLE_RIGHT),
+        y: Math.round(buttonRect.top - navRect.top - press.m42 - IDLE_FOOT_LINE + PERCH_TOP_OFFSET),
       };
     };
 
     const placeCrow = (point: Point) => {
-      crowElement.style.transform = `translate3d(${Math.round(point.x)}px, ${Math.round(point.y)}px, 0)`;
+      crowElement.style.transform = `translate3d(${point.x}px, ${point.y}px, 0)`;
     };
 
-    const setFacing = (direction: "left" | "right") => {
-      crowElement.dataset.facing = direction;
+    const readPosition = (): Point => {
+      const matrix = new DOMMatrixReadOnly(getComputedStyle(crowElement).transform);
+      return { x: matrix.m41, y: matrix.m42 };
     };
 
-    const flyBetween = async (from: Point, to: Point) => {
-      if (disposed) return;
+    const setFacing = (from: Point, to: Point) => {
+      crowElement.dataset.facing = to.x >= from.x ? "right" : "left";
+    };
 
+    const stopMovement = () => {
+      if (!movementAnimation) return;
+      // Salviamo la posizione visibile prima di rimuovere l'effetto dell'animazione.
+      placeCrow(readPosition());
+      movementAnimation.cancel();
+    };
+
+    const flyBetween = async (from: Point, to: Point): Promise<boolean> => {
       const deltaX = to.x - from.x;
       const deltaY = to.y - from.y;
       const distance = Math.hypot(deltaX, deltaY);
       const lift = Math.min(48, Math.max(24, distance * 0.14));
-      const duration = Math.round(
-        Math.min(1050, Math.max(650, distance * 2.1)),
-      );
-
+      movementDuration = Math.round(Math.min(1050, Math.max(650, distance * 2.1)));
       const keyframes = Array.from({ length: 9 }, (_, index) => {
         const progress = index / 8;
-        const x = from.x + deltaX * progress;
-        const linearY = from.y + deltaY * progress;
-        const arcY = 4 * lift * progress * (1 - progress);
-
         return {
-          transform: `translate3d(${x}px, ${linearY - arcY}px, 0)`,
+          transform: `translate3d(${from.x + deltaX * progress}px, ${from.y + deltaY * progress - 4 * lift * progress * (1 - progress)}px, 0)`,
         };
       });
-
       const animation = crowElement.animate(keyframes, {
-        duration,
+        duration: movementDuration,
         easing: "linear",
         fill: "forwards",
       });
-
       movementAnimation = animation;
-
       try {
         await animation.finished;
-
-        if (!disposed) {
-          placeCrow(to);
-        }
+        if (disposed) return false;
+        placeCrow(to);
+        return true;
       } catch {
-        return;
+        return false;
       } finally {
-        // La posizione finale resta nello stile, non in un effetto persistente.
         animation.cancel();
-        if (movementAnimation === animation) {
-          movementAnimation = null;
-        }
+        if (movementAnimation === animation) movementAnimation = null;
       }
     };
 
-    let repositionFrame: number | null = null;
+    const releaseLayoutWaiters = () => {
+      layoutWaiters.forEach((resolve) => resolve());
+      layoutWaiters.clear();
+    };
+
+    const waitForLayout = async () => {
+      while (!layoutReady && !disposed) {
+        await new Promise<void>((resolve) => layoutWaiters.add(resolve));
+      }
+    };
+
+    const runMotion = async () => {
+      if (running || disposed || !layoutReady) return;
+      running = true;
+      try {
+        while (!disposed) {
+          await waitForLayout();
+          if (disposed) return;
+          if (reducedMotion.matches) {
+            perchedSection = requestedSection;
+            placeCrow(getPerchPoint(perchedSection)!);
+            phase = "idle";
+            break;
+          }
+          if (perchedSection === requestedSection) break;
+
+          phase = "takeoff";
+          const origin = getPerchPoint(perchedSection) ?? readPosition();
+          placeCrow(origin);
+          setFacing(origin, getPerchPoint(requestedSection)!);
+          await playFrameSequence(TAKEOFF_START_FRAMES, TAKEOFF_START_DURATIONS);
+          await waitForLayout();
+          if (disposed) return;
+          // Un clic durante il decollo aggiorna la destinazione senza spostare la partenza.
+          if (reducedMotion.matches || perchedSection === requestedSection) {
+            phase = "idle";
+            continue;
+          }
+
+          phase = "flight";
+          void playFlightFrames();
+          while (!disposed) {
+            await waitForLayout();
+            if (disposed) return;
+            if (reducedMotion.matches) break;
+            const destination = requestedSection;
+            const target = getPerchPoint(destination)!;
+            const from = readPosition();
+            flightSection = destination;
+            setFacing(from, target);
+            const arrived = await flyBetween(from, target);
+            if (disposed) return;
+            if (!arrived) continue; // Riparte dalla posizione salvata, senza un altro decollo.
+
+            perchedSection = destination;
+            phase = "landing";
+            await waitForLayout();
+            if (disposed) return;
+            placeCrow(getPerchPoint(perchedSection)!);
+            await playFrameSequence(LANDING_FRAMES, LANDING_DURATIONS);
+            phase = "idle";
+            break;
+          }
+        }
+        if (!disposed) {
+          crowElement.dataset.facing = "left";
+          if (reducedMotion.matches) setFrame(IDLE_FRAMES[0]);
+          else void playFrameSequence(IDLE_FRAMES, IDLE_DURATIONS, true);
+        }
+      } finally {
+        running = false;
+      }
+    };
+
+    const updateDestination = () => {
+      if (!layoutReady || disposed) return;
+      if (reducedMotion.matches) {
+        stopFrameSequence();
+        stopMovement();
+      } else if (phase === "flight" && movementAnimation && flightSection !== requestedSection) {
+        const remaining = movementDuration - Number(movementAnimation.currentTime ?? 0);
+        // Nell'avvicinamento finale completiamo posa e atterraggio prima di ripartire.
+        if (remaining > LANDING_APPROACH_MS) stopMovement();
+      }
+      void runMotion();
+    };
 
     const repositionCrow = () => {
-      if (!disposed && !isFlying) {
-        placeCrow(getPerchPoint(activeButton));
-        setFrame(currentFrame);
+      repositionFrame = null;
+      if (!disposed && layoutReady && phase === "idle") {
+        const point = getPerchPoint(perchedSection);
+        if (point) placeCrow(point);
       }
     };
 
     const requestCrowReposition = () => {
-      if (
-        disposed ||
-        repositionFrame !== null
-      ) {
-        return;
+      if (!disposed && repositionFrame === null) {
+        repositionFrame = requestAnimationFrame(repositionCrow);
       }
-
-      repositionFrame =
-        window.requestAnimationFrame(() => {
-          repositionFrame = null;
-          repositionCrow();
-        });
     };
-
-    const resizeObserver =
-      new ResizeObserver(requestCrowReposition);
-
-    resizeObserver.observe(navigationElement);
-    resizeObserver.observe(activeButton);
-
+    const resizeObserver = new ResizeObserver(requestCrowReposition);
     const visualViewport = window.visualViewport;
 
-    window.addEventListener(
-      "resize",
-      requestCrowReposition,
-    );
+    const onNavigationLayout = () => {
+      // Lo stesso stato usato dal menù per mostrarsi vale anche per il corvo.
+      // Il controllo immediato copre un evento già emesso prima del collegamento.
+      if (disposed || !spriteLoaded || !navigationElement
+        || navigationElement.dataset.navigationLayoutReady !== "true") return;
+      if (!layoutReady) {
+        if (!getPerchPoint(perchedSection)) perchedSection = requestedSection;
+        if (crowElement.hidden) {
+          placeCrow(getPerchPoint(perchedSection)!);
+          setFrame(IDLE_FRAMES[0]);
+          crowElement.hidden = false;
+        }
+        layoutReady = true;
+        releaseLayoutWaiters();
+        updateDestination();
+      }
+      requestCrowReposition();
+    };
 
-    visualViewport?.addEventListener(
-      "resize",
-      requestCrowReposition,
-    );
+    const detachNavigation = () => {
+      resizeObserver.disconnect();
+      navigationElement?.removeEventListener("webhome:navigation-layout", onNavigationLayout);
+      if (repositionFrame !== null) cancelAnimationFrame(repositionFrame);
+      repositionFrame = null;
+    };
 
-    navigationElement.addEventListener(
-      "webhome:navigation-layout",
-      requestCrowReposition,
-    );
-
-    const cleanup = () => {
+    const dispose = () => {
       disposed = true;
       stopFrameSequence();
       movementAnimation?.cancel();
-      resizeObserver.disconnect();
-
-      window.removeEventListener(
-        "resize",
-        requestCrowReposition,
-      );
-
-      visualViewport?.removeEventListener(
-        "resize",
-        requestCrowReposition,
-      );
-
-      navigationElement.removeEventListener(
-        "webhome:navigation-layout",
-        requestCrowReposition,
-      );
-
-      if (repositionFrame !== null) {
-        window.cancelAnimationFrame(
-          repositionFrame,
-        );
-      }
+      detachNavigation();
+      releaseLayoutWaiters();
+      window.removeEventListener("resize", requestCrowReposition);
+      visualViewport?.removeEventListener("resize", requestCrowReposition);
+      reducedMotion.removeEventListener("change", updateDestination);
     };
 
-    document.addEventListener(
-      "astro:before-swap",
-      cleanup,
-      { once: true },
-    );
+    window.addEventListener("resize", requestCrowReposition);
+    visualViewport?.addEventListener("resize", requestCrowReposition);
+    reducedMotion.addEventListener("change", updateDestination);
 
-    let loadedSprite: HTMLImageElement;
-
-    try {
-      loadedSprite = await loadImage(spriteSrc);
-    } catch (error) {
-      console.error(error);
-      cleanup();
-      return;
-    }
-
-    if (
-      loadedSprite.naturalWidth !== FRAME_SIZE * FRAME_COUNT ||
-      loadedSprite.naturalHeight !== FRAME_SIZE
-    ) {
-      console.error(
-        `Crow.png must be ${FRAME_SIZE * FRAME_COUNT} × ${FRAME_SIZE}px; ` +
-          `the loaded file is ${loadedSprite.naturalWidth} × ${loadedSprite.naturalHeight}px.`,
-      );
-      cleanup();
-      return;
-    }
-
-    if (disposed) {
-      return;
-    }
-
-    await waitForStableNavigationLayout();
-
-    if (disposed) {
-      return;
-    }
-
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    const targetPoint = getPerchPoint(activeButton);
-    const shouldFly =
-      !reducedMotion &&
-      previousButton !== null &&
-      previousButton !== activeButton;
-
-    if (!shouldFly) {
-      placeCrow(targetPoint);
-      setFacing("left");
-      setFrame(IDLE_FRAMES[0]);
-      crowElement.hidden = false;
-
-      if (!reducedMotion) {
-        void playFrameSequence(IDLE_FRAMES, IDLE_DURATIONS, true);
+    // Il nodo e questo stato sopravvivono insieme ai cambi pagina di Astro.
+    void loadImage(spriteSrc).then((image) => {
+      if (image.naturalWidth !== FRAME_SIZE * FRAME_COUNT || image.naturalHeight !== FRAME_SIZE) {
+        throw new Error(`Crow.png must be ${FRAME_SIZE * FRAME_COUNT} × ${FRAME_SIZE}px.`);
       }
+      spriteLoaded = true;
+      onNavigationLayout();
+    }).catch((error) => {
+      if (!disposed) {
+        console.error(error);
+        dispose();
+      }
+    });
 
+    return {
+      element: crowElement,
+      get navigation() { return navigationElement; },
+      requestDestination(section) {
+        // Durante un movimento conta subito l'ultimo clic, anche se la pagina sta caricando.
+        if (!running) return;
+        requestedSection = section;
+        updateDestination();
+      },
+      prepareNavigation() {
+        layoutReady = false;
+        detachNavigation();
+        // Il volo continua; lo stile conserva anche una posizione di riserva durante lo swap.
+        if (movementAnimation) placeCrow(readPosition());
+      },
+      bind(navigation, section) {
+        detachNavigation();
+        navigationElement = navigation;
+        requestedSection = section;
+        rememberSection(section);
+        layoutReady = false;
+        resizeObserver.observe(navigation);
+        navigation.addEventListener("webhome:navigation-layout", onNavigationLayout);
+        onNavigationLayout();
+      },
+      dispose,
+    };
+  };
+
+  let controller: CrowController | null = null;
+  const initializeNavigationCrows = () => {
+    const navigation = document.querySelector<HTMLElement>("[data-crow-navigation]");
+    const crow = navigation?.querySelector<HTMLElement>("[data-navigation-crow]");
+    const sprite = crow?.querySelector<HTMLElement>("[data-navigation-crow-sprite]");
+    const section = navigation?.querySelector<HTMLElement>('[data-nav-button][aria-current="page"]')?.dataset.section;
+    if (!navigation || !crow || !sprite || !section || !crow.dataset.spriteSrc) {
+      controller?.dispose();
+      controller = null;
       return;
     }
-
-    const originPoint = getPerchPoint(previousButton);
-
-    placeCrow(originPoint);
-    setFacing(targetPoint.x >= originPoint.x ? "right" : "left");
-    setFrame(TAKEOFF_START_FRAMES[0]);
-    crowElement.hidden = false;
-    isFlying = true;
-
-    await playFrameSequence(TAKEOFF_START_FRAMES, TAKEOFF_START_DURATIONS);
-
-    // Durante il decollo il nodo può essere già passato alla pagina successiva.
-    if (disposed) return;
-
-    const flightPromise = flyBetween(originPoint, targetPoint);
-
-    await playFrameSequence(TAKEOFF_END_FRAMES, TAKEOFF_END_DURATIONS);
-    void playFrameSequence(FLY_FRAMES, FLY_DURATIONS, true);
-    await flightPromise;
-
-    if (disposed) {
-      return;
+    if (controller?.element !== crow) {
+      controller?.dispose();
+      controller = createNavigationCrow(crow, sprite, section, crow.dataset.spriteSrc);
     }
-
-    placeCrow(getPerchPoint(activeButton));
-    await playFrameSequence(LANDING_FRAMES, LANDING_DURATIONS);
-
-    if (disposed) return;
-
-    isFlying = false;
-    setFacing("left");
-    void playFrameSequence(IDLE_FRAMES, IDLE_DURATIONS, true);
+    if (controller.navigation !== navigation) controller.bind(navigation, section);
   };
 
   initializeNavigationCrows();
+  document.addEventListener("astro:before-preparation", (event) => {
+    const button = event.sourceElement?.closest<HTMLElement>("[data-nav-button]");
+    const section = button?.dataset.section;
+    if (section) controller?.requestDestination(section);
+  });
+  document.addEventListener("astro:before-swap", () => controller?.prepareNavigation());
+  document.addEventListener("astro:after-swap", initializeNavigationCrows);
   document.addEventListener("astro:page-load", initializeNavigationCrows);
 </script>

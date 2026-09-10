@@ -1,6 +1,7 @@
 ---
 import { getImage } from "astro:assets";
 import { headerBackgroundSources } from "../data/header-backgrounds";
+import headerBackgroundScript from "../lib/header-background.js?raw";
 import NavButton from "./NavButton.astro";
 import NavigationCrow from "./NavigationCrow.astro";
 import maio1Tile from "../assets/navigation/tiles/maio1.png";
@@ -71,7 +72,7 @@ const getBaseBackground = (section: SiteSection) => {
       ${defaultHeaderBackground.desktopPosition};
   `}
 >
-
+  <script is:inline set:html={headerBackgroundScript} />
   <div
     class="webhome-header__banner"
     data-header-banner
@@ -275,6 +276,11 @@ const getBaseBackground = (section: SiteSection) => {
     overflow: visible;
   }
 
+  /* Con JavaScript mostriamo solo il layout misurato con il font del menù. */
+  :global(.has-js) .webhome-nav:not([data-navigation-layout-ready]) {
+    visibility: hidden;
+  }
+
   .webhome-nav__buttons {
     display: flex;
     flex-flow: row nowrap;
@@ -319,6 +325,20 @@ const getBaseBackground = (section: SiteSection) => {
   }
 
   @media (max-width: 700px) {
+    /* Riserva fin dal primo render le due righe usate sui telefoni. */
+    .webhome-nav:not([data-navigation-layout-ready]) .webhome-nav__buttons {
+      flex-direction: column;
+      align-items: center;
+      gap: 48px;
+    }
+
+    .webhome-nav:not([data-navigation-layout-ready]) .webhome-nav__row {
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      gap: 2px;
+    }
+
     .webhome-header__banner {
       min-height: 140px;
       padding: 12px;
@@ -344,6 +364,7 @@ const getBaseBackground = (section: SiteSection) => {
   ) and (
     pointer: coarse
   ) {
+    .webhome-nav:not([data-navigation-layout-ready]) .webhome-nav__buttons,
     .webhome-nav--two-rows
     .webhome-nav__buttons {
       gap: 29px;
