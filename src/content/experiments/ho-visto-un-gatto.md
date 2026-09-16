@@ -10,7 +10,7 @@ tags: []
 related: []
 sourceFiles:
   - sources/experiments/filastrocca/filastrocca.md
-entryKind: fragment
+entryKind: experiment
 interactive: false
 projects: []
 creationDate:

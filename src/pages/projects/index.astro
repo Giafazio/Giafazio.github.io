@@ -1,5 +1,6 @@
 ---
 import ProjectContents from "../../components/ProjectContents.astro";
+import MusicProjectContents from "../../components/MusicProjectContents.astro";
 import SiteLayout from "../../layouts/SiteLayout.astro";
 import SectionPageHeader from "../../components/SectionPageHeader.astro";
 import ProjectTitleButton from
@@ -115,7 +116,7 @@ const titleOnlyProjects = data.publicProjects
                 >
                   <ProjectTitleButton
                     project={project}
-                  />
+                  >{project.data.id === "symphojingles" ? <>Sympho<wbr />Jingles</> : project.data.title}</ProjectTitleButton>
                 </h2>
                 <p class="meta project-box__stage">
                   {project.data.stage}
@@ -144,7 +145,7 @@ const titleOnlyProjects = data.publicProjects
                     )
 }
 
-                  <ProjectContents
+                  {project.data.id === "symphojingles" ? <MusicProjectContents project={project} entries={contents} showHeadings={false} /> : <ProjectContents
                     entries={contents}
                     repositoryPreview={project.data.id === "esperimenti-di-portafoglio" ? project.data.preview : undefined}
                     externalContents={
@@ -156,7 +157,7 @@ const titleOnlyProjects = data.publicProjects
                     }
                     gallery
                     presentation={project.data.id === "fumettonzi" ? "comic-gallery" : project.data.id === "poetry-collection" ? "reading-list" : "cards"}
-                  />
+                  />}
 
                   {
                     project.data.roadmap.map(

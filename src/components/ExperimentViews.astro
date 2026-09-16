@@ -7,7 +7,7 @@ const { entries } = Astro.props;
 <div data-experiment-views>
   <div data-static-view hidden><EntryGallery entries={entries} variant="kitchen" ariaLabel="Experiments, Fragments and standalone Artifacts" /></div>
   <div data-moving-view>
-    <div class="experiment-drift" data-experiment-drift><EntryGallery entries={entries} variant="kitchen" ariaLabel="Experiments, Fragments and standalone Artifacts in movimento" /></div>
+    <div class="experiment-drift" data-experiment-drift><EntryGallery entries={entries} variant="kitchen" borderless={false} ariaLabel="Experiments, Fragments and standalone Artifacts in movimento" /></div>
   </div>
 </div>
 <style>
@@ -15,8 +15,8 @@ const { entries } = Astro.props;
     --drift-column-gap: 1.25rem;
     --drift-row-gap: 2.5rem;
     --drift-item-basis: calc(20% - var(--drift-column-gap));
-    --drift-card-padding: .7rem;
-    --drift-text-padding: .75rem;
+    --drift-card-padding: .55rem;
+    --drift-text-padding: .6rem;
     padding: 1rem 1.2rem 4rem;
   }
 
@@ -72,8 +72,8 @@ const { entries } = Astro.props;
     object-fit: contain;
     padding: 0;
   }
-  .experiment-drift[data-experiment-drift] :global(.entry-gallery__title) { margin: .6rem 0; }
-  .experiment-drift[data-experiment-drift] :global(.entry-gallery__topline) { flex-wrap: wrap; gap: .2rem 1rem; }
+  .experiment-drift[data-experiment-drift] :global(.entry-gallery__title) { margin: .35rem 0 .45rem; }
+  .experiment-drift[data-experiment-drift] :global(.entry-gallery__topline) { flex-wrap: wrap; gap: .15rem .4rem; }
 
   @media (max-width: 900px) and (min-width: 551px) {
     .experiment-drift { --drift-item-basis: calc(33.333% - var(--drift-column-gap)); }

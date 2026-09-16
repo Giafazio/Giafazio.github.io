@@ -296,7 +296,8 @@
   line-height: 1.25;
 }
 
-.project-content-card__title--artifact {
+.project-content-card__title--artifact,
+.project-content-card__title--note {
   font-family: var(--font-display);
   overflow-wrap: anywhere;
 }

@@ -1,0 +1,9 @@
+---
+import FieldNotesPage from "../../field-notes/index.astro";
+
+export function getStaticPaths() {
+  return import.meta.env.DEV ? ["borderless", "static", "dynamic", "dynamic-subtle"].map(view => ({ params: { view } })) : [];
+}
+---
+
+<FieldNotesPage />

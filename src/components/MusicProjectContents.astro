@@ -1,0 +1,12 @@
+---
+import MusicPiece from "./MusicPiece.astro";
+import type { ArtifactEntry, ProjectEntry, PublishableEntry } from "../lib/content";
+import tile from "../assets/navigation/tiles/maio1_4.png";
+interface Props { project: ProjectEntry; entries: PublishableEntry[]; showHeadings?: boolean; }
+const { project, entries, showHeadings = true } = Astro.props;
+const tracks = entries.filter((entry): entry is ArtifactEntry => entry.collection === "artifacts" && entry.data.artifactKind === "audio");
+---
+{project.data.contentGroups.map(group => <section class="project-content-section" aria-label={group.title}>
+  {showHeadings && <h2 class="project-page-section-title">{group.title}</h2>}
+  {tracks.filter(track => track.data.projects.some(relation => relation.id === project.data.id && relation.group === group.id)).map(artifact => <MusicPiece artifact={artifact} tile={tile.src} />)}
+</section>)}

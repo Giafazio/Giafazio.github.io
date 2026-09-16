@@ -1,0 +1,409 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import SectionPageHeader from "./SectionPageHeader.astro";
+import ComicSquare from "./ComicSquare.astro";
+import ProjectTitleButton from "./ProjectTitleButton.astro";
+import { getProjectTileStyle } from "../lib/projectAppearance";
+import { getSiteData } from "../lib/content";
+import { withBase } from "../lib/urls";
+import { indexItem, externalIndexItems } from "../lib/index/index-taxonomy";
+import { tagParents, tagPath } from "../lib/index/tag-hierarchy";
+const views = [
+  { id: "typography", label: "1 · Indice tipografico" },
+  { id: "ribbons", label: "2 · Fasce scorrevoli" },
+  { id: "margin", label: "3 · Indice a margine" },
+  { id: "cabinet", label: "4 · Schedario" },
+];
+interface Props { previewView?: string; }
+const { previewView } = Astro.props;
+const fontPreview = !previewView || previewView === "fonts";
+const view = fontPreview ? "proposal" : previewView;
+const data = await getSiteData();
+const projectsById = new Map(data.publicProjects.map(project => [project.data.id, project]));
+const previewAssets = new Map([...data.publicProjects, ...data.publicFieldNotes, ...data.publicExperiments, ...data.publicArtifacts].map(entry => [entry.data.id, "previewAsset" in entry.data ? entry.data.previewAsset : undefined]));
+const wordPreviews = new Map(data.publicArtifacts.map(entry => [entry.data.id, entry.data.fourWordsGame?.rounds[0]?.words.slice(0, 4)]));
+for (const project of data.publicProjects) {
+  for (const external of project.data.externalContents) {
+    if (external.kind === "repository") previewAssets.set(`external:${external.href}`, project.data.preview?.asset);
+  }
+}
+for (const artifact of data.publicArtifacts) {
+  if (!previewAssets.get(artifact.data.id) && artifact.data.crossword?.gridAsset) previewAssets.set(artifact.data.id, artifact.data.crossword.gridAsset);
+}
+const items = [...[...data.publicProjects, ...data.publicFieldNotes, ...data.publicExperiments, ...data.publicArtifacts].map(indexItem), ...externalIndexItems(data.publicProjects)].sort((a,b) => a.title.localeCompare(b.title));
+const crossSections = [
+  { label: "Topics", values: ["mathematics", "physics", "literature", "agronomy", "finance", "genealogy", "typography", "wordplay", "visual arts", "music"] },
+  { label: "Media", values: ["image"] },
+  { label: "Features", values: ["translation", "solutions", "simulation"] },
+];
+const groups = [
+  { key: "primary", label: "Content type", values: ["artifact", "project", "experiment", "note", "fragment", "thought", "collection"] },
+  { key: "secondary", label: "Secondary", values: [...new Set(items.flatMap(i => i.secondary ? tagPath("secondary", i.secondary) : []))].sort() },
+  { key: "cross", label: "Explore by", values: [...new Set(items.flatMap(i => i.cross.flatMap(t => tagPath("cross", t))))].sort() },
+];
+---
+<SiteLayout title={previewView ? "Index — Preview" : "Paths & Atlas"} currentSection="atlas">
+  <SectionPageHeader title="Paths & Atlas" subtitle="The Corridor" introduction="The Atlas will visualize all content. Curated Paths will propose thematic groupings." />
+  {view !== "proposal" && <nav class="preview-variants" aria-label="Confronta le quattro preview">
+    {views.map(option => <a href={withBase(`/previews/index/${option.id}/`)} data-preview-link aria-current={view === option.id ? "page" : undefined}>{option.label}</a>)}
+  </nav>}
+  <section id={previewView ? "index-preview" : "index"} data-taxonomy-index data-view={view} data-font-preview={fontPreview || undefined}>
+    <SectionPageHeader title="Index" subtitle="The Attic" headingLevel="h2" introduction="Select tags to browse the corresponding elements" />
+    <div class="filter-panel filter-panel--headed">
+      {view !== "proposal" && <p class="eyebrow">Browse the Index</p>}
+      {groups.map(group => <details open={view !== "proposal" || group.key !== "cross"} class="filter-panel__group" data-filter-group={group.key}>
+        <summary class="meta" id={group.key}><span class="filter-heading-label">{group.label}</span>{view === "proposal" && group.key !== "primary" && <span data-selection-label={group.key}></span>}{view === "proposal" && <button class="filter-button section-all" type="button" data-group={group.key} data-value="" aria-pressed="true">All</button>}</summary>
+        {view === "ribbons" && <div class="rail-controls"><button type="button" data-scroll="-1" aria-label={`Scorri ${group.label} verso sinistra`}>←</button><button type="button" data-scroll="1" aria-label={`Scorri ${group.label} verso destra`}>→</button></div>}
+        <div class="filter-list" role="group" aria-labelledby={group.key} tabindex={["ribbons", "cabinet"].includes(view) ? "0" : undefined}>
+          {view !== "proposal" && <button class="filter-button" type="button" data-group={group.key} data-value="" aria-pressed="true">All</button>}
+          {(group.key === "cross" && view === "proposal" ? crossSections : [{ label: "", values: group.values }]).map(section => <div class:list={["filter-subsection", { "filter-subsection--named": !!section.label }]} role={section.label ? "group" : undefined} aria-label={section.label || undefined}>
+          {section.label && <p class="filter-subsection__title">{section.label}</p>}
+          <div class="filter-subsection__tags">
+          {section.values.filter(value => group.values.includes(value) && !tagParents[group.key]?.[value]).map(value => <div class="tag-branch">
+            {view === "proposal" && group.values.some(child => tagParents[group.key]?.[child] === value) && <button class="branch-toggle" type="button" data-branch-toggle aria-expanded="false" aria-controls={`children-${group.key}-${value}`} aria-label={`Sottotipi di ${value}`}>▶</button>}
+            <button class="filter-button" type="button" data-group={group.key} data-value={value} aria-pressed="false">{value}</button>
+            {group.values.some(child => tagParents[group.key]?.[child] === value) && <div class="tag-children" id={`children-${group.key}-${value}`} hidden={view === "proposal"} role="group" aria-label={`Sottotipi di ${value}`}>
+              {group.values.filter(child => tagParents[group.key]?.[child] === value).map(child => <button class="filter-button" type="button" data-group={group.key} data-value={child} aria-pressed="false">{child}</button>)}
+            </div>}
+          </div>)}
+          </div>
+          </div>)}
+        </div>
+      </details>)}
+      {view === "proposal" && <div class="display-picker" role="group" aria-label="Visualizzazione dei risultati"><span class="filter-heading-label">View</span>{["list", "titles", "cards", "wall"].map(label => <button class="filter-button" type="button" data-display={label} aria-pressed={label === "list"}>{label}</button>)}</div>}
+      <div class="filter-summary"><p class="meta" data-result-count role="status">{items.length} entries</p><button type="button" class="clear" data-clear>Clear filters</button></div>
+    </div>
+
+    <ol class="atlas-list" data-results-display="list">
+      {items.map(item => <li class="atlas-row" data-atlas-item data-content-id={item.id} data-section={item.primary === "collection" || item.primary === "thought" || item.primary === "note" ? "field-notes" : item.primary === "project" ? "projects" : item.primary === "artifact" ? "artifacts" : "experiments"} data-type={item.primary} data-primary={item.primary} data-index-item data-item={JSON.stringify(item)}>
+        <span class="atlas-type">{item.primary}{item.secondary && ` · ${tagPath("secondary", item.secondary).join(" › ")}`}</span>
+        {item.primary === "project" && <div class="index-project-preview"><ProjectTitleButton project={projectsById.get(item.id)!}>{item.id === "caragiulorigin" ? <>Caragiulo<wbr />Origin</> : item.id === "symphojingles" ? <>Sympho<wbr />Jingles</> : item.id === "quellotondo" ? <>Quello<wbr />Tondo</> : item.id === "esperimenti-di-portafoglio" ? <>Esperi<wbr />menti di porta<wbr />foglio</> : item.id === "fumettonzi" ? <>Fumet<wbr />tonzi</> : item.title}</ProjectTitleButton></div>}
+        <a class="atlas-title" href={item.externalDestination ? item.href : withBase(item.href)} title={item.externalDestination ? `Apri su ${item.externalDestination}` : undefined} aria-label={item.externalDestination ? `${item.title} — Apri su ${item.externalDestination}` : item.title}><span class:list={["index-square", { "index-square--image": !!previewAssets.get(item.id) && item.primary !== "project", "index-square--project": item.primary === "project", "index-square--fallback": !previewAssets.get(item.id) && !wordPreviews.get(item.id) && item.primary !== "project" }]} style={item.primary === "project" ? getProjectTileStyle(item.id) : undefined} aria-hidden="true">{item.primary === "project" ? <span>{item.title}</span> : wordPreviews.get(item.id) ? <span class="project-content-card__word-preview">{wordPreviews.get(item.id)!.map(() => <span>?</span>)}</span> : previewAssets.get(item.id) ? (item.secondary === "comic" ? <ComicSquare id={item.id} src={previewAssets.get(item.id)!} /> : <img src={withBase(previewAssets.get(item.id)!)} alt="" loading="lazy" />) : <span>{item.title}</span>}</span><span class="index-entry-title">{item.title}{item.externalDestination && <span aria-hidden="true"> ↗</span>}</span></a>
+        <span class="meta">{item.stage}{item.language && ` · ${item.language.toUpperCase()}`}</span>
+      </li>)}
+    </ol>
+    <p data-empty hidden>No matching entries. Try removing a filter.</p>
+  </section>
+</SiteLayout>
+<style>
+  .display-picker { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .3rem; margin: .75rem 0 .5rem; }
+  .display-picker > span { margin-right: .3rem; }
+  @media (min-width: 761px) {
+    [data-view="proposal"] .filter-panel { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 1.5rem; }
+    [data-view="proposal"] [data-filter-group="primary"] { grid-column: 1; grid-row: 1; }
+    [data-view="proposal"] [data-filter-group="secondary"] { grid-column: 1; grid-row: 2; }
+    [data-view="proposal"] [data-filter-group="cross"] { grid-column: 1 / -1; grid-row: 3; }
+    .display-picker { grid-column: 2; grid-row: 1 / 3; align-self: end; justify-self: end; margin: 0; }
+    .filter-summary { grid-column: 1 / -1; }
+  }
+  [data-view="proposal"] [data-filter-group="primary"] { display: flex; align-items: baseline; gap: .6rem; }
+  [data-view="proposal"] [data-filter-group="primary"] > summary { flex: 0 0 auto; white-space: nowrap; }
+  [data-view="proposal"] [data-filter-group="primary"] > .filter-list { flex: 1; min-width: 0; }
+  [data-view="proposal"]:has([data-results-display="list"]) .filter-panel { margin-bottom: 0; }
+  .atlas-list[data-results-display="list"] .atlas-row { gap: .1rem 1.2rem; padding-block: .2rem; }
+  .atlas-list[data-results-display="list"] .atlas-row:not([hidden]):not(.atlas-row:not([hidden]) ~ .atlas-row) { border-top: 0; }
+  .atlas-list[data-results-display="list"] .atlas-title { font-size: 1.05rem; line-height: 1.1; }
+  .atlas-list[data-results-display="list"] :is(.atlas-type, .meta) { font-size: .7rem; line-height: 1.15; }
+  .index-square, .index-project-preview { display: none; }
+  .atlas-list:is([data-results-display="cards"], [data-results-display="wall"]) .index-project-preview { display: block; }
+  .atlas-list:is([data-results-display="cards"], [data-results-display="wall"]) [data-primary="project"] > .atlas-title { display: none; }
+  .index-project-preview :global(.project-title-button) { width: 100%; box-sizing: border-box; padding: .5rem; font-size: clamp(1rem, 2vw, 1.5rem); text-shadow: 0 0 5px var(--project-title-outline), 0 0 9px var(--project-title-outline); }
+  .atlas-list[data-results-display="wall"] .index-project-preview :global(.project-title-button) { aspect-ratio: 1; min-height: 0; }
+  .atlas-list[data-results-display="cards"] .index-project-preview :global(.project-title-button) { min-height: 4rem; aspect-ratio: auto; }
+  .index-project-preview :global(.project-title-button__label) { overflow-wrap: normal; word-break: normal; }
+
+
+
+  .atlas-list[data-results-display="titles"] { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .1rem 2rem; }
+  .atlas-list[data-results-display="titles"] .atlas-row { display: block; padding: 0; border: 0; }
+  .atlas-list[data-results-display="titles"] .atlas-title { font-size: 1rem; line-height: 1.15; }
+  .atlas-list[data-results-display="titles"] :is(.atlas-type, .meta) { display: none; }
+  .atlas-list[data-results-display="cards"] { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr)); gap: 1rem; }
+  .atlas-list[data-results-display="cards"] .atlas-row { display: flex; flex-direction: column; align-items: stretch; gap: .65rem; align-self: start; padding: .9rem 1rem; border: 1px solid var(--frame-highlight); background: var(--paper-raised); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--frame-highlight) 18%, transparent); }
+  .atlas-list[data-results-display="cards"] .atlas-title { font-size: 1.05rem; order: -1; }
+  .atlas-list[data-results-display="cards"] .index-project-preview { order: -1; }
+  .atlas-list[data-results-display="cards"] :is(.atlas-type, .meta) { font-size: .7rem; }
+  .atlas-list[data-results-display="cards"] .index-square:not(.index-square--fallback) { display: block; margin-bottom: .6rem; }
+  .atlas-list[data-results-display="cards"] .meta { margin-top: auto; }
+  .atlas-list[data-results-display="wall"] { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(10rem, calc((100% - 4rem) / 5)), 1fr)); gap: 1.5rem 1rem; }
+  .atlas-list[data-results-display="wall"] .atlas-row { display: block; padding: 0; border: 0; min-width: 0; }
+  .atlas-list[data-results-display="wall"] :is(.atlas-type, .meta) { display: none; }
+  .atlas-list[data-results-display="wall"] .atlas-title { display: block; font-size: 1rem; }
+  .atlas-list[data-results-display="wall"] .index-square { display: grid; place-items: center; aspect-ratio: 1; border: 1px solid var(--frame-highlight); background: var(--paper-raised); margin-bottom: .55rem; overflow: hidden; }
+  .index-square > img { display: block; width: 100%; height: auto; }
+  .index-square > span { padding: .75rem; text-align: center; font: 500 clamp(.95rem, 1.6vw, 1.35rem)/1.25 var(--font-display); overflow-wrap: anywhere; }
+  .atlas-list[data-results-display="wall"] .index-square--image { aspect-ratio: auto; display: block; }
+  .atlas-list[data-results-display="wall"] .index-square--fallback + .index-entry-title { display: none; }
+  .index-square--project { aspect-ratio: 1; background: var(--project-title-tile) repeat !important; border: 3px solid var(--frame-main) !important; }
+  .index-square--project > span { display: grid; place-items: center; height: 100%; box-sizing: border-box; font-family: "Basteleur", serif; color: white; text-shadow: 0 1px 2px black, 0 0 5px black, 0 0 10px black; }
+  .index-square > .project-content-card__word-preview { padding: 0; width: min(72%, 11rem); margin-block: .5rem; }
+  .index-square > .project-content-card__word-preview > span { min-height: 0; font-size: clamp(1rem, 3vw, 2rem); }
+  @media (max-width: 760px) {
+    .atlas-list[data-results-display="cards"] { row-gap: .75rem; }
+    .atlas-list[data-results-display="titles"] { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: .75rem; }
+    .atlas-list[data-results-display="wall"] { grid-template-columns: repeat(auto-fill, minmax(min(8rem, calc((100% - 2rem) / 3)), 1fr)); }
+  }
+  @media (max-width: 420px) {
+    .atlas-list[data-results-display="titles"] { grid-template-columns: 1fr; }
+  }
+  .filter-summary { display: flex; justify-content: space-between; gap: 1rem; align-items: center; margin-top: 1rem; }
+  .filter-summary p { margin: 0; }
+  .clear { color: var(--ink); background: transparent; border: 1px solid var(--rule); padding: .4rem .6rem; cursor: pointer; font: inherit; }
+  details { margin-top: 2rem; padding-block: 1rem; border-top: 1px solid var(--rule); }
+  summary { cursor: pointer; font-family: var(--font-display); }
+  /* Shared readable controls: never inherit light selected text on a transparent background. */
+  [data-taxonomy-index] { --filter-size: 1rem; }
+  .filter-panel { padding-block: 1.25rem; }
+  .filter-button { min-height: 2.75rem; padding: .5rem .75rem; font: 400 var(--filter-size)/1.4 var(--font-ui); text-align: left; overflow-wrap: normal; border: 0; background: transparent; color: var(--ink); }
+  .filter-button[aria-pressed="true"] { background: var(--ink); color: var(--paper); font-weight: 600; }
+  .filter-button:hover:not(:disabled):not([aria-pressed="true"]) { background: var(--paper-raised); color: var(--ink); }
+  .filter-button:focus-visible, .rail-controls button:focus-visible, .clear:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+  .filter-button:disabled { color: var(--muted); opacity: .65; cursor: default; }
+  .filter-list { display: flex; flex-wrap: wrap; align-items: flex-start; gap: .5rem; }
+  .tag-branch { min-width: 0; }
+  .tag-children { display: flex; flex-direction: column; align-items: stretch; margin: .35rem 0 .4rem .75rem; padding-left: .75rem; border-left: 2px solid var(--rule); gap: .15rem; }
+  .tag-children .filter-button { font-size: .9375rem; }
+  .preview-variants { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; padding-block: .75rem; margin-bottom: 1.5rem; }
+  .preview-variants a { padding-block: .4rem; }
+  .preview-variants a[aria-current] { color: var(--ink); font-weight: bold; }
+  .filter-panel__group { border: 0; padding: 0; margin: 1.25rem 0 0; min-width: 0; }
+  .filter-panel__group > summary { font: 600 1rem/1.4 var(--font-ui); color: var(--ink); text-transform: none; letter-spacing: normal; cursor: default; list-style: none; margin-bottom: .75rem; }
+  .filter-panel__group > summary::-webkit-details-marker { display: none; }
+  [hidden] { display: none !important; }
+  .atlas-list { min-width: 0; margin: 0; padding: 0; list-style: none; }
+  /* 1: an open typographic index, with aligned rows and indented subtypes. */
+  [data-view="typography"] .filter-panel__group { display: grid; grid-template-columns: 9rem minmax(0,1fr); gap: 1rem; padding-block: 1rem; border-bottom: 1px solid var(--rule); }
+  [data-view="typography"] .filter-panel__group > summary { padding-top: .6rem; }
+  [data-view="typography"] .filter-list { gap: .5rem 1rem; }
+  [data-view="typography"] .filter-button { font-family: var(--font-display); font-size: 1.125rem; }
+  [data-view="typography"] .tag-branch { min-width: 0; }
+  [data-view="typography"] .tag-children .filter-button { font-size: 1rem; }
+  /* 2: one clear, scrollable band for each level, with larger labelled stops. */
+  [data-view="ribbons"] .filter-panel__group { position: relative; padding-block: .75rem; border-bottom: 1px solid var(--rule); }
+  [data-view="ribbons"] summary { padding-right: 6.5rem; }
+  [data-view="ribbons"] .filter-list { flex-wrap: nowrap; overflow-x: auto; gap: .75rem; padding: .35rem .2rem .85rem; scrollbar-width: auto; overscroll-behavior-x: contain; }
+  [data-view="ribbons"] .filter-list > * { flex-shrink: 0; }
+  [data-view="ribbons"] .filter-button { white-space: nowrap; border: 1px solid var(--rule); background: var(--paper-raised); padding-inline: 1rem; }
+  [data-view="ribbons"] .filter-button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  [data-view="ribbons"] .tag-children { margin-left: .5rem; }
+  .rail-controls { position: absolute; top: .35rem; right: 0; display: flex; gap: .5rem; }
+  .rail-controls button { background: var(--paper-raised); border: 1px solid var(--rule-strong); color: var(--ink); width: 2.75rem; height: 2.75rem; font-size: 1.2rem; cursor: pointer; }
+  /* 3: a quiet navigation column; results keep their full title width. */
+  [data-view="margin"] { display: grid; grid-template-columns: 16rem minmax(0,1fr); gap: 3rem; align-items: start; }
+  [data-view="margin"] .filter-panel { margin: 0; border-block: 0; border-right: 1px solid var(--rule); padding: 0 1.5rem 0 0; }
+  [data-view="margin"] .filter-list { flex-direction: column; align-items: stretch; gap: .15rem; }
+  [data-view="margin"] .filter-list > .filter-button, [data-view="margin"] .tag-branch > .filter-button { width: 100%; }
+  [data-view="margin"] .filter-panel__group { border-bottom: 1px solid var(--rule); padding-bottom: 1rem; }
+  [data-view="margin"] .filter-summary { flex-wrap: wrap; }
+  /* 4: three independent filing columns, without decorative folds or tiny labels. */
+  [data-view="cabinet"] .filter-panel { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1.5rem; align-items: start; border: 0; }
+  [data-view="cabinet"] .eyebrow, [data-view="cabinet"] .filter-summary { grid-column: 1 / -1; }
+  [data-view="cabinet"] .filter-panel__group { margin: 0; padding: 1rem; background: var(--paper-raised); border-top: 3px solid var(--frame-main); }
+  [data-view="cabinet"] summary { font: 500 1.3rem/1.4 var(--font-display); }
+  [data-view="cabinet"] .filter-list { display: grid; grid-template-columns: 1fr; gap: .25rem; max-height: 20rem; overflow-y: auto; padding: .25rem; scrollbar-width: auto; }
+  [data-view="cabinet"] .tag-branch > .filter-button { width: 100%; }
+  @media(max-width: 760px) {
+    .preview-variants { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1rem; font-size: 1rem; }
+    [data-view="typography"] .filter-panel__group { grid-template-columns: 1fr; gap: .25rem; }
+    [data-view="typography"] .filter-list { gap: .5rem; }
+    [data-view="typography"] .tag-branch { min-width: 0; }
+    [data-view="typography"] .tag-branch:has(.tag-children) { flex-basis: 100%; }
+    [data-view="margin"] { display: block; }
+    [data-view="margin"] .filter-panel { border-right: 0; padding: 0; margin-bottom: 1.5rem; }
+    [data-view="margin"] summary { cursor: pointer; min-height: 2.75rem; padding-block: .5rem; }
+    [data-view="margin"] summary::after { content: "+"; float: right; }
+    [data-view="margin"] details[open] summary::after { content: "−"; }
+    [data-view="margin"] .filter-list { display: grid; grid-template-columns: 1fr 1fr; gap: .25rem; }
+    [data-view="margin"] .tag-branch:has(.tag-children) { grid-column: 1 / -1; }
+    [data-view="cabinet"] .filter-panel { grid-template-columns: 1fr; gap: 1rem; }
+    [data-view="cabinet"] .filter-list { grid-template-columns: 1fr 1fr; }
+    [data-view="cabinet"] .tag-branch:has(.tag-children) { grid-column: 1 / -1; }
+  }
+
+  [data-view="proposal"] > :global(.section-page-header) { margin-bottom: .1rem; padding-top: 2.25rem; }
+  /* Compact proposal: the secondary row is attached to the primary row, not a peer panel. */
+  [data-view="proposal"] .filter-panel { margin-bottom: .75rem; padding-block: .15rem .65rem; }
+  [data-view="proposal"] .filter-panel__group { margin: 0; }
+  [data-view="proposal"] .filter-panel__group > summary { position: relative; font-size: 1rem; padding: .25rem 0; margin: 0 0 .3rem; list-style: none; }
+  [data-view="proposal"] .filter-list { gap: .2rem .3rem; align-items: flex-start; }
+  [data-view="proposal"] .filter-button { min-height: 1.25rem; padding: .025rem .25rem; font-size: .75rem; line-height: 1.35; border: 1px solid transparent; }
+  [data-view="proposal"] .filter-button[aria-pressed="true"] { background: var(--frame-main); border-color: var(--frame-main); color: var(--paper); }
+  [data-view="proposal"] [data-filter-group="secondary"] .filter-button[aria-pressed="true"], [data-view="proposal"] [data-filter-group="cross"] .tag-children .filter-button[aria-pressed="true"] { background: color-mix(in srgb, var(--frame-highlight) 45%, var(--paper)); border-color: color-mix(in srgb, var(--frame-highlight) 45%, var(--paper)); color: var(--frame-main); }
+  [data-view="proposal"] [data-filter-group="secondary"] .tag-children .filter-button[aria-pressed="true"] { background: color-mix(in srgb, var(--frame-highlight) 22%, var(--paper)); border-color: color-mix(in srgb, var(--frame-highlight) 22%, var(--paper)); color: var(--frame-main); }
+  [data-view="proposal"] .tag-branch { display: grid; grid-template-columns: .65rem auto; align-items: center; column-gap: 0; justify-items: start; }
+  [data-view="proposal"] .tag-branch > .filter-button { grid-column: 2; justify-self: start; }
+  [data-view="proposal"] .tag-branch:not(:has(.branch-toggle:not([hidden]))) { grid-template-columns: auto; }
+  [data-view="proposal"] .tag-branch:not(:has(.branch-toggle:not([hidden]))) > .filter-button { grid-column: 1; }
+  [data-view="proposal"] .tag-children { grid-column: 1 / -1; width: 0; min-width: 100%; box-sizing: border-box; flex-direction: column; align-items: flex-start; gap: .1rem; margin: .2rem 0 .35rem calc(.325rem - .5px); padding-left: .325rem; border-left: 1px solid var(--rule-strong); }
+  .branch-toggle { border: 0; background: transparent; color: var(--ink); cursor: pointer; display: grid; place-items: center; width: .65rem; padding: 0; min-height: 1.25rem; font-size: .65rem; }
+  .branch-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  [data-view="proposal"] .tag-children .filter-button { font-size: .7rem; max-width: none; white-space: nowrap; overflow-wrap: normal; text-align: left; }
+  [data-view="proposal"] [data-filter-group="secondary"] { margin: .4rem 0 0 1.1rem; padding: 0; }
+  [data-view="proposal"] [data-filter-group="secondary"] > summary { font-size: .95rem; font-weight: 400; color: var(--ink); }
+  [data-view="proposal"] [data-filter-group="secondary"] .filter-button { font-size: .7rem; }
+  [data-view="proposal"] [data-filter-group="secondary"] .tag-branch > .filter-button, [data-view="proposal"] [data-filter-group="secondary"] .section-all { font-style: italic; }
+  [data-view="proposal"] [data-filter-group="secondary"] .tag-children .filter-button { font-style: normal; }
+  [data-view="proposal"] [data-filter-group="cross"] { margin-top: 1rem; padding-top: .65rem; border-top: 0; }
+  [data-view="proposal"] :is([data-filter-group="cross"], [data-filter-group="secondary"]) > summary { cursor: pointer; }
+  [data-view="proposal"] :is([data-filter-group="cross"], [data-filter-group="secondary"]) > summary::after { content: "▶"; display: inline-block; margin-left: .15rem; width: .65rem; text-align: center; font: .65rem/1 sans-serif; }
+  [data-view="proposal"] :is([data-filter-group="cross"], [data-filter-group="secondary"])[open] > summary::after { content: "▼"; }
+  [data-view="proposal"] [data-selection-label] { color: var(--focus); margin-left: .5rem; }
+  [data-view="proposal"] .filter-summary { margin-top: .4rem; gap: .5rem; }
+  [data-view="proposal"] .filter-summary .meta { font-size: .7rem; }
+  [data-view="proposal"] .clear { font: .75rem/1.4 var(--font-ui); padding: .2rem .4rem; min-height: 1.75rem; }
+  [data-view="proposal"] .filter-panel .filter-panel__group > summary { font-family: var(--preview-heading-font, "Alegreya Variable", serif); }
+  [data-view="proposal"] .filter-panel .filter-button { font-family: var(--preview-tag-font, "Recursive Variable", monospace); }
+  [data-view="proposal"] [data-filter-group="secondary"] .filter-heading-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  [data-view="proposal"] [data-filter-group="secondary"] .section-all { margin-left: 0; }
+  [data-view="proposal"] :is([data-filter-group="primary"], [data-filter-group="cross"], .display-picker) .filter-heading-label { display: inline-block; padding: .2rem .4rem; border: 2px solid var(--frame-main); background: var(--paper-raised); font: normal .8rem/1.2 "Basteleur", serif; font-variant-caps: small-caps; letter-spacing: .06em; vertical-align: middle; }
+  [data-view="proposal"] [data-filter-group="secondary"] > summary { float: left; padding: 0; margin: 0; cursor: default; }
+  [data-view="proposal"] [data-filter-group="secondary"][open] > summary::after { content: none; }
+  [data-view="proposal"] [data-filter-group="secondary"] > .filter-list { margin-left: 2.2rem; }
+  [data-view="proposal"] [data-filter-group="cross"] > summary { display: flex; align-items: center; }
+  [data-view="proposal"] [data-filter-group="cross"] [data-selection-label] { order: 3; }
+  .filter-subsection, .filter-subsection__tags { display: contents; }
+  [data-view="proposal"] .filter-subsection--named { display: grid; grid-template-columns: 4rem minmax(0, 1fr); gap: .4rem; width: 100%; align-items: baseline; }
+  .filter-subsection__title { margin: 0; font: 400 .85rem/1.4 var(--preview-heading-font, "Alegreya Variable", serif); color: var(--muted); }
+  [data-view="proposal"] .filter-subsection--named .filter-subsection__tags { display: flex; flex-wrap: wrap; align-items: flex-start; gap: .2rem .3rem; }
+  [data-view="proposal"] .section-all { margin-left: .6rem; vertical-align: middle; }
+  [data-view="proposal"] details[open] > summary [data-selection-label] { display: none; }
+  /* Reserve the child width while collapsed so expansion changes only row height. */
+  [data-view="proposal"] .tag-children[hidden] { display: flex !important; visibility: hidden; height: 0; overflow: hidden; margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; border-left-color: transparent; }
+</style>
+<script>
+  import { matchesTag, tagPath } from "../lib/index/tag-hierarchy";
+  function initializeTaxonomyIndex() {
+    const root = document.querySelector<HTMLElement>("[data-taxonomy-index]");
+    if (!root || root.dataset.ready) return;
+    root.dataset.ready = "true";
+    type Group = "primary" | "secondary" | "cross";
+    const state: Record<Group, string> = { primary: "", secondary: "", cross: "" };
+    const displayButtons = [...root.querySelectorAll<HTMLButtonElement>("[data-display]")];
+    let display = "list";
+    function setDisplay(value: string) {
+      display = ["list", "titles", "cards", "wall"].includes(value) ? value : "list";
+      root!.querySelector<HTMLElement>("[data-results-display]")!.dataset.resultsDisplay = display;
+      for (const button of displayButtons) button.setAttribute("aria-pressed", String(button.dataset.display === display));
+    }
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>("[data-group]")];
+    const sections = [...root.querySelectorAll<HTMLDetailsElement>("[data-filter-group]")];
+    const mobile = matchMedia("(max-width: 760px)");
+    const rows = [...root.querySelectorAll<HTMLElement>("[data-index-item]")].map(element => ({ element, item: JSON.parse(element.dataset.item!) as { primary: string; secondary: string; cross: string[] } }));
+    const branches = [...root.querySelectorAll<HTMLButtonElement>("[data-branch-toggle]")].map(toggle => {
+      const container = toggle.closest<HTMLElement>(".tag-branch")!;
+      const parent = container.querySelector<HTMLButtonElement>("[data-group]")!;
+      const children = document.getElementById(toggle.getAttribute("aria-controls")!)!;
+      return { toggle, parent, children };
+    });
+    function openBranch(target: typeof branches[number], open: boolean) {
+      for (const branch of branches) {
+        if (branch.parent.dataset.group !== target.parent.dataset.group) continue;
+        const expanded = branch === target && open;
+        branch.children.hidden = !expanded;
+        branch.toggle.setAttribute("aria-expanded", String(expanded));
+        branch.toggle.textContent = expanded ? "▼" : "▶";
+      }
+    }
+    function readUrl() {
+      const params = new URL(location.href).searchParams;
+      setDisplay(params.get("display") || "list");
+      for (const group of Object.keys(state) as Group[]) {
+        const value = params.get(group) || "";
+        state[group] = buttons.some(b => b.dataset.group === group && b.dataset.value === value) ? value : "";
+      }
+    }
+    function update(save = true) {
+      const secondaryEnabled = ["", "artifact", "experiment", "collection"].includes(state.primary);
+      const allowedSecondary = (value: string) => !value || (secondaryEnabled && (state.primary === "collection" ? value === "playlist" : !state.primary || value !== "playlist"));
+      if (!secondaryEnabled || !allowedSecondary(state.secondary)) state.secondary = "";
+      const secondarySection = sections.find(s => s.dataset.filterGroup === "secondary")!;
+      secondarySection.hidden = !secondaryEnabled;
+      for (const button of buttons.filter(b => b.dataset.group === "secondary")) {
+        const value = button.dataset.value!;
+        button.hidden = !allowedSecondary(value) || (!!value && !rows.some(({item}) => matchesTag("primary", state.primary, [item.primary]) && matchesTag("secondary", value, [item.secondary])));
+        button.disabled = !!value && !rows.some(({item}) => matchesTag("primary", state.primary, [item.primary]) && matchesTag("secondary", value, [item.secondary]));
+      }
+      for (const branch of branches) {
+        const hasChildren = [...branch.children.querySelectorAll<HTMLButtonElement>("[data-group]")].some(button => !button.hidden);
+        branch.toggle.hidden = !hasChildren;
+        if (!hasChildren) {
+          branch.children.hidden = true;
+          branch.toggle.setAttribute("aria-expanded", "false");
+          branch.toggle.textContent = "▶";
+        }
+      }
+      for (const branch of root!.querySelectorAll<HTMLElement>(".tag-branch")) {
+        const parent = branch.querySelector<HTMLButtonElement>(":scope > button[data-group]")!;
+        branch.hidden = parent.hidden;
+      }
+      for (const label of root!.querySelectorAll<HTMLElement>("[data-selection-label]")) {
+        const selected = state[label.dataset.selectionLabel as Group];
+        label.textContent = selected ? `· ${selected}` : "";
+      }
+      let count = 0;
+      for (const {element, item} of rows) {
+        element.hidden = !matchesTag("primary", state.primary, [item.primary]) || !matchesTag("secondary", state.secondary, [item.secondary]) || !matchesTag("cross", state.cross, item.cross);
+        if (!element.hidden) count++;
+      }
+      for (const button of buttons) button.setAttribute("aria-pressed", String(state[button.dataset.group as Group] === button.dataset.value));
+      root!.querySelector("[data-result-count]")!.textContent = `${count} of ${rows.length} entries`;
+      root!.querySelector<HTMLElement>("[data-empty]")!.hidden = count > 0;
+      if (save) {
+        const url = new URL(location.href); url.search = "";
+        if (display !== "list") url.searchParams.set("display", display);
+        for (const [key,value] of Object.entries(state)) if (value) url.searchParams.set(key,value);
+        history.replaceState(history.state,"",url);
+      }
+      for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-preview-link]")) {
+        const target = new URL(link.href);
+        target.search = "";
+        for (const [key,value] of Object.entries(state)) if (value) target.searchParams.set(key,value);
+        link.href = target.href;
+      }
+    }
+    const events = new AbortController();
+    for (const button of displayButtons) button.addEventListener("click", () => {
+      setDisplay(button.dataset.display!);
+      update();
+    }, { signal: events.signal });
+    function adjustSections() {
+      for (const section of sections) {
+        if (root!.dataset.view === "proposal") {
+          section.open = section.dataset.filterGroup !== "cross" || !!state[section.dataset.filterGroup as Group];
+        } else section.open = root!.dataset.view !== "margin" || !mobile.matches || section.dataset.filterGroup === "primary" || !!state[section.dataset.filterGroup as Group];
+      }
+    }
+    for (const section of sections) section.querySelector("summary")!.addEventListener("click", event => {
+      const expandable = (root!.dataset.view === "proposal" && section.dataset.filterGroup === "cross") || (root!.dataset.view === "margin" && mobile.matches);
+      if (!expandable) event.preventDefault();
+    }, { signal: events.signal });
+    for (const arrow of root.querySelectorAll<HTMLButtonElement>("[data-scroll]")) arrow.addEventListener("click", () => {
+      const rail = arrow.closest("details")!.querySelector<HTMLElement>(".filter-list")!;
+      rail.scrollBy({ left: Number(arrow.dataset.scroll) * rail.clientWidth * .7, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+    }, { signal: events.signal });
+    for (const branch of branches) branch.toggle.addEventListener("click", () => {
+      openBranch(branch, branch.children.hidden);
+    }, { signal: events.signal });
+    for (const button of buttons) button.addEventListener("click", event => {
+      if (button.classList.contains("section-all")) { event.preventDefault(); event.stopPropagation(); }
+      const group = button.dataset.group as Group;
+      const value = button.dataset.value!;
+      state[group] = state[group] === value ? "" : value;
+      update();
+    }, { signal: events.signal });
+    root.querySelector("[data-clear]")!.addEventListener("click", () => {
+      state.primary = state.secondary = state.cross = "";
+      update();
+      for (const list of root.querySelectorAll<HTMLElement>(".filter-list")) list.scrollTo({ left: 0, top: 0, behavior: "instant" });
+    }, { signal: events.signal });
+    window.addEventListener("popstate", () => { readUrl(); update(false); }, { signal: events.signal });
+    document.addEventListener("astro:before-swap", () => { events.abort(); }, { once: true });
+    readUrl(); update(); adjustSections();
+    for (const branch of branches) {
+      const selected = state[branch.parent.dataset.group as Group];
+      if (selected !== branch.parent.dataset.value && tagPath(branch.parent.dataset.group!, selected).includes(branch.parent.dataset.value!)) openBranch(branch, true);
+    }
+  }
+  initializeTaxonomyIndex();
+  document.addEventListener("astro:page-load", initializeTaxonomyIndex);
+</script>

@@ -7,8 +7,8 @@
   grid-template-columns:
     minmax(0, 1fr)
     auto;
-  align-items: start;
-  gap: 1.25rem 2rem;
+  align-items: baseline;
+  gap: 0.55rem 2rem;
 
   margin-top: 2rem;
   padding-block: 1.4rem 2.5rem;
@@ -32,12 +32,12 @@
 }
 
 .site-footer__identity {
-  justify-self: end;
+  display: contents;
   text-align: right;
 }
 
 .site-footer .site-footer__name {
-  margin-bottom: 0.55rem;
+  justify-self: end;
   color: var(--ink);
   font-family:
     "Basteleur",
@@ -58,6 +58,8 @@
 }
 
 .site-footer__links {
+  grid-column: 1 / -1;
+  justify-self: end;
   display: grid;
   grid-template-columns:
     max-content

@@ -3,12 +3,14 @@ interface Props {
   title: string;
   subtitle?: string;
   introduction?: string;
+  headingLevel?: "h1" | "h2";
 }
 
 const {
   title,
   subtitle,
   introduction,
+  headingLevel: Heading = "h1",
 } = Astro.props;
 
 const introductionLines = introduction
@@ -21,7 +23,7 @@ const introductionLines = introduction
 
 <header class:list={["section-page-header", { "section-page-header--controls": Astro.slots.has("controls") }]}>
   <div class="section-page-header__heading">
-    <h1>
+    <Heading>
       <span class="section-page-header__title">
         {title}
       </span>
@@ -31,7 +33,7 @@ const introductionLines = introduction
           {subtitle}
         </span>
       )}
-    </h1>
+    </Heading>
   </div>
 
   <slot name="controls" />

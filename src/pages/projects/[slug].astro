@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import ProjectContents from "../../components/ProjectContents.astro";
+import MusicProjectContents from "../../components/MusicProjectContents.astro";
 import ComicGallery from "../../components/ComicGallery.astro";
 import SiteLayout from "../../layouts/SiteLayout.astro";
 import { getProjectContents, getSiteData } from "../../lib/content";
@@ -40,7 +41,7 @@ const ungrouped = mainEntries.filter((entry) => !entry.data.projects.find((relat
   <article data-project={project.data.id}>
     <ProjectHeader project={project} />
 
-      {project.data.id === "fumettonzi" ? <ComicGallery entries={contents} initialDisplay="mixtape" /> : <div
+      {project.data.id === "symphojingles" ? <MusicProjectContents project={project} entries={contents} /> : project.data.id === "fumettonzi" ? <ComicGallery entries={contents} initialDisplay="mixtape" /> : <div
         class={
           project.data.roadmap.length > 0 || sidebarEntries.length > 0
             ? "project-page-sections project-page-sections--with-growing"

@@ -6,7 +6,7 @@ summary: "Stemmi araldeggianti che combinano animali, vaccini e giochi di parole
 stage: full-grown
 draft: false
 projectsIndexMode: collapsed
-order: 6
+order: 7
 subjects: []
 tags: []
 related: []

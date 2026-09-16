@@ -98,7 +98,13 @@ export const artifactSchema =
       "image",
       "font",
       "notes",
+      "audio",
     ]),
+
+    audio: z.object({
+      translatedTitle: z.string().min(1).optional(),
+      production: z.string().min(1).optional(),
+    }).optional(),
 
     primaryAsset: z
       .string()

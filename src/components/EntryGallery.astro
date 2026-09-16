@@ -15,6 +15,7 @@ import { withBase } from "../lib/urls";
 
 import { Image } from "astro:assets";
 import CollectionVisual from "./collections/CollectionVisual.astro";
+import PlaylistStrip from "./collections/PlaylistStrip.astro";
 import {
   isCollectionEntry,
   collectionKindLabels,
@@ -29,12 +30,14 @@ interface Props {
   entries: GalleryEntry[];
   variant: "living-room" | "kitchen";
   ariaLabel: string;
+  borderless?: boolean;
 }
 
 const {
   entries,
   variant,
   ariaLabel,
+  borderless = true,
 } = Astro.props;
 
 const languageLabel = (
@@ -48,6 +51,7 @@ const languageLabel = (
 <section
   class="entry-gallery"
   data-variant={variant}
+  data-borderless={borderless || undefined}
   aria-label={ariaLabel}
 >
   <ol class="entry-gallery__grid">
@@ -96,7 +100,8 @@ const languageLabel = (
             : undefined;
 
         return (
-          <li class="entry-gallery__item">
+          <li class="entry-gallery__item" data-entry-kind={entry.collection === "fieldNotes" ? entry.data.entryKind : undefined}
+            style={entry.collection === "fieldNotes" ? { "--entry-gallery-background": entry.data.entryKind === "collection" ? "color-mix(in srgb, #fffdf5 96%, var(--warm))" : entry.data.entryKind === "site-note" ? "color-mix(in srgb, #fffdf5 96%, var(--resident))" : "#fffdf5" } : undefined}>
             <a
               class="entry-gallery__card"
               href={withBase(
@@ -105,8 +110,9 @@ const languageLabel = (
             >
               <span class="entry-gallery__topline">
                 <span class="meta">
-                  {labelForEntry(entry)}
-                  {collection && (" · " + collectionKindLabels[collection.collectionKind])}
+                  {collection?.collectionKind === "playlist"
+                    ? "Playlists"
+                    : <>{labelForEntry(entry)}{collection && (" · " + collectionKindLabels[collection.collectionKind])}</>}
                 </span>
 
                 <span class="meta">
@@ -118,7 +124,10 @@ const languageLabel = (
                 {title}
               </h2>
 
-              {collection?.preview && collection.preview.type !== "none" && (
+              {collection?.collectionKind === "playlist" && (
+                <PlaylistStrip items={collection.items} dynamic />
+              )}
+              {collection?.collectionKind !== "playlist" && collection?.preview && collection.preview.type !== "none" && (
                 <span class="entry-gallery__collection-preview">
                   <CollectionVisual visual={collection.preview} title={title} />
                 </span>
@@ -330,6 +339,31 @@ const languageLabel = (
       var(--entry-gallery-accent);
 
     outline-offset: 3px;
+  }
+
+  /* Preserve card dimensions while removing all decorative frame layers. */
+  .entry-gallery[data-borderless] .entry-gallery__card {
+    border-color: transparent;
+    box-shadow: none;
+    background: var(--entry-gallery-background, #fffdf5);
+  }
+
+
+  .entry-gallery .meta {
+    color: var(--muted);
+    font-size: 0.52rem;
+  }
+
+  .entry-gallery .entry-gallery__card {
+    padding: 0.65rem 0.8rem;
+  }
+
+  .entry-gallery .entry-gallery__title {
+    margin-top: 0.45rem;
+  }
+
+  .entry-gallery[data-borderless] .entry-gallery__card::before {
+    content: none;
   }
 
   .entry-gallery__topline {

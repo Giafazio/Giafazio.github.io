@@ -6,7 +6,7 @@ summary: A digital typeface developed from handwriting, with many ligatures and 
 stage: seed
 draft: false
 projectsIndexMode: collapsed
-order: 5
+order: 6
 subjects: []
 tags: []
 related: []

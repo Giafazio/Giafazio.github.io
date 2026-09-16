@@ -1,5 +1,6 @@
 import gamesTitleTile from
   "../assets/navigation/tiles/maio1_8.png";
+import musicTitleTile from "../assets/navigation/tiles/maio1_4.png";
 
 import portfolioTitleTile from
   "../assets/navigation/tiles/maio1_9.png";
@@ -30,6 +31,7 @@ import mathNotesTitleTile from
 
 const projectTitleTiles:
   Record<string, string> = {
+    "symphojingles": musicTitleTile.src,
     "games-and-riddles":
       gamesTitleTile.src,
 

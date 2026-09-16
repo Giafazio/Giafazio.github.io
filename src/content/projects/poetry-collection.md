@@ -11,7 +11,7 @@ contentGroups:
     title: Poesie
   - id: traduzioni
     title: Traduzioni
-order: 5
+order: 6
 subjects: []
 tags: []
 related: []

@@ -1,0 +1,112 @@
+---
+import type { ArtifactEntry } from "../lib/content";
+import { routeForEntry } from "../lib/content";
+import { withBase } from "../lib/urls";
+interface Props { artifact: ArtifactEntry; detail?: boolean; tile: string; }
+const { artifact, detail = false, tile } = Astro.props;
+const pieceUrl = withBase(routeForEntry(artifact));
+const Heading = detail ? "h1" : "h3";
+---
+      <section class:list={["music-piece", !detail && "music-piece--index"]} aria-labelledby={`title-${artifact.data.id}`} style={`--music-tile: url("${tile}")`}>
+        <div class="music-heading">
+        <Heading id={`title-${artifact.data.id}`} class:list={[detail && "artifact-detail-heading__title"]}>{detail ? artifact.data.title : <a href={pieceUrl}>{artifact.data.title}</a>}</Heading>
+        {detail && <p class="translation" lang="en">{artifact.data.audio?.translatedTitle}</p>}
+        </div>
+        <div class="music-player" data-music-player>
+          <audio hidden preload="none" data-src={withBase(artifact.data.primaryAsset!)} aria-label={artifact.data.title}></audio>
+          <noscript><audio controls preload="none" src={withBase(artifact.data.primaryAsset!)} aria-label={artifact.data.title}></audio></noscript>
+          <div class="music-controls" hidden>
+            <button type="button" data-play aria-label="Riproduci"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path data-play-icon fill="currentColor" d="M8 4v16l12-8z" /></svg></button>
+            <button type="button" data-restart aria-label="Torna all’inizio"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M4 4h3v16H4zM20 4v16L8 12z" /></svg></button>
+            <div class="welcome-enthusiasm__bar music-seek" style="--enthusiasm-progress: 0%">
+              <input class="welcome-enthusiasm__range" type="range" min="0" max="100" value="0" step="0.1" aria-label="Posizione nel brano" disabled />
+            </div>
+            <span class="time" aria-live="off">0:00 / —:—</span>
+          </div>
+          <p data-error role="status" hidden>Non è stato possibile riprodurre l’audio. Riprova.</p>
+        </div>
+        {detail && <div class="article-body">
+<p class="meta">{artifact.data.stage} · {artifact.data.audio?.production}</p>
+<slot />
+        </div>}
+      </section>
+
+<style>
+  .music-piece { max-width: 48rem; }
+  h3 { font-family: "Spectral", serif; font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: .25rem; }
+  .music-piece :global(.music-credits) { margin-inline: 0; text-align: left; font-style: normal; }
+  .music-player { margin-block: 1.5rem; }
+  audio { width: 100%; }
+  .music-controls:not([hidden]) { display: flex; align-items: center; gap: .65rem; }
+  button { display: grid; place-items: center; padding: 0; flex: 0 0 2.75rem; height: 2.75rem; border: 3px solid var(--frame-main); border-radius: 0; background: var(--music-tile) repeat; color: white; cursor: pointer; box-shadow: inset 0 0 0 1px #ffffff70; }
+  button:active { transform: translateY(1px); }
+  button svg { vertical-align: middle; filter: drop-shadow(0 0 3px #000); }
+  button:hover svg { filter: drop-shadow(0 0 3px white); }
+  .music-seek { flex: 1; min-width: 0; width: auto; transform: none; }
+  .time { font-variant-numeric: tabular-nums; white-space: nowrap; font-size: .85rem; }
+  .translation { font-family: "Spectral", serif; font-style: italic; margin-top: .25rem; }
+  @media(max-width: 480px) { .music-controls:not([hidden]) { flex-wrap: wrap; } .time { width: 100%; text-align: right; } }
+  .music-piece--index { container-type: inline-size; max-width: none; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(.5rem, 3cqi, 3rem); align-items: center; }
+  .music-piece--index .music-heading { min-width: 0; }
+  .music-piece--index h3 { margin-top: 0; }
+  .music-piece--index .music-player { min-width: 0; margin: 0; }
+  @container(max-width: 600px) {
+    .music-piece--index h3 { font-size: 1.2rem; }
+    .music-piece--index .music-controls:not([hidden]) { display: grid; grid-template-columns: 1.75rem 1.75rem minmax(0, 1fr); gap: .35rem; }
+    .music-piece--index .music-seek { grid-column: 1 / -1; grid-row: 1; }
+    .music-piece--index button { width: 1.75rem; height: 1.75rem; padding: 0; border-width: 2px; }
+    .music-piece--index button svg { width: 15px; height: 15px; }
+    .music-piece--index .time { font-size: .65rem; width: auto; }
+  }
+  @container(max-width: 300px) {
+    .music-piece--index .music-controls:not([hidden]) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .music-piece--index .time { grid-column: 1 / -1; text-align: right; }
+  }
+</style>
+
+<script>
+  function initializeMusic() {
+    document.querySelectorAll<HTMLElement>("[data-music-player]").forEach((root) => {
+      if (root.dataset.ready) return;
+      root.dataset.ready = "true";
+      const audio = root.querySelector("audio")!;
+      const controls = root.querySelector<HTMLElement>(".music-controls")!;
+      const play = root.querySelector<HTMLButtonElement>("[data-play]")!;
+      const restart = root.querySelector<HTMLButtonElement>("[data-restart]")!;
+      const seek = root.querySelector<HTMLInputElement>("input")!;
+      const time = root.querySelector<HTMLElement>(".time")!;
+      const error = root.querySelector<HTMLElement>("[data-error]")!;
+      const format = (seconds: number) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
+      const update = () => {
+        const ready = Number.isFinite(audio.duration) && audio.duration > 0;
+        seek.disabled = !ready;
+        seek.value = ready ? String(audio.currentTime / audio.duration * 100) : "0";
+        seek.parentElement!.style.setProperty("--enthusiasm-progress", `${seek.value}%`);
+        time.textContent = `${format(audio.currentTime)} / ${ready ? format(audio.duration) : "—:—"}`;
+        seek.setAttribute("aria-valuetext", time.textContent);
+        play.setAttribute("aria-label", audio.paused ? "Riproduci" : "Pausa");
+        play.querySelector("path")!.setAttribute("d", audio.paused ? "M8 4v16l12-8z" : "M6 4h4v16H6zM14 4h4v16h-4z");
+      };
+      play.addEventListener("click", async () => {
+        error.hidden = true;
+        if (!audio.paused) audio.pause();
+        else {
+          // Assign only after a user gesture, also after Astro navigation.
+          if (!audio.hasAttribute("src")) audio.src = audio.dataset.src!;
+          try { await audio.play(); } catch { error.hidden = false; }
+        }
+      });
+      restart.addEventListener("click", () => { if (audio.readyState) audio.currentTime = 0; });
+      seek.addEventListener("input", () => { if (Number.isFinite(audio.duration)) audio.currentTime = Number(seek.value) / 100 * audio.duration; });
+      ["timeupdate", "loadedmetadata", "play", "pause", "ended"].forEach(event => audio.addEventListener(event, update));
+      audio.addEventListener("error", () => { error.hidden = false; });
+      // The noscript player provides native controls when JavaScript is disabled.
+      audio.controls = false;
+      audio.hidden = true;
+      controls.hidden = false;
+      document.addEventListener("astro:before-swap", () => audio.pause(), { once: true });
+    });
+  }
+  initializeMusic();
+  document.addEventListener("astro:page-load", initializeMusic);
+</script>

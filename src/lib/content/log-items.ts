@@ -39,7 +39,7 @@ const MANUAL_LOG_TYPE_LABELS = {
 interface AutomaticLogPresentation {
   type: AutomaticLogType;
   typeLabel: string;
-  message: string;
+  message: string | null;
 }
 
 function automaticLogPresentation(
@@ -81,6 +81,8 @@ function automaticLogPresentation(
 
     case "artifacts":
       switch (entry.data.artifactKind) {
+        case "audio":
+          return { type: "new-artifact", typeLabel: "Audio", message: "New music piece added!" };
         case "crossword":
         case "game":
           return {
@@ -146,6 +148,8 @@ function defaultLogTypeLabel(
 
     case "artifacts":
       switch (entry.data.artifactKind) {
+        case "audio":
+          return "Audio";
         case "crossword":
         case "game":
           return "Games";

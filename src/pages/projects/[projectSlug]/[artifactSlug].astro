@@ -5,6 +5,9 @@ import {
 
 import ArtifactDetail from
   "../../../components/ArtifactDetail.astro";
+import MusicPiece from "../../../components/MusicPiece.astro";
+import ProjectTitleButton from "../../../components/ProjectTitleButton.astro";
+import musicTile from "../../../assets/navigation/tiles/maio1_4.png";
 
 import SiteLayout from
   "../../../layouts/SiteLayout.astro";
@@ -132,12 +135,17 @@ const { Content } =
   currentSection="projects"
   lang={artifact.data.language ?? "en"}
 >
-  <ArtifactDetail
+  {artifact.data.artifactKind === "audio" ? <>
+    <header class="project-detail-header project-detail-header--project">
+      <div class="project-detail-header__heading"><ProjectTitleButton project={project} variant="heading" /></div>
+    </header>
+    <MusicPiece artifact={artifact} detail tile={musicTile.src}><Content /></MusicPiece>
+  </> : <ArtifactDetail
     artifact={artifact}
     project={project}
     previousArtifact={previousArtifact}
     nextArtifact={nextArtifact}
   >
     <Content />
-  </ArtifactDetail>
+  </ArtifactDetail>}
 </SiteLayout>

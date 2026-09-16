@@ -6,7 +6,7 @@ summary: "Mathematical solutions, course notes, teaching materials, and annotate
 stage: growing
 draft: false
 projectsIndexMode: expanded
-order: 9
+order: 10
 subjects:
   - mathematics
 tags:

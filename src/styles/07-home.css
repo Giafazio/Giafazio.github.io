@@ -1419,9 +1419,9 @@
 }
 
 .home-featured-project__preview img {
+  display: block;
   width: 100%;
-  height:
-    clamp(9rem, 18vw, 14rem);
+  height: auto;
 
   object-fit: contain;
 }

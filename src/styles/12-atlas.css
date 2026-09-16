@@ -8,6 +8,11 @@
   margin-bottom: 0.75rem;
 }
 
+.filter-panel.filter-panel--headed {
+  border-top: 0;
+  padding-top: 0;
+}
+
 .filter-panel__group + .filter-panel__group {
   margin-top: 1rem;
 }

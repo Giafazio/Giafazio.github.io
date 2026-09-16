@@ -1,0 +1,65 @@
+---
+import { getImage } from "astro:assets";
+import type { PlaylistItem } from "../../content/schemas/collections";
+interface Props { items: PlaylistItem[]; dynamic: boolean }
+const { items, dynamic } = Astro.props;
+const images = await Promise.all(items.flatMap(item => item.visual.type === "image" ? [item.visual] : []).map(async visual => ({
+  src: (await getImage({ src: visual.asset, width: Math.min(200, visual.asset.width), format: "webp" })).src,
+  position: visual.position,
+})));
+---
+<playlist-strip data-images={dynamic ? JSON.stringify(images) : undefined} aria-hidden="true">
+  {images.slice(0, 3).map(image => <span><img src={image.src} alt="" width="200" height="200" style={{ objectPosition: image.position }} /></span>)}
+</playlist-strip>
+
+<style>
+  playlist-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.3rem; margin-bottom: 0.9rem; }
+  playlist-strip > span { display: block; position: relative; aspect-ratio: 1; overflow: hidden; }
+  playlist-strip img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+</style>
+
+<script>
+  class PlaylistStrip extends HTMLElement {
+    private cleanup?: () => void;
+    connectedCallback() {
+      this.cleanup?.();
+      if (!this.dataset.images) return;
+      const images: { src: string; position: string }[] = JSON.parse(this.dataset.images);
+      if (images.length <= 3) return;
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+      const card = this.closest("a");
+      let stopped = false;
+      let busy = false;
+      let slot = 0;
+      let next = 3;
+      let animation: Animation | undefined;
+      let incoming: HTMLImageElement | undefined;
+      // Decode before displaying; late completions cannot update a departed page.
+      const timer = window.setInterval(async () => {
+        if (busy || reduced.matches || document.hidden || card?.matches(":hover, :focus-within")) return;
+        busy = true;
+        const frame = this.children[slot];
+        const old = frame.querySelector("img")!;
+        const fresh = old.cloneNode(false) as HTMLImageElement;
+        fresh.src = images[next].src;
+        fresh.style.objectPosition = images[next].position;
+        try {
+          await fresh.decode();
+          if (stopped || reduced.matches || document.hidden || card?.matches(":hover, :focus-within")) return;
+          incoming = fresh;
+          frame.append(fresh);
+          animation = fresh.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 450, easing: "ease-in-out" });
+          await animation.finished;
+          old.remove();
+          incoming = undefined;
+          slot = (slot + 1) % 3;
+          next = (next + 1) % images.length;
+        } catch { fresh.remove(); }
+        finally { busy = false; }
+      }, 3000);
+      this.cleanup = () => { stopped = true; clearInterval(timer); animation?.cancel(); incoming?.remove(); };
+    }
+    disconnectedCallback() { this.cleanup?.(); }
+  }
+  if (!customElements.get("playlist-strip")) customElements.define("playlist-strip", PlaylistStrip);
+</script>

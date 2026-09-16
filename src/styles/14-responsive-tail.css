@@ -31,13 +31,8 @@
   }
 
   .site-footer {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-
-  .site-footer__identity {
-    justify-self: start;
-    text-align: left;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: 1rem;
   }
 
   .site-footer p + p {
@@ -46,6 +41,19 @@
 }
 
 @media (max-width: 480px) {
+  .site-footer {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .site-footer__links {
+    max-width: 100%;
+    grid-template-columns: max-content minmax(0, 1fr);
+  }
+
+  .site-footer__value {
+    white-space: normal;
+  }
+
   .section-heading {
     display: block;
   }

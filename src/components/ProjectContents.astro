@@ -73,6 +73,7 @@ const localContents = entries.map(
     return {
       id: entry.data.id,
       isArtifact: "artifactKind" in entry.data,
+      isNote: entry.collection === "fieldNotes" && entry.data.entryKind === "site-note",
       translation: "artifactKind" in entry.data && entry.data.translation,
       medium: "artifactKind" in entry.data ? entry.data.medium : undefined,
 
@@ -96,7 +97,7 @@ const localContents = entries.map(
       preview:
         "artifactKind" in entry.data
           ? entry.data.artifactKind === "crossword"
-            ? entry.data.crossword?.gridAsset
+            ? entry.data.previewAsset ?? entry.data.crossword?.gridAsset
             : entry.data.previewAsset
           : undefined,
 
@@ -223,6 +224,7 @@ const isScrollableGallery =
                 "project-content-card__title",
                 {
                   "project-content-card__title--artifact": content.isArtifact,
+                  "project-content-card__title--note": "isNote" in content && content.isNote,
                   "project-content-card__title--repository":
                     content.kind === "repository",
 
