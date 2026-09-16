@@ -8,6 +8,10 @@ const base = process.env.TEST_BASE_URL || "http://127.0.0.1:4321";
   try {
     for (const width of [1440, 1000, 820, 390]) {
       const page = await browser.newPage({ viewport: { width, height: 900 } });
+      await page.goto(`${base}/`);
+      const homeTitle = page.locator('.home-featured-project .project-title-button').first();
+      const homeTitleSize = await homeTitle.evaluate(e => parseFloat(getComputedStyle(e).fontSize));
+      assert(homeTitleSize <= (width <= 760 ? 22 : 28), 'Featured titles must retain their own responsive sizing');
       await page.goto(`${base}/projects/`);
       assert.match(await page.locator('a[href$="/mini-cruci-1/"] img').getAttribute('src'), /mini-cruci-1-gallery\.webp$/);
       const title = page.locator('a[href$="/field-notes/cruciverba/"] .project-content-card__title');
