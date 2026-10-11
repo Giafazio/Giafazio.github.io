@@ -6,3 +6,5 @@ tmp/
 .DS_Store
 *.log
 /AGENTS.md
+playwright-report/
+test-results/

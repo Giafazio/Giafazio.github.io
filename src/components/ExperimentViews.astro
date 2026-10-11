@@ -1,13 +1,16 @@
 ---
+import type { ProjectEntry } from "../lib/content";
 import EntryGallery from "./EntryGallery.astro";
 import type { ArtifactEntry, ExperimentEntry } from "../lib/content";
-interface Props { entries: (ArtifactEntry | ExperimentEntry)[]; }
-const { entries } = Astro.props;
+interface Props {
+  projects: readonly ProjectEntry[];
+  entries: (ArtifactEntry | ExperimentEntry)[]; }
+const { projects, entries } = Astro.props;
 ---
 <div data-experiment-views>
-  <div data-static-view hidden><EntryGallery entries={entries} variant="kitchen" ariaLabel="Experiments, Fragments and standalone Artifacts" /></div>
+  <div data-static-view hidden><EntryGallery projects={projects} entries={entries} variant="kitchen" ariaLabel="Experiments, Fragments and standalone Artifacts" /></div>
   <div data-moving-view>
-    <div class="experiment-drift" data-experiment-drift><EntryGallery entries={entries} variant="kitchen" borderless={false} ariaLabel="Experiments, Fragments and standalone Artifacts in movimento" /></div>
+    <div class="experiment-drift" data-experiment-drift><EntryGallery projects={projects} entries={entries} variant="kitchen" borderless={false} ariaLabel="Experiments, Fragments and standalone Artifacts in movimento" /></div>
   </div>
 </div>
 <style>
@@ -150,11 +153,21 @@ const { entries } = Astro.props;
 
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const hover = matchMedia("(hover: hover)");
-    const cards = [...root.querySelectorAll<HTMLElement>(".entry-gallery__card")].map((element, index) => ({ element, index, time: index * 3.7 }));
+    const cards = [...root.querySelectorAll<HTMLElement>(".entry-gallery__card")].map((element, index) => ({ element, index, time: index * 3.7, lift: 0, tilt: 0 }));
+    // These CSS values change with layout, so read them on setup/resize, not each frame.
+    function readCardStyles() {
+      for (const card of cards) {
+        const style = getComputedStyle(card.element);
+        card.lift = parseFloat(style.getPropertyValue("--lift")) || 0;
+        card.tilt = parseFloat(style.getPropertyValue("--tilt")) || 0;
+      }
+    }
+    readCardStyles();
     let frame: number | null = null;
     let previous = 0;
     let disposed = false;
-    const canAnimate = () => !disposed && !movingView.hidden && !reduced.matches && !document.hidden;
+    let inViewport = false;
+    const canAnimate = () => !disposed && inViewport && !movingView.hidden && !reduced.matches && !document.hidden;
 
     // Ogni oggetto accelera e rallenta con tempi propri; la pausa conserva la fase.
     function tick(now: number) {
@@ -181,9 +194,7 @@ const { entries } = Astro.props;
         const target = paused || hovered ? 0 : 1;
         const speed = 4 * (.65 + .7 * (1 + Math.sin(card.time / (3 + card.index * .4) + card.index)) / 2);
         card.time += dt * target * speed;
-        const style = getComputedStyle(card.element);
-        const lift = parseFloat(style.getPropertyValue("--lift")) || 0;
-        const tilt = parseFloat(style.getPropertyValue("--tilt")) || 0;
+        const { lift, tilt } = card;
         const t = card.time;
         const scale = innerWidth <= 550 ? .45 : 1;
 
@@ -209,14 +220,23 @@ const { entries } = Astro.props;
     }
 
     const onResize = () => {
+      readCardStyles();
       if (!disposed && !movingView.hidden && reduced.matches) renderCards(0);
     };
+    // The shared loop also governs the cow; neither runs outside the gallery.
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      if (disposed) return;
+      inViewport = entry.isIntersecting;
+      updateMotion();
+    }, { rootMargin: "64px" });
+    visibilityObserver.observe(root);
     document.addEventListener("visibilitychange", updateMotion);
     reduced.addEventListener("change", updateMotion);
     window.addEventListener("resize", onResize);
     updateMotion();
     document.addEventListener("astro:before-swap", () => {
       disposed = true;
+      visibilityObserver.disconnect();
       updateMotion();
       document.removeEventListener("visibilitychange", updateMotion);
       reduced.removeEventListener("change", updateMotion);

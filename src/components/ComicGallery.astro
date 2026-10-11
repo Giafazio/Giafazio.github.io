@@ -1,9 +1,12 @@
 ---
+import type { ProjectEntry } from "../lib/content";
 import ComicSquare from "./ComicSquare.astro";
 import { routeForEntry, type PublishableEntry } from "../lib/content";
 import { withBase } from "../lib/urls";
-interface Props { entries: PublishableEntry[]; initialDisplay: "mixtape" | "wall" }
-const { entries, initialDisplay } = Astro.props;
+interface Props {
+  projects: readonly ProjectEntry[];
+  entries: PublishableEntry[]; initialDisplay: "mixtape" | "wall" }
+const { projects, entries, initialDisplay } = Astro.props;
 const views = [{ id: "mixtape", title: "Mixtape" }, { id: "wall", title: "Record Wall" }];
 ---
 <section data-comic-gallery aria-label="Gallery">
@@ -15,7 +18,7 @@ const views = [{ id: "mixtape", title: "Mixtape" }, { id: "wall", title: "Record
     <ol class:list={["comic-preview", `comic-preview--${view.id}`]} data-panel={view.id} hidden={view.id !== initialDisplay} aria-label={view.title}>
       {entries.map((entry) => (
         <li>
-          <a href={withBase(routeForEntry(entry))}>
+          <a href={withBase(routeForEntry(entry, projects))}>
             {"previewAsset" in entry.data && entry.data.previewAsset && (
               view.id === "wall" ? <ComicSquare id={entry.data.id} src={entry.data.previewAsset} />
                 : <img src={withBase(entry.data.previewAsset)} alt="" loading="lazy" />

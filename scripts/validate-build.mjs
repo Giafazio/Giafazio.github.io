@@ -389,6 +389,61 @@ for (const output of forbiddenOutputs) {
   }
 }
 
+// Canonical e sitemap devono descrivere le stesse pagine pubbliche.
+const configuredSite = new URL(process.env.SITE_URL || "https://fabriziocaragiulo.com");
+function decodeXml(value) {
+  return value.replaceAll("&lt;", "<").replaceAll("&gt;", ">")
+    .replaceAll("&quot;", '"').replaceAll("&apos;", "'").replaceAll("&amp;", "&");
+}
+function attribute(tag, name) {
+  return tag.match(new RegExp('\\b' + name + '=["\']([^"\']*)["\']', 'i'))?.[1];
+}
+const canonicalPages = new Map();
+for (const file of relativeHtmlPaths) {
+  const html = readFileSync(join(distRoot, file), "utf8");
+  const links = [...html.matchAll(/<link\b[^>]*>/gi)]
+    .map(([tag]) => tag).filter(tag => attribute(tag, "rel") === "canonical");
+  const isRedirect = [...html.matchAll(/<meta\b[^>]*>/gi)]
+    .some(([tag]) => attribute(tag, "http-equiv")?.toLowerCase() === "refresh");
+  // Astro genera i propri canonical nei documenti di redirect.
+  // Questi documenti non sono pagine da inserire nella sitemap.
+  if (isRedirect) continue;
+  if (file === "404.html" || file.startsWith("previews/")) {
+    if (links.length) problems.add(file + " must not declare a canonical URL");
+    continue;
+  }
+  if (links.length !== 1) {
+    problems.add(file + " must declare exactly one canonical URL");
+    continue;
+  }
+  const raw = attribute(links[0], "href");
+  const path = configuredBase + file.replace(/(?:^|\/)index\.html$/, "/").replace(/^\//, "");
+  const expected = new URL(path, configuredSite).href;
+  if (!raw || decodeXml(raw) !== expected) {
+    problems.add(file + " has an unexpected canonical URL: " + raw);
+    continue;
+  }
+  canonicalPages.set(expected, file);
+}
+const sitemapFile = join(distRoot, "sitemap.xml");
+if (!existsSync(sitemapFile)) {
+  problems.add("missing required output: sitemap.xml");
+} else {
+  const xml = readFileSync(sitemapFile, "utf8");
+  if (!xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')) {
+    problems.add("sitemap.xml has an invalid namespace");
+  }
+  const urls = [...xml.matchAll(/<loc>([^<]*)<\/loc>/g)].map(([, url]) => decodeXml(url));
+  const sitemapUrls = new Set(urls);
+  if (sitemapUrls.size !== urls.length) problems.add("sitemap.xml contains duplicate URLs");
+  for (const url of sitemapUrls) {
+    if (!canonicalPages.has(url)) problems.add("sitemap.xml includes a noncanonical page: " + url);
+  }
+  for (const url of canonicalPages.keys()) {
+    if (!sitemapUrls.has(url)) problems.add("sitemap.xml is missing a canonical page: " + url);
+  }
+}
+
 if (problems.size > 0) {
   throw new Error(
     `Build validation failed:\n- ${
@@ -404,6 +459,6 @@ console.log(
     "BASE_PATH usage,",
     "required output groups,",
     "duplicate IDs,",
-    "and local-only URLs are correct.",
+    "local-only URLs, canonical URLs and sitemap are correct.",
   ].join(" "),
 );

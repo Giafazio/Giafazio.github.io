@@ -1,4 +1,5 @@
 ---
+import type { ProjectEntry } from "../lib/content";
 import HomeFeaturedCard from
   "./HomeFeaturedCard.astro";
 
@@ -7,6 +8,7 @@ import type {
 } from "../lib/homeFeatured";
 
 interface Props {
+  projects: readonly ProjectEntry[];
   items: HomeFeaturedItem[];
 }
 
@@ -19,7 +21,7 @@ type GallerySlide = {
   items: HomeFeaturedItem[];
 };
 
-const { items } = Astro.props;
+const { projects, items } = Astro.props;
 
 const slides: GallerySlide[] = [];
 
@@ -102,7 +104,7 @@ for (const item of items) {
                   `home-featured-item--${item.kind}`,
                 ]}
               >
-                <HomeFeaturedCard item={item} />
+                <HomeFeaturedCard projects={projects} item={item} />
               </div>
             ))
           }

@@ -26,6 +26,7 @@ import {
 } from "../lib/urls";
 
 interface Props {
+  projects: readonly ProjectEntry[];
   artifact: ArtifactEntry;
   project?: ProjectEntry;
   previousArtifact?: ArtifactEntry;
@@ -33,6 +34,7 @@ interface Props {
 }
 
 const {
+  projects,
   artifact,
   project,
   previousArtifact,
@@ -64,7 +66,7 @@ const sequenceImageSize = project?.data.artifactSequence && artifact.data.previe
   : undefined;
 
 function sequenceHref(entry: ArtifactEntry): string {
-  const href = withBase(routeForEntry(entry));
+  const href = withBase(routeForEntry(entry, projects));
   return entry.data.previewAsset && entry.data.showPreviewOnDetail !== false
     && !entry.data.crossword && !entry.data.fourWordsGame
     ? `${href}#artifact-image`

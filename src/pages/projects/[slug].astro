@@ -1,4 +1,5 @@
 ---
+import { routeForSiteContentEntry } from "../../lib/content";
 import type { CollectionEntry } from "astro:content";
 import ProjectContents from "../../components/ProjectContents.astro";
 import MusicProjectContents from "../../components/MusicProjectContents.astro";
@@ -14,15 +15,16 @@ export async function getStaticPaths() {
   const data = await getSiteData();
   return data.publicProjects.map((project) => ({
     params: { slug: project.data.slug },
-    props: { project },
+    props: { project, canonicalPath: routeForSiteContentEntry(project, data.publicProjects) },
   }));
 }
 
 interface Props {
+  canonicalPath: string;
   project: CollectionEntry<"projects">;
 }
 
-const { project } = Astro.props;
+const { project, canonicalPath } = Astro.props;
 const data = await getSiteData();
 const contents = getProjectContents(data, project.data.id);
 const sidebarIds = project.data.sidebarContentIds ?? [];
@@ -33,6 +35,7 @@ const ungrouped = mainEntries.filter((entry) => !entry.data.projects.find((relat
 ---
 
 <SiteLayout
+  canonicalPath={canonicalPath}
   title={project.data.title}
   description={project.data.summary}
   currentSection="projects"
@@ -41,7 +44,7 @@ const ungrouped = mainEntries.filter((entry) => !entry.data.projects.find((relat
   <article data-project={project.data.id}>
     <ProjectHeader project={project} />
 
-      {project.data.id === "symphojingles" ? <MusicProjectContents project={project} entries={contents} /> : project.data.id === "fumettonzi" ? <ComicGallery entries={contents} initialDisplay="mixtape" /> : <div
+      {project.data.id === "symphojingles" ? <MusicProjectContents projects={data.publicProjects} project={project} entries={contents} /> : project.data.id === "fumettonzi" ? <ComicGallery projects={data.publicProjects} entries={contents} initialDisplay="mixtape" /> : <div
         class={
           project.data.roadmap.length > 0 || sidebarEntries.length > 0
             ? "project-page-sections project-page-sections--with-growing"
@@ -52,7 +55,7 @@ const ungrouped = mainEntries.filter((entry) => !entry.data.projects.find((relat
         {groups.map((group) => (
           <section class="project-content-section" aria-labelledby={`group-${group.id}`}>
             <h2 class="project-page-section-title" id={`group-${group.id}`}>{group.title}</h2>
-            <ProjectContents
+            <ProjectContents projects={data.publicProjects}
               entries={mainEntries.filter((entry) => entry.data.projects.some((relation) => relation.id === project.data.id && relation.group === group.id))}
               projectId={project.data.id}
             />
@@ -66,7 +69,7 @@ const ungrouped = mainEntries.filter((entry) => !entry.data.projects.find((relat
             Contents
           </h2>
 
-          <ProjectContents
+          <ProjectContents projects={data.publicProjects}
             entries={ungrouped}
             repositoryPreview={project.data.id === "esperimenti-di-portafoglio" ? project.data.preview : undefined}
             externalContents={
@@ -112,7 +115,7 @@ const ungrouped = mainEntries.filter((entry) => !entry.data.projects.find((relat
             </aside>
           )
         }
-        {sidebarEntries.length > 0 && <ProjectContents entries={sidebarEntries} projectId={project.data.id} showSummary />}
+        {sidebarEntries.length > 0 && <ProjectContents projects={data.publicProjects} entries={sidebarEntries} projectId={project.data.id} showSummary />}
         </div>
       </div>}
 

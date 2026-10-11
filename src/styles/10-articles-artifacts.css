@@ -134,6 +134,22 @@
   letter-spacing: -0.015em;
 }
 
+.experiment-article--oracolo .article-header {
+  max-width: none;
+}
+
+.experiment-article--oracolo .article-header h1 {
+  text-align: center;
+  font-family: "Basteleur", serif;
+  font-weight: normal;
+}
+
+.experiment-article--oracolo .article-header .about-copy {
+  text-align: center;
+  margin-inline: auto;
+  font-size: 1rem;
+}
+
 .experiment-article--verse .article-header,
 .experiment-article--verse .article-body {
   width: min(100%, 34rem);

@@ -1,7 +1,0 @@
----
-import AtlasIndexPage from "../../../components/AtlasIndexPage.astro";
-export function getStaticPaths() {
-  return import.meta.env.DEV ? ["proposal", "fonts", "typography", "ribbons", "margin", "cabinet"].map(view => ({ params: { view } })) : [];
-}
----
-<AtlasIndexPage previewView={Astro.params.view} />

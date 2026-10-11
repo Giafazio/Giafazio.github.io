@@ -1,4 +1,5 @@
 ---
+import { routeForSiteContentEntry } from "../../lib/content";
 import {
   render,
 } from "astro:content";
@@ -26,15 +27,16 @@ export async function getStaticPaths() {
 
   return fieldNotesForDisplay(data).map((entry) => ({
     params: { slug: entry.data.slug },
-    props: { entry },
+    props: { entry, canonicalPath: routeForSiteContentEntry(entry, data.publicProjects) },
   }));
 }
 
 interface Props {
+  canonicalPath: string;
   entry: FieldNoteEntry;
 }
 
-const { entry } = Astro.props;
+const { entry, canonicalPath } = Astro.props;
 const note = isWrittenFieldNote(entry) ? entry.data : undefined;
 const { Content, headings } = await render(entry);
 
@@ -53,6 +55,7 @@ const isLongform =
 ---
 
 <SiteLayout
+  canonicalPath={canonicalPath}
   title={pageTitle}
   description={isCollectionEntry(entry) ? entry.data.summary : undefined}
   currentSection="field-notes"

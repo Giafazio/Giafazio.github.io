@@ -15,6 +15,7 @@ import type {
 import {
   validateSiteData,
 } from "./validation";
+import { validateIndexData } from "../../index/index-taxonomy";
 
 let siteDataPromise: Promise<SiteData> | undefined;
 
@@ -109,6 +110,7 @@ async function loadSiteData():
   };
 
   validateSiteData(data);
+  validateIndexData(data);
 
   return data;
 }

@@ -8,7 +8,12 @@
     "check": "astro check",
     "build": "astro check && astro build && node scripts/validate-build.mjs",
     "validate": "node scripts/validate-build.mjs",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test:routing": "node --experimental-strip-types --test tests/unit/routing.test.ts",
+    "test:taxonomy": "node --experimental-strip-types --test tests/unit/taxonomy.test.ts",
+    "test:browser": "npm run build && playwright test",
+    "test:browser:built": "playwright test",
+    "test:browser:report": "playwright show-report"
   },
   "dependencies": {
     "@fontsource-variable/alegreya": "^5.3.0",
@@ -28,6 +33,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
+    "@playwright/test": "1.63.0",
     "@types/node": "22.19.19",
     "typescript": "5.9.3"
   }

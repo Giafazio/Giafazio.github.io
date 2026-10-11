@@ -55,7 +55,6 @@
 }
 
 .project-card,
-.project-row,
 .list-row,
 .atlas-row {
   padding-top: 0.85rem;
@@ -73,23 +72,6 @@
   font-size: 0.91rem;
 }
 
-.project-row {
-  display: grid;
-  grid-template-columns: minmax(12rem, 0.42fr) minmax(0, 1fr);
-  gap: 1.5rem clamp(2rem, 5vw, 5rem);
-  padding-bottom: 2rem;
-}
-
-.project-row + .project-row {
-  margin-top: 1rem;
-}
-
-.project-row h2 {
-  margin-bottom: 0.35rem;
-}
-
-.project-contents,
-.log-list,
 .plain-list,
 .atlas-list {
   margin: 0;
@@ -97,8 +79,6 @@
   list-style: none;
 }
 
-.project-contents li,
-.log-list li,
 .plain-list li {
   display: grid;
   grid-template-columns: minmax(9rem, 0.35fr) minmax(0, 1fr);
@@ -108,13 +88,6 @@
 }
 
 
-.project-contents li:first-child {
-  border-top: 0;
-}
-
-
-.project-contents a,
-.log-list a,
 .plain-list a {
   font-family: var(--font-display);
   font-size: 1.14rem;

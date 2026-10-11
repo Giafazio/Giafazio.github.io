@@ -1,7 +1,5 @@
-export const tagParents: Record<string, Record<string, string>> = {
-  secondary: { "nursery-rhyme": "poem", crossword: "game", comic: "graphics" },
-  cross: { "mathematical-analysis": "mathematics", "set-theory": "mathematics", topology: "mathematics" },
-};
+import { tagParents } from "./taxonomy-rules.ts";
+export { tagParents } from "./taxonomy-rules.ts";
 
 export function tagPath(group: string, tag: string): string[] {
   const parent = tagParents[group]?.[tag];

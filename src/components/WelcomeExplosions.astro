@@ -26,6 +26,14 @@ const ravenSrcEn = publicAsset("/images/corvo-lessgo.gif");
     { position: "bottom-right-delayed", delay: 500 },
   ] as const;
 
+  type RavenFlight = {
+    delayElapsed: boolean;
+    requestVersion: number;
+    image?: HTMLImageElement;
+    overlay?: HTMLDivElement;
+    traveller?: HTMLDivElement;
+  };
+
   const initializeWelcomeExplosions = () => {
     const layers = document.querySelectorAll<HTMLElement>(
       "[data-welcome-explosions]",
@@ -49,7 +57,7 @@ const ravenSrcEn = publicAsset("/images/corvo-lessgo.gif");
 
       let lastLevel = range.valueAsNumber;
       let timers: number[] = [];
-      let flight: HTMLDivElement | undefined;
+      let flight: RavenFlight | undefined;
 
       /* Ancora la base visibile dei video alla linea di Featured. */
       const alignBaseline = () => {
@@ -70,44 +78,74 @@ const ravenSrcEn = publicAsset("/images/corvo-lessgo.gif");
         timers.forEach((timer) => window.clearTimeout(timer));
         timers = [];
         layer.replaceChildren();
-        flight?.remove();
+        flight?.overlay?.remove();
+        // Invalida anche le decodifiche ancora in corso, senza attendere la rete.
+        flight = undefined;
+      };
+
+      const startRavenFlight = (state: RavenFlight) => {
+        if (flight !== state || state.overlay || !state.delayElapsed || !state.image
+          || state.image.getAttribute("src") !== currentRavenSrc()
+          || !layer.isConnected || range.value !== range.max
+          || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        const overlay = document.createElement("div");
+        overlay.className = "welcome-raven-flight";
+        overlay.setAttribute("aria-hidden", "true");
+        // La traiettoria appartiene al contenitore: cambiare GIF non riavvia il volo.
+        const traveller = document.createElement("div");
+        traveller.className = "welcome-raven-flight__traveller";
+        traveller.append(state.image);
+        overlay.append(traveller);
+        traveller.addEventListener("animationend", () => {
+          overlay.remove();
+          if (flight === state) flight = undefined;
+        }, { once: true });
+        state.overlay = overlay;
+        state.traveller = traveller;
+        document.body.append(overlay);
+      };
+
+      const prepareRavenImage = async (state: RavenFlight) => {
+        const src = currentRavenSrc();
+        const version = ++state.requestVersion;
+        if (!src) return;
+        if (state.image?.getAttribute("src") === src) {
+          startRavenFlight(state);
+          return;
+        }
+
+        const image = new Image();
+        image.alt = "";
+        image.src = src;
+        try {
+          await image.decode();
+        } catch {
+          // Durante un cambio lingua conserva la GIF già visibile se la nuova fallisce.
+          return;
+        }
+        if (flight !== state || version !== state.requestVersion
+          || !layer.isConnected || range.value !== range.max) return;
+
+        state.image = image;
+        if (state.traveller) state.traveller.replaceChildren(image);
+        else startRavenFlight(state);
       };
 
       const scheduleRavenFlight = () => {
-        const ravenSrc = currentRavenSrc();
-        if (!ravenSrc || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-        // Carica la GIF durante l'attesa, solo quando l'effetto viene attivato.
-        const raven = new Image(540, 225);
-        raven.src = ravenSrc;
-        raven.alt = "";
-
+        if (!currentRavenSrc() || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const state: RavenFlight = { delayElapsed: false, requestVersion: 0 };
+        flight = state;
+        // Preparazione e pausa scenica procedono insieme; servono entrambe per partire.
+        void prepareRavenImage(state);
         timers.push(window.setTimeout(() => {
-          if (range.value !== range.max) return;
-
-          // La lingua può essere cambiata durante i 3,5 secondi di attesa.
-          const currentSrc = currentRavenSrc();
-          if (currentSrc && raven.getAttribute("src") !== currentSrc) {
-            raven.src = currentSrc;
-          }
-
-          const overlay = document.createElement("div");
-          overlay.className = "welcome-raven-flight";
-          overlay.setAttribute("aria-hidden", "true");
-          overlay.append(raven);
-          raven.addEventListener("animationend", () => overlay.remove(), {
-            once: true,
-          });
-          document.body.append(overlay);
-          flight = overlay;
+          state.delayElapsed = true;
+          startRavenFlight(state);
         }, 3500));
       };
 
       const updateRavenLanguage = () => {
-        const raven = flight?.querySelector("img");
-        const src = currentRavenSrc();
-        // Cambia soltanto la GIF: il volo eventualmente in corso continua.
-        if (raven && src && raven.getAttribute("src") !== src) raven.src = src;
+        if (flight) void prepareRavenImage(flight);
         alignBaseline();
       };
 

@@ -36,7 +36,7 @@ const entries = [...fieldNotesForDisplay(data)].sort((a, b) =>
 
   {
     entries.length > 0 ? (
-      <EntryGallery
+      <EntryGallery projects={data.publicProjects}
         entries={entries}
         variant="living-room"
         ariaLabel="Field Notes and Thoughts"

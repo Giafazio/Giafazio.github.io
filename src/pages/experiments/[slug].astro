@@ -1,27 +1,31 @@
 ---
+import { routeForSiteContentEntry } from "../../lib/content";
 import { render, type CollectionEntry } from "astro:content";
 import SiteLayout from "../../layouts/SiteLayout.astro";
 import { getSiteData } from "../../lib/content";
 import { Image } from "astro:assets";
+import Oracolo from "../../components/Oracolo.astro";
 
 
 export async function getStaticPaths() {
   const data = await getSiteData();
   return data.publicExperiments.map((entry) => ({
     params: { slug: entry.data.slug },
-    props: { entry },
+    props: { entry, canonicalPath: routeForSiteContentEntry(entry, data.publicProjects) },
   }));
 }
 
 interface Props {
+  canonicalPath: string;
   entry: CollectionEntry<"experiments">;
 }
 
-const { entry } = Astro.props;
+const { entry, canonicalPath } = Astro.props;
 const { Content } = await render(entry);
 ---
 
 <SiteLayout
+  canonicalPath={canonicalPath}
   title={entry.data.title ?? entry.data.workingLabel}
   currentSection="experiments"
   lang={entry.data.language ?? "en"}
@@ -31,6 +35,7 @@ const { Content } = await render(entry);
     class:list={[
       "experiment-article",
       {
+        "experiment-article--oracolo": entry.data.id === "oracolo",
         "experiment-article--verse":
           entry.data.presentation === "verse",
         "experiment-article--image":
@@ -63,7 +68,7 @@ const { Content } = await render(entry);
         )
       }
 
-      <Content />
+      {entry.data.id === "oracolo" ? <Oracolo /> : <Content />}
     </div>
   </article>
 </SiteLayout>

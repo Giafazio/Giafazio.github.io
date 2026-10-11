@@ -1,0 +1,640 @@
+{
+  "stato": "Copia di riferimento del dizionario incorporato nel filtro B5 approvato; non caricata a runtime",
+  "nota": "Voci per lingua, in alfabeto latino. Le forme nelle lingue con altre scritture sono traslitterazioni pratiche senza cifre Arabizi. Le grafie alternative non sono automaticamente equivalenti. Le voci condivise fra lingue vanno deduplicate al momento del confronto. Gli indizi italiani mantengono la precedenza come richiesto dall'utente. Controllo delle fonti parziale, non revisione madrelingua di ogni voce.",
+  "fonti_di_riferimento": [
+    "https://en.wiktionary.org/wiki/what",
+    "https://en.wiktionary.org/wiki/who",
+    "https://en.wiktionary.org/wiki/how",
+    "https://en.wiktionary.org/wiki/where",
+    "https://friendsofmorocco.org/Docs/Darija/Moroccan%20Arabic%20textbook%202011.pdf",
+    "https://www.cours-langues-audio.com/questions-darija-algerien/",
+    "https://www.ithacaboundlanguages.com/articles/a-study-what-in-tunisian-arabic/",
+    "https://swahiligrammar.com/who-what-and-why-asking-questions",
+    "https://arxiv.org/abs/2206.09167"
+  ],
+  "lingue": {
+    "inglese": [
+      "you",
+      "your",
+      "yours",
+      "yourself",
+      "he",
+      "she",
+      "its",
+      "we",
+      "they",
+      "him",
+      "her",
+      "them",
+      "was",
+      "were",
+      "been",
+      "being",
+      "does",
+      "did",
+      "done",
+      "have",
+      "has",
+      "had",
+      "having",
+      "will",
+      "would",
+      "shall",
+      "should",
+      "could",
+      "may",
+      "might",
+      "must",
+      "not",
+      "who",
+      "whom",
+      "whose",
+      "what",
+      "which",
+      "when",
+      "where",
+      "why",
+      "how",
+      "that",
+      "those",
+      "these",
+      "there",
+      "this",
+      "the",
+      "and",
+      "but",
+      "then",
+      "than",
+      "because",
+      "although",
+      "while",
+      "whether",
+      "with",
+      "without",
+      "from",
+      "into",
+      "about",
+      "between",
+      "among",
+      "through",
+      "before",
+      "after",
+      "during",
+      "under",
+      "over",
+      "please",
+      "hello",
+      "thanks",
+      "yes",
+      "yeah",
+      "nope",
+      "okay",
+      "tell",
+      "ask",
+      "question",
+      "answer",
+      "don't",
+      "doesn't",
+      "didn't",
+      "isn't",
+      "aren't",
+      "wasn't",
+      "weren't",
+      "won't",
+      "can't",
+      "couldn't"
+    ],
+    "francese": [
+      "nous",
+      "vous",
+      "ils",
+      "elles",
+      "suis",
+      "êtes",
+      "avons",
+      "avez",
+      "sont",
+      "étaient",
+      "pourquoi",
+      "combien",
+      "quelles",
+      "quels",
+      "lequel",
+      "laquelle",
+      "lesquels",
+      "lesquelles"
+    ],
+    "tedesco": [
+      "wer",
+      "warum",
+      "wieso",
+      "wie",
+      "wann",
+      "wo",
+      "wohin",
+      "woher",
+      "welcher",
+      "welche",
+      "welches",
+      "du",
+      "ihr",
+      "euch",
+      "dein",
+      "deine",
+      "nicht",
+      "ist",
+      "sind",
+      "haben"
+    ],
+    "spagnolo": [
+      "qué",
+      "quién",
+      "quiénes",
+      "cuál",
+      "cuáles",
+      "cuándo",
+      "dónde",
+      "adónde",
+      "cómo",
+      "cuántos",
+      "cuántas",
+      "ustedes",
+      "vosotros",
+      "vosotras",
+      "usted",
+      "estoy",
+      "estás",
+      "estamos",
+      "tenéis",
+      "también"
+    ],
+    "portoghese": [
+      "quem",
+      "quê",
+      "quais",
+      "aonde",
+      "porquê",
+      "porque",
+      "quantos",
+      "quantas",
+      "você",
+      "vocês",
+      "também",
+      "estou",
+      "estamos",
+      "estão",
+      "alguém",
+      "ninguém",
+      "daqui",
+      "querem"
+    ],
+    "olandese": [
+      "wie",
+      "wat",
+      "waar",
+      "wanneer",
+      "waarom",
+      "hoe",
+      "welke",
+      "hoeveel",
+      "jij",
+      "jullie"
+    ],
+    "svedese": [
+      "vem",
+      "vad",
+      "vart",
+      "varifrån",
+      "när",
+      "varför",
+      "hur",
+      "vilken",
+      "vilka"
+    ],
+    "polacco": [
+      "kto",
+      "gdzie",
+      "kiedy",
+      "dlaczego",
+      "jak",
+      "który",
+      "która",
+      "ile",
+      "czy"
+    ],
+    "slovacco": [
+      "kto",
+      "čo",
+      "prečo",
+      "kedy",
+      "kde",
+      "kam",
+      "ako",
+      "ktorý",
+      "ktorá",
+      "koľko"
+    ],
+    "ceco": [
+      "kdo",
+      "proč",
+      "kdy",
+      "kde",
+      "kam",
+      "jak",
+      "který",
+      "která",
+      "kolik"
+    ],
+    "sloveno": [
+      "kdo",
+      "kaj",
+      "zakaj",
+      "kdaj",
+      "kje",
+      "kam",
+      "kako",
+      "kateri",
+      "katera",
+      "koliko"
+    ],
+    "greco": [
+      "poios",
+      "poia",
+      "poio",
+      "pou",
+      "giati",
+      "posos",
+      "poses",
+      "poion"
+    ],
+    "turco": [
+      "kim",
+      "nerede",
+      "nereye",
+      "nereden",
+      "neden",
+      "niçin",
+      "nasıl",
+      "hangi",
+      "kaç",
+      "misiniz"
+    ],
+    "arabo_standard": [
+      "man",
+      "mata",
+      "ayna",
+      "kayfa",
+      "limadha",
+      "hal",
+      "madha",
+      "ayyu",
+      "ayya",
+      "kam",
+      "antum",
+      "antunna",
+      "nahnu",
+      "huwa",
+      "hiya",
+      "hum",
+      "hunna",
+      "hadha",
+      "hadhihi",
+      "dhalika",
+      "tilka",
+      "huna",
+      "hunaka",
+      "laysa",
+      "laysat",
+      "yakun",
+      "yumkin",
+      "uridu"
+    ],
+    "darja_marocchino": [
+      "shkun",
+      "shnu",
+      "imta",
+      "kifash",
+      "shhal",
+      "alash",
+      "wash",
+      "ashnu",
+      "daba"
+    ],
+    "darja_algerino": [
+      "chkoun",
+      "wach",
+      "win",
+      "waqtach",
+      "kifach",
+      "chhal",
+      "alah",
+      "menhou",
+      "winta",
+      "rak"
+    ],
+    "darja_tunisino": [
+      "chkoun",
+      "chnowa",
+      "chneya",
+      "win",
+      "waqtach",
+      "kifech",
+      "alech",
+      "qaddech",
+      "mouch"
+    ],
+    "ebraico": [
+      "eikh",
+      "matai",
+      "eifo",
+      "kama",
+      "haim",
+      "anakhnu"
+    ],
+    "cinese_mandarino": [
+      "shenme",
+      "shei",
+      "nali",
+      "nar",
+      "weishenme",
+      "zenme",
+      "duoshao",
+      "shenmeshihou",
+      "nimen",
+      "women"
+    ],
+    "farsi": [
+      "chera",
+      "chegune",
+      "koja",
+      "key",
+      "aya",
+      "shoma",
+      "hast",
+      "nist",
+      "kodam"
+    ],
+    "giapponese": [
+      "doko",
+      "itsu",
+      "naze",
+      "doushite",
+      "dou",
+      "dore",
+      "anata",
+      "watashi",
+      "desu"
+    ],
+    "coreano": [
+      "nugu",
+      "mueot",
+      "eodi",
+      "eonje",
+      "wae",
+      "eotteoke",
+      "eolma",
+      "mwoya",
+      "dangsin",
+      "aniyo"
+    ],
+    "hindi": [
+      "kya",
+      "kaun",
+      "kahan",
+      "kab",
+      "kyon",
+      "kaise",
+      "kitna",
+      "kitne",
+      "aap",
+      "nahin"
+    ],
+    "urdu": [
+      "kya",
+      "kaun",
+      "kahan",
+      "kab",
+      "kyun",
+      "kaise",
+      "kitna",
+      "kitne",
+      "aap",
+      "nahin"
+    ],
+    "telugu": [
+      "evaru",
+      "ekkada",
+      "eppudu",
+      "enduku",
+      "ela",
+      "enta",
+      "meeru",
+      "kaadu"
+    ],
+    "tamil": [
+      "yaar",
+      "enge",
+      "eppodhu",
+      "eppadi",
+      "evvalavu",
+      "edhu",
+      "neengal",
+      "illai"
+    ],
+    "swahili": [
+      "nini",
+      "wapi",
+      "vipi",
+      "gani",
+      "ngapi",
+      "mbona",
+      "yupi",
+      "kipi",
+      "wewe"
+    ]
+  },
+  "nota_collisioni": "Rimossi gli omografi italiani individuati e alcune forme ambigue con sigle, abbreviazioni e nomi propri. La revisione non prova esclusivita linguistica universale. Nessuna sostituzione automatica per mantenere le quote originarie.",
+  "voci_eliminate_per_ambiguita": [
+    {
+      "lingua": "inglese",
+      "parola": "it",
+      "motivo": "sigla"
+    },
+    {
+      "lingua": "inglese",
+      "parola": "us",
+      "motivo": "sigla"
+    },
+    {
+      "lingua": "inglese",
+      "parola": "am",
+      "motivo": "sigla"
+    },
+    {
+      "lingua": "inglese",
+      "parola": "is",
+      "motivo": "sigla"
+    },
+    {
+      "lingua": "inglese",
+      "parola": "are",
+      "motivo": "plurale di ara"
+    },
+    {
+      "lingua": "inglese",
+      "parola": "be",
+      "motivo": "grafia colloquiale di interiezione"
+    },
+    {
+      "lingua": "inglese",
+      "parola": "do",
+      "motivo": "forma di dare e nota musicale"
+    },
+    {
+      "lingua": "inglese",
+      "parola": "can",
+      "motivo": "troncamento italiano"
+    },
+    {
+      "lingua": "inglese",
+      "parola": "an",
+      "motivo": "abbreviazione"
+    },
+    {
+      "lingua": "inglese",
+      "parola": "or",
+      "motivo": "troncamento italiano"
+    },
+    {
+      "lingua": "inglese",
+      "parola": "if",
+      "motivo": "parola chiave tecnica"
+    },
+    {
+      "lingua": "francese",
+      "parola": "cela",
+      "motivo": "forma di celare"
+    },
+    {
+      "lingua": "portoghese",
+      "parola": "onde",
+      "motivo": "parola italiana"
+    },
+    {
+      "lingua": "portoghese",
+      "parola": "dali",
+      "motivo": "nome proprio"
+    },
+    {
+      "lingua": "svedese",
+      "parola": "var",
+      "motivo": "abbreviazione tecnica"
+    },
+    {
+      "lingua": "polacco",
+      "parola": "co",
+      "motivo": "abbreviazione o grafia colloquiale"
+    },
+    {
+      "lingua": "ceco",
+      "parola": "co",
+      "motivo": "abbreviazione o grafia colloquiale"
+    },
+    {
+      "lingua": "greco",
+      "parola": "pote",
+      "motivo": "forma letteraria italiana"
+    },
+    {
+      "lingua": "greco",
+      "parola": "pos",
+      "motivo": "sigla usata in italiano"
+    },
+    {
+      "lingua": "arabo_standard",
+      "parola": "anta",
+      "motivo": "sostantivo italiano"
+    },
+    {
+      "lingua": "arabo_standard",
+      "parola": "anti",
+      "motivo": "forma italiana"
+    },
+    {
+      "lingua": "darja_marocchino",
+      "parola": "fin",
+      "motivo": "forma italiana"
+    },
+    {
+      "lingua": "darja_tunisino",
+      "parola": "enti",
+      "motivo": "plurale italiano"
+    },
+    {
+      "lingua": "ebraico",
+      "parola": "mi",
+      "motivo": "pronome italiano"
+    },
+    {
+      "lingua": "ebraico",
+      "parola": "ma",
+      "motivo": "congiunzione italiana"
+    },
+    {
+      "lingua": "ebraico",
+      "parola": "lama",
+      "motivo": "sostantivo italiano"
+    },
+    {
+      "lingua": "ebraico",
+      "parola": "ata",
+      "motivo": "sigla usata in italiano"
+    },
+    {
+      "lingua": "farsi",
+      "parola": "che",
+      "motivo": "parola italiana"
+    },
+    {
+      "lingua": "giapponese",
+      "parola": "donata",
+      "motivo": "participio italiano e nome proprio"
+    },
+    {
+      "lingua": "telugu",
+      "parola": "emi",
+      "motivo": "nome o abbreviazione"
+    },
+    {
+      "lingua": "telugu",
+      "parola": "edi",
+      "motivo": "nome o abbreviazione"
+    },
+    {
+      "lingua": "tamil",
+      "parola": "enna",
+      "motivo": "toponimo italiano"
+    },
+    {
+      "lingua": "swahili",
+      "parola": "lini",
+      "motivo": "plurale di lino"
+    },
+    {
+      "lingua": "francese",
+      "parola": "quelle",
+      "motivo": "Omografo del dimostrativo italiano"
+    },
+    {
+      "lingua": "tamil",
+      "parola": "yen",
+      "motivo": "Termine di valuta usato in italiano"
+    }
+  ],
+  "conteggi": {
+    "voci": 385,
+    "forme_distinte": 364,
+    "voci_rimosse": 35,
+    "forme_rimosse": 34
+  }
+}

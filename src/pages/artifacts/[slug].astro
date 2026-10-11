@@ -1,4 +1,5 @@
 ---
+import { routeForEntry } from "../../lib/content";
 import {
   render,
 } from "astro:content";
@@ -11,12 +12,12 @@ import SiteLayout from
 
 import {
   getSiteData,
-  routeForEntry,
+  resolveArtifactRoute,
+  type ProjectEntry,
   type ArtifactEntry,
 } from "../../lib/content";
 
 import {
-  routeFor,
   withBase,
 } from "../../lib/urls";
 
@@ -25,13 +26,7 @@ export async function getStaticPaths() {
 
   return data.publicArtifacts.map(
     (artifact) => {
-      const standalonePath = routeFor(
-        "artifacts",
-        artifact.data.slug,
-      );
-
-      const canonicalPath =
-        routeForEntry(artifact);
+      const route = resolveArtifactRoute(artifact, data.publicProjects);
 
       return {
         params: {
@@ -40,11 +35,10 @@ export async function getStaticPaths() {
 
         props: {
           artifact,
+          projects: data.publicProjects,
 
           destination:
-            canonicalPath === standalonePath
-              ? null
-              : withBase(canonicalPath),
+            route.kind === "standalone" ? null : withBase(route.path),
         },
       };
     },
@@ -52,11 +46,13 @@ export async function getStaticPaths() {
 }
 
 interface Props {
+  projects: readonly ProjectEntry[];
   artifact: ArtifactEntry;
   destination: string | null;
 }
 
 const {
+  projects,
   artifact,
   destination,
 } = Astro.props;
@@ -78,12 +74,13 @@ const { Content } =
 ---
 
 <SiteLayout
+  canonicalPath={routeForEntry(artifact, projects)}
   title={artifact.data.title}
   description={artifact.data.summary}
   currentSection="experiments"
   lang={artifact.data.language ?? "en"}
 >
-  <ArtifactDetail artifact={artifact}>
+  <ArtifactDetail projects={projects} artifact={artifact}>
     <Content />
   </ArtifactDetail>
 </SiteLayout>

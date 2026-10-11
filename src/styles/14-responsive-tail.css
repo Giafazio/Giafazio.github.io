@@ -17,9 +17,6 @@
     grid-template-columns: 1fr;
   }
 
-  .project-row,
-  .project-contents li,
-  .log-list li,
   .plain-list li,
   .atlas-row {
     grid-template-columns: 1fr;

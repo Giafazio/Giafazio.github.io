@@ -1,4 +1,6 @@
 ---
+import { absolutePublicUrl } from "../lib/site-discovery";
+import { withBase } from "../lib/urls";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 
@@ -47,6 +49,8 @@ import siteDecorationUrl from
 import { ClientRouter } from "astro:transitions";
 
 interface Props {
+  canonicalPath?: string;
+  canonical?: boolean;
   title?: string;
   description?: string;
   currentSection?: SiteSection;
@@ -55,12 +59,22 @@ interface Props {
 }
 
 const {
+  canonicalPath,
+  canonical = true,
   title,
   description = siteConfig.description,
   currentSection,
   lang = "en",
   contentClass = "",
 } = Astro.props;
+
+const isPreview = Astro.url.pathname.startsWith(withBase("/previews/"));
+const canonicalUrl = canonical && !isPreview
+  ? absolutePublicUrl(
+      canonicalPath !== undefined ? withBase(canonicalPath) : Astro.url.pathname,
+      Astro.site,
+    )
+  : null;
 
 const fullTitle = title ? `${title} — ${siteConfig.name}` : siteConfig.name;
 ---
@@ -76,6 +90,7 @@ const fullTitle = title ? `${title} — ${siteConfig.name}` : siteConfig.name;
       name="viewport"
       content="width=device-width, initial-scale=1"
     />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content="#f3f0e8" media="(prefers-color-scheme: light)" />

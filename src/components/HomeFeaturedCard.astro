@@ -1,4 +1,5 @@
 ---
+import type { ProjectEntry } from "../lib/content";
 import ProjectContents from "./ProjectContents.astro";
 import ProjectTitleButton from
   "./ProjectTitleButton.astro";
@@ -12,10 +13,11 @@ import {
 } from "../lib/urls";
 
 interface Props {
+  projects: readonly ProjectEntry[];
   item: HomeFeaturedItem;
 }
 
-const { item } = Astro.props;
+const { projects, item } = Astro.props;
 
 const projectItem =
   item.kind === "project"
@@ -70,7 +72,7 @@ const entryItem =
 
         {
           projectItem.contents.length > 0 && (
-            <ProjectContents
+            <ProjectContents projects={projects}
               entries={projectItem.contents}
               projectId={
                 projectItem.project.data.id
@@ -117,7 +119,7 @@ const entryItem =
     </article>
   ) : entryItem ? (
     <div class="home-featured-entry">
-      <ProjectContents
+      <ProjectContents projects={projects}
         entries={[entryItem.entry]}
         showEmpty={false}
         summaryEntryIds={

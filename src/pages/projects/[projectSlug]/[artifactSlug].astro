@@ -1,4 +1,5 @@
 ---
+import { routeForEntry } from "../../../lib/content";
 import {
   render,
 } from "astro:content";
@@ -14,6 +15,7 @@ import SiteLayout from
 
 import {
   getSiteData,
+  resolveArtifactRoute,
   getProjectContents,
   type ArtifactEntry,
   type ProjectEntry,
@@ -24,23 +26,9 @@ export async function getStaticPaths() {
 
   return data.publicArtifacts.flatMap(
     (artifact) => {
-      const primaryProjectId =
-        artifact.data.projects[0]?.id;
-
-      if (!primaryProjectId) {
-        return [];
-      }
-
-      const project =
-        data.publicProjects.find(
-          (entry) =>
-            entry.data.id ===
-            primaryProjectId,
-        );
-
-      if (!project) {
-        return [];
-      }
+      const route = resolveArtifactRoute(artifact, data.publicProjects);
+      if (route.kind === "standalone") return [];
+      const project = route.project;
 
       const sequenceArtifacts =
         project.data.artifactSequence
@@ -91,16 +79,11 @@ export async function getStaticPaths() {
 
       return [
         {
-          params: {
-            projectSlug:
-              project.data.slug,
-
-            artifactSlug:
-              artifact.data.slug,
-          },
+          params: route.params,
 
           props: {
             artifact,
+            projects: data.publicProjects,
             project,
             previousArtifact,
             nextArtifact,
@@ -112,6 +95,7 @@ export async function getStaticPaths() {
 }
 
 interface Props {
+  projects: readonly ProjectEntry[];
   artifact: ArtifactEntry;
   project: ProjectEntry;
   previousArtifact?: ArtifactEntry;
@@ -119,6 +103,7 @@ interface Props {
 }
 
 const {
+  projects,
   artifact,
   project,
   previousArtifact,
@@ -130,6 +115,7 @@ const { Content } =
 ---
 
 <SiteLayout
+  canonicalPath={routeForEntry(artifact, projects)}
   title={artifact.data.title}
   description={artifact.data.summary}
   currentSection="projects"
@@ -139,8 +125,9 @@ const { Content } =
     <header class="project-detail-header project-detail-header--project">
       <div class="project-detail-header__heading"><ProjectTitleButton project={project} variant="heading" /></div>
     </header>
-    <MusicPiece artifact={artifact} detail tile={musicTile.src}><Content /></MusicPiece>
+    <MusicPiece projects={projects} artifact={artifact} detail tile={musicTile.src}><Content /></MusicPiece>
   </> : <ArtifactDetail
+    projects={projects}
     artifact={artifact}
     project={project}
     previousArtifact={previousArtifact}

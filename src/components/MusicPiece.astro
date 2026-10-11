@@ -1,10 +1,13 @@
 ---
+import type { ProjectEntry } from "../lib/content";
 import type { ArtifactEntry } from "../lib/content";
 import { routeForEntry } from "../lib/content";
 import { withBase } from "../lib/urls";
-interface Props { artifact: ArtifactEntry; detail?: boolean; tile: string; }
-const { artifact, detail = false, tile } = Astro.props;
-const pieceUrl = withBase(routeForEntry(artifact));
+interface Props {
+  projects: readonly ProjectEntry[];
+  artifact: ArtifactEntry; detail?: boolean; tile: string; }
+const { projects, artifact, detail = false, tile } = Astro.props;
+const pieceUrl = withBase(routeForEntry(artifact, projects));
 const Heading = detail ? "h1" : "h3";
 ---
       <section class:list={["music-piece", !detail && "music-piece--index"]} aria-labelledby={`title-${artifact.data.id}`} style={`--music-tile: url("${tile}")`}>

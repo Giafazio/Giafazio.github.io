@@ -878,13 +878,18 @@
   pointer-events: none;
 }
 
-.welcome-raven-flight img {
+.welcome-raven-flight__traveller {
   position: absolute;
   top: 35vh;
   left: 0;
   width: clamp(240px, 35vw, 480px);
-  height: auto;
   animation: welcome-raven-crossing 6s linear both;
+}
+
+.welcome-raven-flight img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 @keyframes welcome-raven-crossing {

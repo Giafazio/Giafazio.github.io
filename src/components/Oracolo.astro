@@ -1,0 +1,151 @@
+---
+import tile from '../assets/navigation/tiles/maio1_3.png';
+---
+<form data-oracolo>
+  <label for="oracolo-question">Poni una <span class="question-hint">domanda in italiano con risposta sì/no</span> e l'Oracolo ti risponderà.</label>
+  <input id="oracolo-question" type="text" autocomplete="off" required />
+  <p class="oracolo-question" hidden></p>
+  <button type="submit" style={`--button-tile: url("${tile.src}")`} disabled>Sentenzia</button>
+  <div class="oracolo-answer" aria-live="polite" aria-atomic="true"></div>
+</form>
+
+<script>
+  import { classificaDomanda } from '../lib/oracolo/oracolo.mjs';
+  import responses from '../lib/oracolo/responses.json';
+
+  function initialize() {
+    const form = document.querySelector<HTMLFormElement>('[data-oracolo]');
+    if (!form || form.dataset.initialized) return;
+    form.dataset.initialized = 'true';
+    const input = form.querySelector<HTMLInputElement>('input')!;
+    const button = form.querySelector<HTMLButtonElement>('button')!;
+    const answer = form.querySelector<HTMLDivElement>('.oracolo-answer')!;
+    const question = form.querySelector<HTMLParagraphElement>('.oracolo-question')!;
+    let answered = false;
+    // Marks are allowed only after a Latin letter, including decomposed accents.
+    const sanitize = (text: string) => (text.normalize('NFC').match(/\p{Script=Latin}\p{M}*|[0-9\p{P}\p{Zs}]/gu) ?? []).join('');
+    function update() {
+      const start = input.selectionStart ?? input.value.length;
+      const prefix = sanitize(input.value.slice(0, start));
+      const clean = sanitize(input.value);
+      if (clean !== input.value) {
+        input.value = clean;
+        input.setSelectionRange(prefix.length, prefix.length);
+      }
+      button.disabled = !answered && !input.value.trim();
+    }
+    input.addEventListener('beforeinput', event => {
+      if (!event.isComposing && event.data && sanitize(event.data) === '') event.preventDefault();
+    });
+    input.addEventListener('input', update);
+    input.addEventListener('paste', event => {
+      event.preventDefault();
+      if (answered) return;
+      const text = sanitize(event.clipboardData?.getData('text/plain') ?? '');
+      input.setRangeText(text, input.selectionStart ?? 0, input.selectionEnd ?? 0, 'end');
+      update();
+    });
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      if (answered) {
+        answered = false;
+        form.classList.remove('question-open');
+        input.readOnly = false;
+        input.hidden = false;
+        question.hidden = true;
+        question.textContent = '';
+        input.value = '';
+        answer.replaceChildren();
+        button.textContent = 'Sentenzia';
+        update();
+        input.focus();
+        return;
+      }
+      update();
+      if (!input.value.trim()) return;
+      const label = classificaDomanda(input.value).etichetta as keyof typeof responses;
+      form.classList.toggle('question-open', label === 'aperta');
+      const pool = responses[label];
+      const response = pool[Math.floor(Math.random() * pool.length)];
+      const quote = document.createElement('p');
+      quote.textContent = `«${response.text}»`;
+      const attribution = document.createElement('small');
+      const link = document.createElement('a');
+      link.href = response.url;
+      link.textContent = 'Wikisource';
+      const work = document.createElement('em');
+      work.textContent = response.work;
+      const author = document.createElement('em');
+      author.textContent = response.author;
+      attribution.append(`${response.character}, da `, work, ' di ', author, ' · ', link);
+      answer.replaceChildren(quote, attribution);
+      answered = true;
+      input.readOnly = true;
+      input.hidden = true;
+      question.textContent = input.value;
+      question.hidden = false;
+      button.textContent = 'Interpella nuovamente';
+      button.focus();
+    });
+  }
+  initialize();
+  document.addEventListener('astro:page-load', initialize);
+</script>
+
+<style>
+  form { display: grid; gap: 1rem; }
+  label { font-style: italic; }
+  .question-open .question-hint { font-weight: bold; font-size: 1.1em; }
+  input { width: 100%; min-width: 0; padding: 0.5rem; border: 1px solid var(--rule-strong); background: var(--paper-raised); color: var(--ink); }
+  .oracolo-question { margin: 0; padding: 0.5rem; overflow-wrap: anywhere; }
+  button {
+    justify-self: center;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin: 0;
+    width: max-content;
+    padding: .5rem 1rem;
+    border: 4px solid #5a3b26;
+    border-radius: 0;
+    background: #fff;
+    color: #fff;
+    font-family: "Basteleur", serif;
+    font-weight: normal;
+    cursor: pointer;
+    -webkit-text-stroke: 2px rgb(0 0 0 / .95);
+    paint-order: stroke fill;
+    text-shadow: 0 0 3px #000, 0 0 6px rgb(0 0 0 / .9);
+  }
+  button:not(:disabled):active { transform: translateY(2px); }
+  button::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 var(--motion-tile-shift);
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, transparent var(--motion-tile-inner-end), white var(--motion-tile-inner-end)),
+      linear-gradient(to bottom, transparent var(--motion-tile-inner-end), white var(--motion-tile-inner-end)),
+      var(--button-tile);
+    background-size: var(--motion-tile-size) var(--motion-tile-size);
+    background-position: center;
+    image-rendering: pixelated;
+    animation: tile-light 4s ease-in-out infinite;
+  }
+  @keyframes tile-light {
+    0%, 70%, 100% { filter: brightness(.84); }
+    82% { filter: brightness(1.3); }
+  }
+  @media (max-width: 600px) {
+    button { padding: .3rem .55rem; font-size: .8rem; line-height: 1.2; border-width: 3px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    button::before { animation: none; filter: brightness(.84); }
+  }
+  button:disabled { opacity: 0.5; cursor: default; }
+  .oracolo-answer:empty { display: none; }
+  .oracolo-answer { text-align: center; }
+  .oracolo-answer :global(p) { margin: 0 0 0.5rem; font-weight: bold; }
+  small { font-size: 0.8em; }
+</style>

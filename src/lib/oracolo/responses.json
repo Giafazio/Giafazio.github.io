@@ -1,0 +1,708 @@
+{
+  "aperta": [
+    {
+      "character": "Fulgenzio",
+      "text": "Non sono un burattino da farmi far di queste figure.",
+      "url": "https://it.wikisource.org/wiki/Pagina:Goldoni_-_Opere_complete,_Venezia_1914,_XIX.djvu/85",
+      "author": "Carlo Goldoni",
+      "work": "Le smanie per la villeggiatura"
+    },
+    {
+      "character": "Torquato",
+      "text": "Non si tratta così, di voi mi maraviglio; Oprate senza senno, senz’ombra di consiglio.",
+      "url": "https://it.wikisource.org/wiki/Pagina:Goldoni_-_Opere_complete,_Venezia_1911,_XI.djvu/457",
+      "author": "Carlo Goldoni",
+      "work": "Torquato Tasso"
+    },
+    {
+      "character": "Il Direttore",
+      "text": "Oh, ma guardate che ci vuole una bella faccia tosta!",
+      "url": "https://it.wikisource.org/wiki/Sei_personaggi_in_cerca_d'autore/Sei_personaggi_in_cerca_d'autore",
+      "author": "Luigi Pirandello",
+      "work": "Sei personaggi in cerca d’autore"
+    },
+    {
+      "character": "Il Marchese",
+      "text": "Non mi fate andar in collera.",
+      "url": "https://it.wikisource.org/wiki/La_locandiera/Atto_I",
+      "author": "Carlo Goldoni",
+      "work": "La locandiera"
+    }
+  ],
+  "incerta": [
+    {
+      "character": "Teeteto",
+      "text": "Non ho capito.",
+      "url": "https://it.wikisource.org/wiki/Il_Sofista_e_l'Uomo_politico/Il_Sofista/XV",
+      "author": "Platone",
+      "work": "Il Sofista"
+    },
+    {
+      "character": "Teeteto",
+      "text": "Neanche a questo so che cosa io debba rispondere.",
+      "url": "https://it.wikisource.org/wiki/Il_Sofista_e_l'Uomo_politico/Il_Sofista/XV",
+      "author": "Platone",
+      "work": "Il Sofista"
+    },
+    {
+      "character": "Simplicio",
+      "text": "Questo è quello ch’io non capisco e ch’io vorrei intendere.",
+      "url": "https://it.wikisource.org/wiki/Dialogo_sopra_i_due_massimi_sistemi_del_mondo_tolemaico_e_copernicano/Giornata_seconda",
+      "author": "Galileo Galilei",
+      "work": "Dialogo sopra i due massimi sistemi del mondo"
+    },
+    {
+      "character": "Frangiotto",
+      "text": "Spiegatevi, ch’io non vi capisco.",
+      "url": "https://it.wikisource.org/wiki/Pagina:Goldoni_-_Opere_complete,_Venezia_1910,_VII.djvu/133",
+      "author": "Carlo Goldoni",
+      "work": "La castalda"
+    },
+    {
+      "character": "Raimondo",
+      "text": "Io non so che vi dite.",
+      "url": "https://it.wikisource.org/wiki/Le_massere/Atto_II",
+      "author": "Carlo Goldoni",
+      "work": "Le massere"
+    },
+    {
+      "character": "Il Direttore",
+      "text": "Ma io non comprendo più nulla!",
+      "url": "https://it.wikisource.org/wiki/Sei_personaggi_in_cerca_d'autore/Sei_personaggi_in_cerca_d'autore",
+      "author": "Luigi Pirandello",
+      "work": "Sei personaggi in cerca d’autore"
+    },
+    {
+      "character": "Il Capocomico",
+      "text": "Io non mi raccapezzo piú!",
+      "url": "https://it.wikisource.org/wiki/Sei_personaggi_in_cerca_d'autore_(1965)/Atto_unico",
+      "author": "Luigi Pirandello",
+      "work": "Sei personaggi in cerca d’autore"
+    },
+    {
+      "character": "Il Conte",
+      "text": "Per dirvi la verità, non capisco niente.",
+      "url": "https://it.wikisource.org/wiki/Pagina:Goldoni_-_Opere_complete,_Venezia_1914,_XVIII.djvu/321",
+      "author": "Carlo Goldoni",
+      "work": "La casa nova"
+    },
+    {
+      "character": "Mingone",
+      "text": "Non capisco.",
+      "url": "https://it.wikisource.org/wiki/Pagina:Goldoni_-_Opere_complete,_Venezia_1922,_XXI.djvu/165",
+      "author": "Carlo Goldoni",
+      "work": "La gelosia di Lindoro"
+    },
+    {
+      "character": "Arlecchino",
+      "text": "Son confuso, son stordìo, son fora de mi.",
+      "url": "https://it.wikisource.org/wiki/Pagina:Goldoni_-_Opere_complete,_Venezia_1923,_XXII.djvu/53",
+      "author": "Carlo Goldoni",
+      "work": "Gli amanti timidi"
+    },
+    {
+      "character": "Il Conte",
+      "text": "Spiegatevi, signore; non capisco.",
+      "url": "https://it.wikisource.org/wiki/Pagina:Goldoni_-_Opere_complete,_Venezia_1930,_XXIX.djvu/446",
+      "author": "Carlo Goldoni",
+      "work": "La diavolessa"
+    },
+    {
+      "character": "Leonide",
+      "text": "Io non capisco niente.",
+      "url": "https://it.wikisource.org/wiki/I_malcontenti/Atto_II",
+      "author": "Carlo Goldoni",
+      "work": "I malcontenti"
+    },
+    {
+      "character": "Bertoldo",
+      "text": "Io non mi raccapezzo bene",
+      "url": "https://it.wikisource.org/wiki/Enrico_IV_(1965)/Atto_I",
+      "author": "Luigi Pirandello",
+      "work": "Enrico IV"
+    },
+    {
+      "character": "Ludovico",
+      "text": "Io ancora non mi raccapezzo.",
+      "url": "https://it.wikisource.org/wiki/Vestire_gli_ignudi/Atto_III",
+      "author": "Luigi Pirandello",
+      "work": "Vestire gli ignudi"
+    },
+    {
+      "character": "Marta",
+      "text": "Le dico proprio che non capisco.",
+      "url": "https://it.wikisource.org/wiki/L'amica_delle_mogli_(commedia)/Atto_I",
+      "author": "Luigi Pirandello",
+      "work": "L’amica delle mogli"
+    },
+    {
+      "character": "Anna",
+      "text": "Perché? Non capisco...",
+      "url": "https://it.wikisource.org/wiki/Pagina:Pirandello_-_Maschere_nude,_Volume_II_-_Verona,_Mondadori,_1965.djvu/140",
+      "author": "Luigi Pirandello",
+      "work": "L’amica delle mogli"
+    },
+    {
+      "character": "Il Commesso viaggiatore",
+      "text": "Io non capisco niente...",
+      "url": "https://it.wikisource.org/wiki/L'imbecille_(Commedia,_1965)",
+      "author": "Luigi Pirandello",
+      "work": "L’imbecille"
+    },
+    {
+      "character": "Giorgio",
+      "text": "Non capisco.",
+      "url": "https://it.wikisource.org/wiki/Non_si_sa_come/Atto_II",
+      "author": "Luigi Pirandello",
+      "work": "Non si sa come"
+    },
+    {
+      "character": "Elj",
+      "text": "Io non comprendo piú nulla",
+      "url": "https://it.wikisource.org/wiki/Trovarsi/Atto_II",
+      "author": "Luigi Pirandello",
+      "work": "Trovarsi"
+    },
+    {
+      "character": "Personaggio indicato con ***",
+      "text": "Che vuol dire? Io non so nulla!",
+      "url": "https://it.wikisource.org/wiki/Quando_si_è_qualcuno/Atto_II",
+      "author": "Luigi Pirandello",
+      "work": "Quando si è qualcuno"
+    }
+  ],
+  "si_no": [
+    {
+      "character": "Lisetta",
+      "text": "Non vi è dubbio. Fidatevi di me, e non temete.",
+      "url": "https://it.wikisource.org/wiki/Il_matrimonio_per_concorso/Atto_III",
+      "author": "Carlo Goldoni",
+      "work": "Il matrimonio per concorso"
+    },
+    {
+      "character": "Timandro",
+      "text": "Non credo; ma cotesto non monta nulla al nostro proposito.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Timandro_e_di_Eleandro",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Timandro e di Eleandro"
+    },
+    {
+      "character": "Beatrice",
+      "text": "Forse sì, e forse no.",
+      "url": "https://it.wikisource.org/wiki/Il_cavaliere_di_buon_gusto/Atto_I",
+      "author": "Carlo Goldoni",
+      "work": "Il cavaliere di buon gusto"
+    },
+    {
+      "character": "Florindo",
+      "text": "Io certamente, in massima, non vi saprei rispondere.",
+      "url": "https://it.wikisource.org/wiki/La_moglie_saggia/Atto_I",
+      "author": "Carlo Goldoni",
+      "work": "La moglie saggia"
+    },
+    {
+      "character": "William Legrand",
+      "text": "Ah! questa è una domanda alla quale non saprei rispondere meglio di voi.",
+      "url": "https://it.wikisource.org/wiki/Lo_scarabeo_d'oro",
+      "author": "Edgar Allan Poe",
+      "work": "Lo scarabeo d’oro"
+    },
+    {
+      "character": "Evaristo",
+      "text": "Non vi è dubbio, ne son sicurissimo.",
+      "url": "https://it.wikisource.org/wiki/Il_ventaglio_(Goldoni)/Atto_II",
+      "author": "Carlo Goldoni",
+      "work": "Il ventaglio"
+    },
+    {
+      "character": "Fedro",
+      "text": "E perchè no?",
+      "url": "https://it.wikisource.org/wiki/Fedro_(Dalbono,_1869)/Fedro",
+      "author": "Platone",
+      "work": "Fedro"
+    },
+    {
+      "character": "Il Venditore",
+      "text": "Oh illustrissimo sì, certo.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_un_venditore_d'almanacchi_e_di_un_passeggere",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di un venditore d’almanacchi e di un passeggere"
+    },
+    {
+      "character": "Felicita",
+      "text": "Onoratamente vi dico, che non è vero.",
+      "url": "https://it.wikisource.org/wiki/Le_donne_di_buon_umore/Atto_I",
+      "author": "Carlo Goldoni",
+      "work": "Le donne di buon umore"
+    },
+    {
+      "character": "Il Conte",
+      "text": "Non saprei certamente.",
+      "url": "https://it.wikisource.org/wiki/Le_donne_di_buon_umore/Atto_I",
+      "author": "Carlo Goldoni",
+      "work": "Le donne di buon umore"
+    },
+    {
+      "character": "Timandro",
+      "text": "Non solo io, ma tutto il mondo lo crede.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Timandro_e_di_Eleandro",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Timandro e di Eleandro"
+    },
+    {
+      "character": "Timandro",
+      "text": "Non ve lo nego.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Timandro_e_di_Eleandro",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Timandro e di Eleandro"
+    },
+    {
+      "character": "Eleandro",
+      "text": "Sì, formalmente.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Timandro_e_di_Eleandro",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Timandro e di Eleandro"
+    },
+    {
+      "character": "Tasso",
+      "text": "Io per me ti giuro che non lo so.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Torquato_Tasso_e_del_suo_Genio_familiare",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Torquato Tasso e del suo Genio familiare"
+    },
+    {
+      "character": "Il Genio",
+      "text": "Che so io di cotesto? Meglio lo saprete voi, che siete uomini.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Torquato_Tasso_e_del_suo_Genio_familiare",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Torquato Tasso e del suo Genio familiare"
+    },
+    {
+      "character": "Critone",
+      "text": "Non posso rispondere a quello che domandi tu; chè non intendo.",
+      "url": "https://it.wikisource.org/wiki/Critone/Capitolo_XI",
+      "author": "Platone",
+      "work": "Critone"
+    },
+    {
+      "character": "Critone",
+      "text": "Par di no.",
+      "url": "https://it.wikisource.org/wiki/Critone/Capitolo_X",
+      "author": "Platone",
+      "work": "Critone"
+    },
+    {
+      "character": "Il Marchese",
+      "text": "Orsù, parliamo d’altro.",
+      "url": "https://it.wikisource.org/wiki/La_locandiera/Atto_I",
+      "author": "Carlo Goldoni",
+      "work": "La locandiera"
+    },
+    {
+      "character": "Il Dottore",
+      "text": "Non voglio sentir altro.",
+      "url": "https://it.wikisource.org/wiki/Il_servitore_di_due_padroni/Atto_III",
+      "author": "Carlo Goldoni",
+      "work": "Il servitore di due padroni"
+    },
+    {
+      "character": "La Luna",
+      "text": "No, che io sappia. E come? e perché?",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_della_Terra_e_della_Luna",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo della Terra e della Luna"
+    },
+    {
+      "character": "Colombo",
+      "text": "Parlando schiettamente, e come si può con persona amica e segreta, confesso che sono entrato un poco in forse…",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Cristoforo_Colombo_e_di_Pietro_Gutierrez",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Cristoforo Colombo e di Pietro Gutierrez"
+    },
+    {
+      "character": "Sallustio",
+      "text": "Oh verissimo.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_un_lettore_di_umanit%C3%A0_e_di_Sallustio",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di un lettore di umanità e di Sallustio"
+    },
+    {
+      "character": "Tristano",
+      "text": "Sicuro.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Tristano_e_di_un_amico",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Tristano e di un amico"
+    },
+    {
+      "character": "Ridolfo",
+      "text": "Le dico che non lo so.",
+      "url": "https://it.wikisource.org/wiki/La_bottega_del_caff%C3%A8/Atto_II",
+      "author": "Carlo Goldoni",
+      "work": "La bottega del caffè"
+    },
+    {
+      "character": "Lo Gnomo",
+      "text": "Tu dici il vero.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_un_Folletto_e_di_uno_Gnomo",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di un Folletto e di uno Gnomo"
+    },
+    {
+      "character": "Il Cavaliere",
+      "text": "Non lo so davvero.",
+      "url": "https://it.wikisource.org/wiki/La_famiglia_dell'antiquario/Atto_II",
+      "author": "Carlo Goldoni",
+      "work": "La famiglia dell’antiquario"
+    },
+    {
+      "character": "Tristano",
+      "text": "Senza dubbio.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Tristano_e_di_un_amico",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Tristano e di un amico"
+    },
+    {
+      "character": "Il Cavaliere",
+      "text": "Non mi par ragionevole",
+      "url": "https://it.wikisource.org/wiki/La_famiglia_dell'antiquario/Atto_II",
+      "author": "Carlo Goldoni",
+      "work": "La famiglia dell’antiquario"
+    },
+    {
+      "character": "Giannina",
+      "text": "Non le ho detto di sì?",
+      "url": "https://it.wikisource.org/wiki/Il_ventaglio_(Goldoni)/Atto_I",
+      "author": "Carlo Goldoni",
+      "work": "Il ventaglio"
+    },
+    {
+      "character": "Il Venditore",
+      "text": "Speriamo.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_un_venditore_d'almanacchi_e_di_un_passeggere",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di un venditore d’almanacchi e di un passeggere"
+    },
+    {
+      "character": "Il Padre",
+      "text": "Non dico di no.",
+      "url": "https://it.wikisource.org/wiki/Sei_personaggi_in_cerca_d'autore/Sei_personaggi_in_cerca_d'autore",
+      "author": "Luigi Pirandello",
+      "work": "Sei personaggi in cerca d’autore"
+    },
+    {
+      "character": "La Madre",
+      "text": "Non lo nego, no....",
+      "url": "https://it.wikisource.org/wiki/Sei_personaggi_in_cerca_d'autore/Sei_personaggi_in_cerca_d'autore",
+      "author": "Luigi Pirandello",
+      "work": "Sei personaggi in cerca d’autore"
+    },
+    {
+      "character": "Critone",
+      "text": "Dici vero.",
+      "url": "https://it.wikisource.org/wiki/Critone/Capitolo_X",
+      "author": "Platone",
+      "work": "Critone"
+    },
+    {
+      "character": "Socrate",
+      "text": "Ma chiaro, mi pare.",
+      "url": "https://it.wikisource.org/wiki/Critone/Capitolo_II",
+      "author": "Platone",
+      "work": "Critone"
+    },
+    {
+      "character": "Ligurio",
+      "text": "Sì, sarà!",
+      "url": "https://it.wikisource.org/wiki/La_mandragola/Atto_secondo/Scena_seconda",
+      "author": "Niccolò Machiavelli",
+      "work": "La mandragola"
+    },
+    {
+      "character": "Callimaco",
+      "text": "Senza dubbio, e’ non si può fare di meno.",
+      "url": "https://it.wikisource.org/wiki/La_mandragola/Atto_secondo/Scena_seconda",
+      "author": "Niccolò Machiavelli",
+      "work": "La mandragola"
+    },
+    {
+      "character": "Fulgenzio",
+      "text": "Pazienza.",
+      "url": "https://it.wikisource.org/wiki/Gl'innamorati/Atto_III",
+      "author": "Carlo Goldoni",
+      "work": "Gl’innamorati"
+    },
+    {
+      "character": "Eutifrone",
+      "text": "Per l’appunto.",
+      "url": "https://it.wikisource.org/wiki/Eutifrone/Capitolo_IV",
+      "author": "Platone",
+      "work": "Eutifrone"
+    },
+    {
+      "character": "Eutifrone",
+      "text": "Non ci si capisce.",
+      "url": "https://it.wikisource.org/wiki/Eutifrone/Capitolo_XII",
+      "author": "Platone",
+      "work": "Eutifrone"
+    },
+    {
+      "character": "Eutifrone",
+      "text": "A me par d’intendere.",
+      "url": "https://it.wikisource.org/wiki/Eutifrone/Capitolo_XII",
+      "author": "Platone",
+      "work": "Eutifrone"
+    },
+    {
+      "character": "Plotino",
+      "text": "Sia così. Non voglio ora contraddirti sopra questa parte.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Plotino_e_di_Porfirio",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Plotino e di Porfirio"
+    },
+    {
+      "character": "Il Fisico",
+      "text": "Oh cotesto no",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_un_fisico_e_di_un_metafisico",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di un fisico e di un metafisico"
+    },
+    {
+      "character": "Il Fisico",
+      "text": "Di grazia, lasciamo cotesta materia, che è troppo malinconica",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_un_fisico_e_di_un_metafisico",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di un fisico e di un metafisico"
+    },
+    {
+      "character": "La Natura",
+      "text": "A me non è dato prevedere il futuro",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_della_Natura_e_di_un'Anima",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo della Natura e di un’Anima"
+    },
+    {
+      "character": "Malambruno",
+      "text": "Così è.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Malambruno_e_di_Farfarello",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Malambruno e di Farfarello"
+    },
+    {
+      "character": "Fedro",
+      "text": "Questo veramente sarebbe ridicolo in modo superlativo.",
+      "url": "https://it.wikisource.org/wiki/Fedro_(Dalbono,_1869)/Fedro",
+      "author": "Platone",
+      "work": "Fedro"
+    },
+    {
+      "character": "Fedro",
+      "text": "Impossibile.",
+      "url": "https://it.wikisource.org/wiki/Fedro_(Dalbono,_1869)/Fedro",
+      "author": "Platone",
+      "work": "Fedro"
+    },
+    {
+      "character": "Teofilo",
+      "text": "Voi dite bene.",
+      "url": "https://it.wikisource.org/wiki/De_la_causa,_principio_e_uno/Dialogo_secondo",
+      "author": "Giordano Bruno",
+      "work": "De la causa, principio e uno"
+    },
+    {
+      "character": "Poliinnio",
+      "text": "Io non saprei cossi di repente rispondere a questo impudentissimo.",
+      "url": "https://it.wikisource.org/wiki/De_la_causa,_principio_e_uno/Dialogo_terzo",
+      "author": "Giordano Bruno",
+      "work": "De la causa, principio e uno"
+    },
+    {
+      "character": "Dicsono",
+      "text": "Ogni cosa va bene se non v’adirate.",
+      "url": "https://it.wikisource.org/wiki/De_la_causa,_principio_e_uno/Dialogo_terzo",
+      "author": "Giordano Bruno",
+      "work": "De la causa, principio e uno"
+    },
+    {
+      "character": "Simplicio",
+      "text": "Signor sì",
+      "url": "https://it.wikisource.org/wiki/Dialogo_sopra_i_due_massimi_sistemi_del_mondo_tolemaico_e_copernicano/Giornata_prima",
+      "author": "Galileo Galilei",
+      "work": "Dialogo sopra i due massimi sistemi del mondo"
+    },
+    {
+      "character": "Menippo",
+      "text": "Questo no",
+      "url": "https://it.wikisource.org/wiki/Dialoghi_dei_morti/2",
+      "author": "Luciano di Samosata",
+      "work": "Dialoghi dei morti, Dialogo 2"
+    },
+    {
+      "character": "Menippo",
+      "text": "Sì, per Giove.",
+      "url": "https://it.wikisource.org/wiki/Dialoghi_dei_morti/20",
+      "author": "Luciano di Samosata",
+      "work": "Dialoghi dei morti, Dialogo 20"
+    },
+    {
+      "character": "Teeteto",
+      "text": "Sia pure.",
+      "url": "https://it.wikisource.org/wiki/Il_Sofista_e_l'Uomo_politico/Il_Sofista/V",
+      "author": "Platone",
+      "work": "Il Sofista"
+    },
+    {
+      "character": "Teeteto",
+      "text": "Hai domandato una cosa difficile e direi quasi impossibile affatto per le mie forze.",
+      "url": "https://it.wikisource.org/wiki/Il_Sofista_e_l'Uomo_politico/Il_Sofista/XXV",
+      "author": "Platone",
+      "work": "Il Sofista"
+    },
+    {
+      "character": "Saulino",
+      "text": "Tutto dunque, che avete profferito, è verissimo.",
+      "url": "https://it.wikisource.org/wiki/Spaccio_de_la_bestia_trionfante/Dialogo_primo/Parte_prima",
+      "author": "Giordano Bruno",
+      "work": "Spaccio de la bestia trionfante"
+    },
+    {
+      "character": "Teeteto",
+      "text": "Proprio così.",
+      "url": "https://it.wikisource.org/wiki/Il_Sofista_e_l'Uomo_politico/Il_Sofista/XVII",
+      "author": "Platone",
+      "work": "Il Sofista"
+    },
+    {
+      "character": "Teeteto",
+      "text": "E come potrebbe?",
+      "url": "https://it.wikisource.org/wiki/Il_Sofista_e_l'Uomo_politico/Il_Sofista/XXV",
+      "author": "Platone",
+      "work": "Il Sofista"
+    },
+    {
+      "character": "Timeo",
+      "text": "In parte sì",
+      "url": "https://it.wikisource.org/wiki/Timeo/Capitolo_I",
+      "author": "Platone",
+      "work": "Timeo"
+    },
+    {
+      "character": "Socrate",
+      "text": "Non può essere",
+      "url": "https://it.wikisource.org/wiki/Timeo/Capitolo_IV",
+      "author": "Platone",
+      "work": "Timeo"
+    },
+    {
+      "character": "Socrate",
+      "text": "Par così davvero.",
+      "url": "https://it.wikisource.org/wiki/Volgarizzamenti_da_Platone/Il_Parmenide,_ovvero_delle_idee",
+      "author": "Platone",
+      "work": "Il Parmenide, ovvero delle idee"
+    },
+    {
+      "character": "Socrate",
+      "text": "Senza fallo.",
+      "url": "https://it.wikisource.org/wiki/Volgarizzamenti_da_Platone/Il_Parmenide,_ovvero_delle_idee",
+      "author": "Platone",
+      "work": "Il Parmenide, ovvero delle idee"
+    },
+    {
+      "character": "Socrate",
+      "text": "Tu credi il vero.",
+      "url": "https://it.wikisource.org/wiki/Volgarizzamenti_da_Platone/Il_Parmenide,_ovvero_delle_idee",
+      "author": "Platone",
+      "work": "Il Parmenide, ovvero delle idee"
+    },
+    {
+      "character": "Plotino",
+      "text": "A ogni modo queste cose non mi persuadono",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Plotino_e_di_Porfirio",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Plotino e di Porfirio"
+    },
+    {
+      "character": "Il Fisico",
+      "text": "Penso che non mi persuade",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_un_fisico_e_di_un_metafisico",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di un fisico e di un metafisico"
+    },
+    {
+      "character": "Tasso",
+      "text": "Tu dici il vero pur troppo.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Torquato_Tasso_e_del_suo_Genio_familiare",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Torquato Tasso e del suo Genio familiare"
+    },
+    {
+      "character": "Tasso",
+      "text": "Pilato non lo seppe meno di quello che lo so io.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Torquato_Tasso_e_del_suo_Genio_familiare",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Torquato Tasso e del suo Genio familiare"
+    },
+    {
+      "character": "Il Genio",
+      "text": "Così pare.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Torquato_Tasso_e_del_suo_Genio_familiare",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Torquato Tasso e del suo Genio familiare"
+    },
+    {
+      "character": "Il Genio",
+      "text": "Forse.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_di_Torquato_Tasso_e_del_suo_Genio_familiare",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo di Torquato Tasso e del suo Genio familiare"
+    },
+    {
+      "character": "La Natura",
+      "text": "Di cotesto conferirò col destino.",
+      "url": "https://it.wikisource.org/wiki/Operette_morali/Dialogo_della_Natura_e_di_un'Anima",
+      "author": "Giacomo Leopardi",
+      "work": "Operette morali, Dialogo della Natura e di un’Anima"
+    },
+    {
+      "character": "Sagredo",
+      "text": "Sono di questo sicurissimo.",
+      "url": "https://it.wikisource.org/wiki/Dialogo_sopra_i_due_massimi_sistemi_del_mondo_tolemaico_e_copernicano/Giornata_prima",
+      "author": "Galileo Galilei",
+      "work": "Dialogo sopra i due massimi sistemi del mondo"
+    },
+    {
+      "character": "Sagredo",
+      "text": "Io confesso non aver sentita cosa più ammirabile di questa",
+      "url": "https://it.wikisource.org/wiki/Dialogo_sopra_i_due_massimi_sistemi_del_mondo_tolemaico_e_copernicano/Giornata_terza",
+      "author": "Galileo Galilei",
+      "work": "Dialogo sopra i due massimi sistemi del mondo"
+    },
+    {
+      "character": "Simplicio",
+      "text": "E chi ne dubita?",
+      "url": "https://it.wikisource.org/wiki/Dialogo_sopra_i_due_massimi_sistemi_del_mondo_tolemaico_e_copernicano/Giornata_quarta",
+      "author": "Galileo Galilei",
+      "work": "Dialogo sopra i due massimi sistemi del mondo"
+    },
+    {
+      "character": "Sofia",
+      "text": "Dici bene.",
+      "url": "https://it.wikisource.org/wiki/Spaccio_de_la_bestia_trionfante/Dialogo_primo/Parte_prima",
+      "author": "Giordano Bruno",
+      "work": "Spaccio de la bestia trionfante"
+    },
+    {
+      "character": "Sofia",
+      "text": "Non dubitate!",
+      "url": "https://it.wikisource.org/wiki/Spaccio_de_la_bestia_trionfante/Dialogo_primo/Parte_prima",
+      "author": "Giordano Bruno",
+      "work": "Spaccio de la bestia trionfante"
+    },
+    {
+      "character": "Teofilo",
+      "text": "Messer, sì, padre, sì, madonna, sì, madre, sì",
+      "url": "https://it.wikisource.org/wiki/Cena_de_le_ceneri/Dialogo_primo",
+      "author": "Giordano Bruno",
+      "work": "Cena de le ceneri"
+    }
+  ]
+}

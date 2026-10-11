@@ -8,16 +8,7 @@ import { getSiteData } from "../lib/content";
 import { withBase } from "../lib/urls";
 import { indexItem, externalIndexItems } from "../lib/index/index-taxonomy";
 import { tagParents, tagPath } from "../lib/index/tag-hierarchy";
-const views = [
-  { id: "typography", label: "1 · Indice tipografico" },
-  { id: "ribbons", label: "2 · Fasce scorrevoli" },
-  { id: "margin", label: "3 · Indice a margine" },
-  { id: "cabinet", label: "4 · Schedario" },
-];
-interface Props { previewView?: string; }
-const { previewView } = Astro.props;
-const fontPreview = !previewView || previewView === "fonts";
-const view = fontPreview ? "proposal" : previewView;
+import { crossSections, primaryTags } from "../lib/index/taxonomy-rules";
 const data = await getSiteData();
 const projectsById = new Map(data.publicProjects.map(project => [project.data.id, project]));
 const previewAssets = new Map([...data.publicProjects, ...data.publicFieldNotes, ...data.publicExperiments, ...data.publicArtifacts].map(entry => [entry.data.id, "previewAsset" in entry.data ? entry.data.previewAsset : undefined]));
@@ -30,39 +21,29 @@ for (const project of data.publicProjects) {
 for (const artifact of data.publicArtifacts) {
   if (!previewAssets.get(artifact.data.id) && artifact.data.crossword?.gridAsset) previewAssets.set(artifact.data.id, artifact.data.crossword.gridAsset);
 }
-const items = [...[...data.publicProjects, ...data.publicFieldNotes, ...data.publicExperiments, ...data.publicArtifacts].map(indexItem), ...externalIndexItems(data.publicProjects)].sort((a,b) => a.title.localeCompare(b.title));
-const crossSections = [
-  { label: "Topics", values: ["mathematics", "physics", "literature", "agronomy", "finance", "genealogy", "typography", "wordplay", "visual arts", "music"] },
-  { label: "Media", values: ["image"] },
-  { label: "Features", values: ["translation", "solutions", "simulation"] },
-];
+const items = [...[...data.publicProjects, ...data.publicFieldNotes, ...data.publicExperiments, ...data.publicArtifacts].map((entry) => indexItem(entry, data.publicProjects)), ...externalIndexItems(data.publicProjects)].sort((a,b) => a.title.localeCompare(b.title));
 const groups = [
-  { key: "primary", label: "Content type", values: ["artifact", "project", "experiment", "note", "fragment", "thought", "collection"] },
+  { key: "primary", label: "Content type", values: [...primaryTags] },
   { key: "secondary", label: "Secondary", values: [...new Set(items.flatMap(i => i.secondary ? tagPath("secondary", i.secondary) : []))].sort() },
   { key: "cross", label: "Explore by", values: [...new Set(items.flatMap(i => i.cross.flatMap(t => tagPath("cross", t))))].sort() },
 ];
 ---
-<SiteLayout title={previewView ? "Index — Preview" : "Paths & Atlas"} currentSection="atlas">
+<SiteLayout title="Paths & Atlas" currentSection="atlas">
   <SectionPageHeader title="Paths & Atlas" subtitle="The Corridor" introduction="The Atlas will visualize all content. Curated Paths will propose thematic groupings." />
-  {view !== "proposal" && <nav class="preview-variants" aria-label="Confronta le quattro preview">
-    {views.map(option => <a href={withBase(`/previews/index/${option.id}/`)} data-preview-link aria-current={view === option.id ? "page" : undefined}>{option.label}</a>)}
-  </nav>}
-  <section id={previewView ? "index-preview" : "index"} data-taxonomy-index data-view={view} data-font-preview={fontPreview || undefined}>
+  <!-- Keep the existing styling hook until the separate CSS cleanup. -->
+  <section id="index" data-taxonomy-index data-view="proposal">
     <SectionPageHeader title="Index" subtitle="The Attic" headingLevel="h2" introduction="Select tags to browse the corresponding elements" />
     <div class="filter-panel filter-panel--headed">
-      {view !== "proposal" && <p class="eyebrow">Browse the Index</p>}
-      {groups.map(group => <details open={view !== "proposal" || group.key !== "cross"} class="filter-panel__group" data-filter-group={group.key}>
-        <summary class="meta" id={group.key}><span class="filter-heading-label">{group.label}</span>{view === "proposal" && group.key !== "primary" && <span data-selection-label={group.key}></span>}{view === "proposal" && <button class="filter-button section-all" type="button" data-group={group.key} data-value="" aria-pressed="true">All</button>}</summary>
-        {view === "ribbons" && <div class="rail-controls"><button type="button" data-scroll="-1" aria-label={`Scorri ${group.label} verso sinistra`}>←</button><button type="button" data-scroll="1" aria-label={`Scorri ${group.label} verso destra`}>→</button></div>}
-        <div class="filter-list" role="group" aria-labelledby={group.key} tabindex={["ribbons", "cabinet"].includes(view) ? "0" : undefined}>
-          {view !== "proposal" && <button class="filter-button" type="button" data-group={group.key} data-value="" aria-pressed="true">All</button>}
-          {(group.key === "cross" && view === "proposal" ? crossSections : [{ label: "", values: group.values }]).map(section => <div class:list={["filter-subsection", { "filter-subsection--named": !!section.label }]} role={section.label ? "group" : undefined} aria-label={section.label || undefined}>
+      {groups.map(group => <details open={group.key !== "cross"} class="filter-panel__group" data-filter-group={group.key}>
+        <summary class="meta" id={group.key}><span class="filter-heading-label">{group.label}</span>{group.key !== "primary" && <span data-selection-label={group.key}></span>}<button class="filter-button section-all" type="button" data-group={group.key} data-value="" aria-pressed="true">All</button></summary>
+        <div class="filter-list" role="group" aria-labelledby={group.key}>
+          {(group.key === "cross" ? crossSections : [{ label: "", values: group.values }]).map(section => <div class:list={["filter-subsection", { "filter-subsection--named": !!section.label }]} role={section.label ? "group" : undefined} aria-label={section.label || undefined}>
           {section.label && <p class="filter-subsection__title">{section.label}</p>}
           <div class="filter-subsection__tags">
           {section.values.filter(value => group.values.includes(value) && !tagParents[group.key]?.[value]).map(value => <div class="tag-branch">
-            {view === "proposal" && group.values.some(child => tagParents[group.key]?.[child] === value) && <button class="branch-toggle" type="button" data-branch-toggle aria-expanded="false" aria-controls={`children-${group.key}-${value}`} aria-label={`Sottotipi di ${value}`}>▶</button>}
+            {group.values.some(child => tagParents[group.key]?.[child] === value) && <button class="branch-toggle" type="button" data-branch-toggle aria-expanded="false" aria-controls={`children-${group.key}-${value}`} aria-label={`Sottotipi di ${value}`}>▶</button>}
             <button class="filter-button" type="button" data-group={group.key} data-value={value} aria-pressed="false">{value}</button>
-            {group.values.some(child => tagParents[group.key]?.[child] === value) && <div class="tag-children" id={`children-${group.key}-${value}`} hidden={view === "proposal"} role="group" aria-label={`Sottotipi di ${value}`}>
+            {group.values.some(child => tagParents[group.key]?.[child] === value) && <div class="tag-children" id={`children-${group.key}-${value}`} hidden role="group" aria-label={`Sottotipi di ${value}`}>
               {group.values.filter(child => tagParents[group.key]?.[child] === value).map(child => <button class="filter-button" type="button" data-group={group.key} data-value={child} aria-pressed="false">{child}</button>)}
             </div>}
           </div>)}
@@ -70,7 +51,7 @@ const groups = [
           </div>)}
         </div>
       </details>)}
-      {view === "proposal" && <div class="display-picker" role="group" aria-label="Visualizzazione dei risultati"><span class="filter-heading-label">View</span>{["list", "titles", "cards", "wall"].map(label => <button class="filter-button" type="button" data-display={label} aria-pressed={label === "list"}>{label}</button>)}</div>}
+      <div class="display-picker" role="group" aria-label="Visualizzazione dei risultati"><span class="filter-heading-label">View</span>{["list", "titles", "cards", "wall"].map(label => <button class="filter-button" type="button" data-display={label} aria-pressed={label === "list"}>{label}</button>)}</div>
       <div class="filter-summary"><p class="meta" data-result-count role="status">{items.length} entries</p><button type="button" class="clear" data-clear>Clear filters</button></div>
     </div>
 
@@ -271,139 +252,8 @@ const groups = [
   [data-view="proposal"] .tag-children[hidden] { display: flex !important; visibility: hidden; height: 0; overflow: hidden; margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; border-left-color: transparent; }
 </style>
 <script>
-  import { matchesTag, tagPath } from "../lib/index/tag-hierarchy";
-  function initializeTaxonomyIndex() {
-    const root = document.querySelector<HTMLElement>("[data-taxonomy-index]");
-    if (!root || root.dataset.ready) return;
-    root.dataset.ready = "true";
-    type Group = "primary" | "secondary" | "cross";
-    const state: Record<Group, string> = { primary: "", secondary: "", cross: "" };
-    const displayButtons = [...root.querySelectorAll<HTMLButtonElement>("[data-display]")];
-    let display = "list";
-    function setDisplay(value: string) {
-      display = ["list", "titles", "cards", "wall"].includes(value) ? value : "list";
-      root!.querySelector<HTMLElement>("[data-results-display]")!.dataset.resultsDisplay = display;
-      for (const button of displayButtons) button.setAttribute("aria-pressed", String(button.dataset.display === display));
-    }
-    const buttons = [...root.querySelectorAll<HTMLButtonElement>("[data-group]")];
-    const sections = [...root.querySelectorAll<HTMLDetailsElement>("[data-filter-group]")];
-    const mobile = matchMedia("(max-width: 760px)");
-    const rows = [...root.querySelectorAll<HTMLElement>("[data-index-item]")].map(element => ({ element, item: JSON.parse(element.dataset.item!) as { primary: string; secondary: string; cross: string[] } }));
-    const branches = [...root.querySelectorAll<HTMLButtonElement>("[data-branch-toggle]")].map(toggle => {
-      const container = toggle.closest<HTMLElement>(".tag-branch")!;
-      const parent = container.querySelector<HTMLButtonElement>("[data-group]")!;
-      const children = document.getElementById(toggle.getAttribute("aria-controls")!)!;
-      return { toggle, parent, children };
-    });
-    function openBranch(target: typeof branches[number], open: boolean) {
-      for (const branch of branches) {
-        if (branch.parent.dataset.group !== target.parent.dataset.group) continue;
-        const expanded = branch === target && open;
-        branch.children.hidden = !expanded;
-        branch.toggle.setAttribute("aria-expanded", String(expanded));
-        branch.toggle.textContent = expanded ? "▼" : "▶";
-      }
-    }
-    function readUrl() {
-      const params = new URL(location.href).searchParams;
-      setDisplay(params.get("display") || "list");
-      for (const group of Object.keys(state) as Group[]) {
-        const value = params.get(group) || "";
-        state[group] = buttons.some(b => b.dataset.group === group && b.dataset.value === value) ? value : "";
-      }
-    }
-    function update(save = true) {
-      const secondaryEnabled = ["", "artifact", "experiment", "collection"].includes(state.primary);
-      const allowedSecondary = (value: string) => !value || (secondaryEnabled && (state.primary === "collection" ? value === "playlist" : !state.primary || value !== "playlist"));
-      if (!secondaryEnabled || !allowedSecondary(state.secondary)) state.secondary = "";
-      const secondarySection = sections.find(s => s.dataset.filterGroup === "secondary")!;
-      secondarySection.hidden = !secondaryEnabled;
-      for (const button of buttons.filter(b => b.dataset.group === "secondary")) {
-        const value = button.dataset.value!;
-        button.hidden = !allowedSecondary(value) || (!!value && !rows.some(({item}) => matchesTag("primary", state.primary, [item.primary]) && matchesTag("secondary", value, [item.secondary])));
-        button.disabled = !!value && !rows.some(({item}) => matchesTag("primary", state.primary, [item.primary]) && matchesTag("secondary", value, [item.secondary]));
-      }
-      for (const branch of branches) {
-        const hasChildren = [...branch.children.querySelectorAll<HTMLButtonElement>("[data-group]")].some(button => !button.hidden);
-        branch.toggle.hidden = !hasChildren;
-        if (!hasChildren) {
-          branch.children.hidden = true;
-          branch.toggle.setAttribute("aria-expanded", "false");
-          branch.toggle.textContent = "▶";
-        }
-      }
-      for (const branch of root!.querySelectorAll<HTMLElement>(".tag-branch")) {
-        const parent = branch.querySelector<HTMLButtonElement>(":scope > button[data-group]")!;
-        branch.hidden = parent.hidden;
-      }
-      for (const label of root!.querySelectorAll<HTMLElement>("[data-selection-label]")) {
-        const selected = state[label.dataset.selectionLabel as Group];
-        label.textContent = selected ? `· ${selected}` : "";
-      }
-      let count = 0;
-      for (const {element, item} of rows) {
-        element.hidden = !matchesTag("primary", state.primary, [item.primary]) || !matchesTag("secondary", state.secondary, [item.secondary]) || !matchesTag("cross", state.cross, item.cross);
-        if (!element.hidden) count++;
-      }
-      for (const button of buttons) button.setAttribute("aria-pressed", String(state[button.dataset.group as Group] === button.dataset.value));
-      root!.querySelector("[data-result-count]")!.textContent = `${count} of ${rows.length} entries`;
-      root!.querySelector<HTMLElement>("[data-empty]")!.hidden = count > 0;
-      if (save) {
-        const url = new URL(location.href); url.search = "";
-        if (display !== "list") url.searchParams.set("display", display);
-        for (const [key,value] of Object.entries(state)) if (value) url.searchParams.set(key,value);
-        history.replaceState(history.state,"",url);
-      }
-      for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-preview-link]")) {
-        const target = new URL(link.href);
-        target.search = "";
-        for (const [key,value] of Object.entries(state)) if (value) target.searchParams.set(key,value);
-        link.href = target.href;
-      }
-    }
-    const events = new AbortController();
-    for (const button of displayButtons) button.addEventListener("click", () => {
-      setDisplay(button.dataset.display!);
-      update();
-    }, { signal: events.signal });
-    function adjustSections() {
-      for (const section of sections) {
-        if (root!.dataset.view === "proposal") {
-          section.open = section.dataset.filterGroup !== "cross" || !!state[section.dataset.filterGroup as Group];
-        } else section.open = root!.dataset.view !== "margin" || !mobile.matches || section.dataset.filterGroup === "primary" || !!state[section.dataset.filterGroup as Group];
-      }
-    }
-    for (const section of sections) section.querySelector("summary")!.addEventListener("click", event => {
-      const expandable = (root!.dataset.view === "proposal" && section.dataset.filterGroup === "cross") || (root!.dataset.view === "margin" && mobile.matches);
-      if (!expandable) event.preventDefault();
-    }, { signal: events.signal });
-    for (const arrow of root.querySelectorAll<HTMLButtonElement>("[data-scroll]")) arrow.addEventListener("click", () => {
-      const rail = arrow.closest("details")!.querySelector<HTMLElement>(".filter-list")!;
-      rail.scrollBy({ left: Number(arrow.dataset.scroll) * rail.clientWidth * .7, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
-    }, { signal: events.signal });
-    for (const branch of branches) branch.toggle.addEventListener("click", () => {
-      openBranch(branch, branch.children.hidden);
-    }, { signal: events.signal });
-    for (const button of buttons) button.addEventListener("click", event => {
-      if (button.classList.contains("section-all")) { event.preventDefault(); event.stopPropagation(); }
-      const group = button.dataset.group as Group;
-      const value = button.dataset.value!;
-      state[group] = state[group] === value ? "" : value;
-      update();
-    }, { signal: events.signal });
-    root.querySelector("[data-clear]")!.addEventListener("click", () => {
-      state.primary = state.secondary = state.cross = "";
-      update();
-      for (const list of root.querySelectorAll<HTMLElement>(".filter-list")) list.scrollTo({ left: 0, top: 0, behavior: "instant" });
-    }, { signal: events.signal });
-    window.addEventListener("popstate", () => { readUrl(); update(false); }, { signal: events.signal });
-    document.addEventListener("astro:before-swap", () => { events.abort(); }, { once: true });
-    readUrl(); update(); adjustSections();
-    for (const branch of branches) {
-      const selected = state[branch.parent.dataset.group as Group];
-      if (selected !== branch.parent.dataset.value && tagPath(branch.parent.dataset.group!, selected).includes(branch.parent.dataset.value!)) openBranch(branch, true);
-    }
-  }
+  import { initializeTaxonomyIndex } from "../lib/index/index-controller";
+
   initializeTaxonomyIndex();
   document.addEventListener("astro:page-load", initializeTaxonomyIndex);
 </script>

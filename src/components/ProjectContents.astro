@@ -1,4 +1,5 @@
 ---
+import type { ProjectEntry } from "../lib/content";
 import ComicSquare from "./ComicSquare.astro";
 import type {
   CollectionEntry,
@@ -16,6 +17,7 @@ type ExternalContent =
   CollectionEntry<"projects">["data"]["externalContents"][number];
 
 interface Props {
+  projects: readonly ProjectEntry[];
   gallery?: boolean;
   presentation?: "cards" | "comic-gallery" | "reading-list";
   entries: PublishableEntry[];
@@ -28,6 +30,7 @@ interface Props {
 }
 
 const {
+  projects,
   entries,
   externalContents = [],
   repositoryPreview,
@@ -117,7 +120,7 @@ const localContents = entries.map(
         entry.data.projects[0]?.id,
 
       href:
-        routeForEntry(entry),
+        routeForEntry(entry, projects),
 
       elsewhere: false,
 

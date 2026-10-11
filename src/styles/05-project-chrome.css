@@ -510,22 +510,6 @@
 }
 
 /*
- * Le liste interne diventano verticali:
- * nello spazio di mezza pagina sono più leggibili
- * rispetto alle vecchie due colonne.
- */
-
-.project-box .project-contents li {
-  grid-template-columns: 1fr;
-  gap: 0.15rem;
-  padding-block: 0.65rem;
-}
-
-.project-box .project-contents a {
-  font-size: 1.03rem;
-}
-
-/*
  * Progetti mostrati soltanto come titolo.
  */
 

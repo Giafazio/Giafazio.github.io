@@ -145,7 +145,7 @@ const titleOnlyProjects = data.publicProjects
                     )
 }
 
-                  {project.data.id === "symphojingles" ? <MusicProjectContents project={project} entries={contents} showHeadings={false} /> : <ProjectContents
+                  {project.data.id === "symphojingles" ? <MusicProjectContents projects={data.publicProjects} project={project} entries={contents} showHeadings={false} /> : <ProjectContents projects={data.publicProjects}
                     entries={contents}
                     repositoryPreview={project.data.id === "esperimenti-di-portafoglio" ? project.data.preview : undefined}
                     externalContents={

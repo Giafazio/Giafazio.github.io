@@ -1,0 +1,31 @@
+{
+  "versione": "B5 generalizzato",
+  "data": "2026-10-10",
+  "stato": "Approvato dall’utente come filtro JavaScript",
+  "runtime": "oracolo.mjs",
+  "identicoAB5": true,
+  "sha256": {
+    "CONTESTO.md": "10bb29f74e4ae423557bdca9ac8bcd3ede6050db4d07ee92c4ca376b39525f0b",
+    "README.md": "dd6b32bdcd3c7d93a259aad2d5e2169eba910aa5d740578eb272d1aac522d8df",
+    "corpus.csv": "146afadb0ca5c7a31d39c8ef451ca8d5b4db2bf82b8097b8a3462c41b2cf7c11",
+    "diagnostici.json": "f87d4fe037d358b5b42de2bb90f242a8b6727151a0dacc06738fd52854a263ca",
+    "dizionario-straniero.json": "7a1aa9e671b27de371e69a712c5b4dba1150fa439135b73236e448ea7eb364d4",
+    "oracolo.mjs": "5b8b1cd68d3a07c00168ff31fdfddf572eef40cc2b0f241ac2c06e49f2a4eb73",
+    "risultati.json": "a801e3df977ee8d512121c64654ea6a139d9b7b88300ca79f94f8570cf6cfeb6",
+    "verifica.mjs": "3b3199de7f6919ed2d58f67cd01bccf0e017eed55cf9299c3b0c3f02672d0f62"
+  },
+  "risultati": {
+    "corpus": {
+      "corrette": 582,
+      "totale": 582
+    },
+    "esterni": {
+      "corrette": 166,
+      "totale": 178
+    },
+    "controlliMirati": {
+      "corrette": 36,
+      "totale": 36
+    }
+  }
+}

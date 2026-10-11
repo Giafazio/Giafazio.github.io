@@ -1,0 +1,356 @@
+{
+  "nota": "B5 generalizzato rispetto a B4. Alternative ellittiche fra espressioni temporali da elenco finito. Sul corpus e sui 178 esterni precedenti deve cambiare soltanto Oggi o domani? Where?. I controlli mirati includono nuove alternative, formule polari, proposizioni complete e input stranieri.",
+  "nuovi": [
+    {
+      "domanda": "Oggi o domani?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Domani o oggi?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "OGGI O DOMANI?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "  Domani   o   oggi？ ",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Oggi o domani? Who?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Oggi?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "Domani?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "Oggi o no?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "Vieni oggi o domani?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Oggi vieni?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "What are you doing?",
+      "attesa_proposta": "incerta"
+    },
+    {
+      "domanda": "Oggi o domani",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Stasera oppure domattina?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Prima o dopo?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Adesso o più tardi?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Lunedì o martedì?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Domani mattina oppure domani sera?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Presto o tardi?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Stamattina o stasera?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Stanotte oppure domattina?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Dopodomani o venerdì?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Più presto o più tardi?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Sabato oppure domenica?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Prima o dopo? Where?",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Adesso oppure no?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "Domattina o no?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "Hai un impegno stasera o domattina?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "Hai un impegno lunedì o martedì?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "Puoi venire lunedì o martedì?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "Vieni prima o dopo?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "Prima?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "Oggi o oggi?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "Stasera oppure stasera?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "Stasera o domattina",
+      "attesa_proposta": "aperta"
+    },
+    {
+      "domanda": "Adesso o più tardi vieni?",
+      "attesa_proposta": "si_no"
+    },
+    {
+      "domanda": "You or they?",
+      "attesa_proposta": "incerta"
+    }
+  ],
+  "corpus": {
+    "totale": 582,
+    "correttePrima": 582,
+    "corretteDopo": 582,
+    "cambiamenti": [],
+    "regressioni": [],
+    "erroriResidui": []
+  },
+  "esterni": {
+    "totale": 178,
+    "correttePrima": 165,
+    "corretteDopo": 166,
+    "cambiamenti": [
+      {
+        "domanda": "Oggi o domani? Where?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      }
+    ],
+    "regressioni": [],
+    "erroriResidui": [
+      {
+        "domanda": "Ho riflettuto, quale itinerario, secondo te, conviene scegliere?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "si_no"
+      },
+      {
+        "domanda": "Ho una casa, dove passo l'estate, che affitterò presto?",
+        "attesa": "si_no",
+        "prima": "aperta",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Vuoi il tè o il succo?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "si_no"
+      },
+      {
+        "domanda": "Che sia già finita la gara?",
+        "attesa": "si_no",
+        "prima": "aperta",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Che sia già partito?",
+        "attesa": "si_no",
+        "prima": "aperta",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Dopo che hai finito dove andrai domani?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "si_no"
+      },
+      {
+        "domanda": "Ho chiuso il negozio, che vuoi comprare domani?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "si_no"
+      },
+      {
+        "domanda": "Ho scelto il lavoro, che vuoi fare adesso?",
+        "attesa": "si_no",
+        "prima": "aperta",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Ho visto il film, che vuoi vedere stasera?",
+        "attesa": "si_no",
+        "prima": "aperta",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Tomorrow?",
+        "attesa": "incerta",
+        "prima": "si_no",
+        "dopo": "si_no"
+      },
+      {
+        "domanda": "Come here?",
+        "attesa": "incerta",
+        "prima": "aperta",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "How come?",
+        "attesa": "incerta",
+        "prima": "si_no",
+        "dopo": "si_no"
+      }
+    ]
+  },
+  "controlliMirati": {
+    "totale": 36,
+    "correttePrima": 19,
+    "corretteDopo": 36,
+    "cambiamenti": [
+      {
+        "domanda": "Oggi o domani?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Domani o oggi?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "OGGI O DOMANI?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "  Domani   o   oggi？ ",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Oggi o domani? Who?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Stasera oppure domattina?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Prima o dopo?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Adesso o più tardi?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Lunedì o martedì?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Domani mattina oppure domani sera?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Presto o tardi?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Stamattina o stasera?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Stanotte oppure domattina?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Dopodomani o venerdì?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Più presto o più tardi?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Sabato oppure domenica?",
+        "attesa": "aperta",
+        "prima": "si_no",
+        "dopo": "aperta"
+      },
+      {
+        "domanda": "Prima o dopo? Where?",
+        "attesa": "aperta",
+        "prima": "incerta",
+        "dopo": "aperta"
+      }
+    ],
+    "regressioni": [],
+    "erroriResidui": []
+  }
+}

@@ -9,9 +9,7 @@ import {
 
 import { isCollectionEntry } from "../collections";
 
-import {
-  routeFor,
-} from "../../urls";
+import { validateContentRoutes } from "../routing";
 
 import {
   automaticReplacementTargetIds,
@@ -19,10 +17,6 @@ import {
 } from "../log-targets";
 
 import type {
-  ArtifactEntry,
-  ExperimentEntry,
-  FieldNoteEntry,
-  ProjectEntry,
   SiteContentEntry,
   SiteData,
 } from "../types";
@@ -32,15 +26,6 @@ const projectRoot = process.env.npm_package_json
   : process.cwd();
 
 const publicRoot = join(projectRoot, "public");
-
-function canonicalUrl(
-  collection: "projects" | "fieldNotes" | "experiments" | "artifacts",
-  entry: ProjectEntry | FieldNoteEntry | ExperimentEntry | ArtifactEntry,
-): string | null {
-  const slug = entry.data.slug;
-  if (!slug) return null;
-  return routeFor(collection, slug);
-}
 
 function validateLanguage(language: string | undefined, id: string): void {
   if (!language) return;
@@ -71,7 +56,6 @@ export function validateSiteData(data: SiteData): void {
   ] as const;
 
   const idOwners = new Map<string, string>();
-  const urlOwners = new Map<string, string>();
   const projectById = new Map(
     data.projects.map((entry) => [entry.data.id, entry])
   );
@@ -130,15 +114,8 @@ export function validateSiteData(data: SiteData): void {
         });
       }
 
-      const url = canonicalUrl(collection, entry);
-      if (!draft && !url) {
+      if (!draft && !entry.data.slug) {
         throw new Error(`Public entry ${id} has no canonical slug`);
-      }
-      if (url) {
-        if (urlOwners.has(url)) {
-          throw new Error(`Duplicate canonical URL "${url}"`);
-        }
-        urlOwners.set(url, id);
       }
 
       for (const relatedId of related) {
@@ -186,6 +163,11 @@ export function validateSiteData(data: SiteData): void {
       }
     }
   }
+
+  validateContentRoutes(
+    allGroups.flatMap<SiteContentEntry>(([, entries]) => [...entries]),
+    data.projects,
+  );
 
   for (const project of data.projects) {
     const groupIds = (project.data.contentGroups ?? []).map((group) => group.id);

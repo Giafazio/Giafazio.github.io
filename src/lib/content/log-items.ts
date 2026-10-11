@@ -1,6 +1,6 @@
 import {
   routeForSiteContentEntry,
-} from "./entries";
+} from "./routing";
 
 import {
   automaticReplacementTargetIds,
@@ -14,6 +14,7 @@ import type {
   LogOperation,
   LogTarget,
   PublishableEntry,
+  ProjectEntry,
   SiteContentEntry,
   SiteData,
 } from "./types";
@@ -215,14 +216,12 @@ function visibleContentTitle(
   return entry.data.title;
 }
 
-function makeLogTarget(
-  entry: SiteContentEntry,
-): LogTarget {
+function makeLogTarget(entry: SiteContentEntry, projects: readonly ProjectEntry[]): LogTarget {
   return {
     id: entry.data.id,
     title: visibleContentTitle(entry),
     href:
-      routeForSiteContentEntry(entry),
+      routeForSiteContentEntry(entry, projects),
   };
 }
 
@@ -316,7 +315,7 @@ export function getLogItems(
       automaticLogPresentation(entry);
 
     const target =
-      makeLogTarget(entry);
+      makeLogTarget(entry, data.publicProjects);
 
     automaticItems.push({
       id:
@@ -389,9 +388,7 @@ export function getLogItems(
                   );
 
                 const target =
-                  makeLogTarget(
-                    targetEntry,
-                  );
+                  makeLogTarget(targetEntry, data.publicProjects);
 
                 return {
                   operation:
@@ -479,9 +476,7 @@ export function getLogItems(
           );
 
         const targets =
-          targetEntries.map(
-            makeLogTarget,
-          );
+          targetEntries.map((target) => makeLogTarget(target, data.publicProjects));
 
         const soleTargetEntry =
           targetEntries.length === 1

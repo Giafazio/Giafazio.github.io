@@ -26,9 +26,13 @@ export {
 export {
   collectionNameFor,
   labelForEntry,
+} from "./content/entries";
+
+export {
+  resolveArtifactRoute,
   routeForEntry,
   routeForSiteContentEntry,
-} from "./content/entries";
+} from "./content/routing";
 
 export {
   getProjectContents,

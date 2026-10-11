@@ -1,0 +1,583 @@
+id,domanda,etichetta,famiglia,motivo
+S01,"Vieni domani?",si_no,polare_semplice,Conferma o negazione della proposizione
+S02,"Hai finito il lavoro?",si_no,polare_semplice,Conferma o negazione della proposizione
+S03,"Il negozio è aperto?",si_no,polare_semplice,Conferma o negazione della proposizione
+S04,"Possiamo entrare?",si_no,polare_modale,Principale polare
+S05,"Ti piace questo libro?",si_no,polare_semplice,Conferma o negazione della proposizione
+S06,"Non vieni alla riunione?",si_no,polare_negativa,La negazione conserva la forma polare
+S07,"Non hai ancora mangiato?",si_no,polare_negativa,La negazione conserva la forma polare
+S08,"Nessuno ti ha avvisato?",si_no,polare_negativa,Conferma o negazione della proposizione negativa
+S09,"Puoi dirmi quando vieni?",si_no,richiesta_indiretta,Principale polare secondo la convenzione approvata
+S10,"Sai che ore sono?",si_no,richiesta_indiretta,Principale polare secondo la convenzione approvata
+S11,"Ricordi dove abbiamo parcheggiato?",si_no,richiesta_indiretta,Principale polare con interrogativa subordinata
+S12,"Mi spieghi perché sei partito?",si_no,richiesta_indiretta,Principale polare con interrogativa subordinata
+S13,"Potresti indicarmi quale autobus prendere?",si_no,richiesta_indiretta,Principale polare con interrogativa subordinata
+S14,"Hai capito come funziona?",si_no,richiesta_indiretta,Principale polare con interrogativa subordinata
+S15,"Vieni oppure no?",si_no,alternativa_polare,Alternativa fra proposizione e negazione
+S16,"Hai deciso se partecipare o no?",si_no,subordinata,Principale polare
+S17,"È vero che il treno è in ritardo?",si_no,subordinata,Principale polare
+S18,"Pensi che funzionerà?",si_no,subordinata,Principale polare
+S19,"Ti sembra giusto?",si_no,retorica_possibile,La possibile retoricità non cambia la forma
+S20,"Non è forse evidente?",si_no,retorica_possibile,La possibile retoricità non cambia la forma
+S21,"Ma ti pare normale?",si_no,retorica_possibile,La possibile retoricità non cambia la forma
+S22,"Credi davvero che io sia così ingenuo?",si_no,retorica_possibile,Principale polare
+S23,"Vieni con noi, vero?",si_no,conferma,Richiesta di conferma
+S24,"Hai ricevuto il messaggio, no?",si_no,conferma,Richiesta di conferma
+S25,"Il pacco è arrivato?",si_no,polare_semplice,Conferma o negazione della proposizione
+S26,"Tu domani lavori?",si_no,ordine_colloquiale,Proposizione completa interrogativa
+S27,"Hai letto il testo e controllato i conti?",si_no,coordinazione,Una domanda polare su una congiunzione
+S28,"Se piove, restiamo a casa?",si_no,condizionale,Conferma o negazione della proposizione condizionale
+S29,"Hai fame? Vuoi mangiare?",si_no,multiple_omogenee,Due domande autonome entrambe polari
+S30,"Perché, non ti fidi di me?",si_no,marcatore_discorsivo,Perché separato introduce una domanda polare
+A01,"Quando vieni?",aperta,interrogativo_temporale,Richiede un momento
+A02,"Dove abiti?",aperta,interrogativo_luogo,Richiede un luogo
+A03,"Chi ha chiamato?",aperta,interrogativo_persona,Richiede una persona
+A04,"Che cosa cerchi?",aperta,interrogativo_oggetto,Richiede un oggetto
+A05,"Perché sei partito?",aperta,interrogativo_causa,Richiede una spiegazione
+A06,"Come funziona questo dispositivo?",aperta,interrogativo_modo,Richiede una descrizione
+A07,"Quanto costa?",aperta,interrogativo_quantita,Richiede un valore
+A08,"Quanti ospiti arrivano?",aperta,interrogativo_quantita,Richiede un numero
+A09,"Quale libro preferisci?",aperta,interrogativo_scelta,Richiede un elemento
+A10,"Di chi è questa borsa?",aperta,interrogativo_persona,Richiede il possessore
+A11,"A chi hai scritto?",aperta,interrogativo_persona,Richiede il destinatario
+A12,"Da dove arriva il treno?",aperta,interrogativo_luogo,Richiede un'origine
+A13,"Fino a quando rimani?",aperta,interrogativo_temporale,Richiede un termine temporale
+A14,"Con quale strumento lo misuri?",aperta,interrogativo_scelta,Richiede uno strumento
+A15,"In che modo posso aiutarti?",aperta,interrogativo_modo,Richiede una modalità
+A16,"Preferisci tè o caffè?",aperta,alternativa_valori,Richiede una scelta fra bevande
+A17,"Vieni oggi o domani?",aperta,alternativa_valori,Richiede una scelta fra momenti
+A18,"Partiamo alle otto o alle nove?",aperta,alternativa_valori,Richiede una scelta fra orari
+A19,"Quale preferisci, il rosso o il blu?",aperta,alternativa_valori,Richiede una scelta fra colori
+A20,"Dove e quando ci incontriamo?",aperta,coordinazione,Richiede luogo e momento
+A21,"Chi viene e chi resta?",aperta,coordinazione,Richiede due identificazioni
+A22,"Dove vai? Quando torni?",aperta,multiple_omogenee,Due domande autonome entrambe aperte
+A23,"Chi non ha consegnato?",aperta,interrogativo_negativo,La negazione non elimina la richiesta di persona
+A24,"Perché non mi hai chiamato?",aperta,interrogativo_negativo,Richiede una spiegazione
+A25,"Come potrei dimenticarlo?",aperta,retorica_possibile,Forma aperta anche se potenzialmente retorica
+A26,"Chi potrebbe crederci?",aperta,retorica_possibile,Forma aperta anche se potenzialmente retorica
+A27,"Che senso ha continuare?",aperta,retorica_possibile,Richiede formalmente un senso o una ragione
+A28,"Quando puoi dirmi se vieni?",aperta,principale_aperta,La principale chiede un momento
+A29,"Come sai che è vero?",aperta,principale_aperta,La principale chiede una modalità o giustificazione
+A30,"Dove abiti",aperta,punteggiatura_assente,Struttura interrogativa aperta esplicita
+I01,"Vieni? A che ora?",aperta,multiple_miste,Domande autonome di tipi diversi
+I02,"Hai finito e quando consegni?",aperta,multiple_miste,Richiesta polare e richiesta temporale
+I03,"Dove vai? Torni stasera?",aperta,multiple_miste,Domande autonome di tipi diversi
+I04,"Vuoi partecipare? Perché?",aperta,multiple_miste,Richiesta polare e richiesta di spiegazione
+I05,"Domani?",si_no,frammento,Frammento assegnato a si_no per convenzione
+I06,"Il rosso?",si_no,frammento,Frammento assegnato a si_no per convenzione
+I07,"E tu?",si_no,frammento,Frammento assegnato a si_no per convenzione
+I08,"Davvero?",si_no,frammento,Frammento assegnato a si_no per convenzione
+I09,"Con Marco?",si_no,frammento,Frammento assegnato a si_no per convenzione
+I10,"Hai un cane o un gatto?",si_no,disgiunzione_ambigua,Disgiunzione ambigua assegnata a si_no per convenzione
+I11,"Sei italiano o francese?",si_no,disgiunzione_ambigua,Disgiunzione ambigua assegnata a si_no per convenzione
+I12,"Ha telefonato Marco o Luca?",si_no,disgiunzione_ambigua,Disgiunzione ambigua assegnata a si_no per convenzione
+I13,"Vorrei sapere quando vieni.",aperta,fuori_ambito,Richiesta dichiarativa assegnata ad aperta per convenzione
+I14,"Dimmi dove abiti.",aperta,fuori_ambito,Richiesta imperativa assegnata ad aperta per convenzione
+I15,"Il treno arriva alle otto.",aperta,fuori_ambito,Enunciato dichiarativo assegnato ad aperta per convenzione
+I16,"Ciao!",aperta,fuori_ambito,Saluto assegnato ad aperta per convenzione
+I17,"",aperta,input_non_valido,Input vuoto assegnato ad aperta per convenzione
+I18,"???",aperta,input_non_valido,Input non linguistico assegnato ad aperta per convenzione
+I19,"Tu domani lavori",aperta,punteggiatura_assente,Assenza di segnali interrogativi; etichetta corretta dall'utente
+I20,"Quando? Sì o no?",aperta,multiple_miste,Richieste di tipi diversi e contenuto ellittico
+G01,"Cosa fai?",aperta,principale_aperta,Interrogativo aperto nella principale; approvato durante il gioco
+G02,"Allora ti è piaciuto?",si_no,polare_con_clitici,Etichetta corretta dall'utente durante il gioco
+G03,"Ci ho pensato molto e vorrei chiederti se pensi che ci riuscirò",si_no,richiesta_indiretta,Richiesta con interrogativa indiretta polare indicata dall'utente
+G04,"Mi passi a prendere?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G05,"Ho pensato che potesse piacerti. Non ti pare?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G06,"Non sei d'accordo?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G07,"Ti manco?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G08,"Ti sono mancato?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G09,"Hai fatto la spesa?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G10,"Chi ha ragione tra Kant ed Hegel?",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G11,"Stai male?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G12,"Sarò chiaro perché voglio saperlo. Te lo chiedo un'ultima volta. Vieni?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G13,"Potrebbero mai saperlo?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G14,"Ce lo diranno secondo te?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G15,"Ce la faremo?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G16,"Ce la farete a superare le difficoltà?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G17,"Mi picciono i treni",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G18,"Eccomi",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G19,"Sai, penso spesso a te",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G20,"Vorrei capire cosa pensi",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G21,"Ho visto un gatto",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G22,"Mi piacerebbe chiederti qual è il tuo colore preferito",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G23,"Mi sento male",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G24,"Stai",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G25,"Senti",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G26,"quando van",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G27,"Mi fai stare bene",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G28,"Devo confessarti che non ho apprezzato il tuo comportamento di ieri",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G29,"Ti sei stancato di me?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G30,"Che hai fatto! Non mi sopporti più?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G31,"Non mi vuoi più bene?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G32,"Ti fa piacere vedermi?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G33,"Troverò la felicità?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G34,"Usciremo dalla crisi?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G35,"Riusciremo a farcela?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G36,"Ce la farai?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G37,"Hai visto?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G38,"Hai notato i miei nuovi capelli?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G39,"Hai sentito?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G40,"Pensi che morirò?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G41,"aiuto",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G42,"Cosa faremo?",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G43,"Cosa troveremo?",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G44,"Dove andremo?",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G45,"Chi ci dirà di no?",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G46,"Senti un po'",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G47,"Stai calmo",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G48,"Vorrei sapere cosa hai fatto ieri",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G49,"Mi dai una mano?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G50,"Posso chiederti una mano?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G51,"Andiamo al cinema?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G52,"Facciamo qualcosa?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G53,"Sono andati via?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G54,"Hanno lasciato loro le cose per terra?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G55,"E' stato Marco? Proprio lui?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G56,"Mai avrei detto! Sei sicuro sia stato lui?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G57,"Hai pensato a quello che ho detto?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G58,"Senti, ci hai più pensato?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G59,"Ci hai dormito un po' su?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G60,"E' piaciuta la torta secondo te?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G61,"Andiamo via?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G62,"Cantiamo qualcosa?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G63,"Maria ha fatto un po' cacare secondo te?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G64,"E' stato orribile?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G65,"Giulio ha stonato?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G66,"Il cane ha abbaiato?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G67,"C'è stato un casino ieri?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G68,"Domani verrai?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G69,"Ieri è successo qualcosa?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G70,"Ma guarda un po'! Mi ha stupito! Anche te?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G71,"Anche tu sei stato male?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G72,"Mi hai fatto preoccupare, stai meglio?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G73,"Mi dai il tuo numero?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G74,"Ti faccio pena?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G75,"E' per quello che non mi parli più?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G76,"Più tardi ci vediamo?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G77,"Mi fai sapere più tardi?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G78,"Dopo?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G79,"Perché non parli?",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G80,"Perché  mi hai tradito?",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G81,"Mi fai sospirare",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G82,"Abbiamo deciso cosa fare?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G83,"Sei un robot?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G84,"Andrò in cielo?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G85,"Volerò?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G86,"Cambierò mai?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G87,"Il mondo potrà mai cambiare in meglio?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G88,"L'umanità sopravviverà?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G89,"I panda si estingueranno?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G90,"Ce la faranno i nostri eroi?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G91,"Vinceremo?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G92,"Moriremo tutti?",si_no,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G93,"Quando ci vediamo?",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G94,"Chi vincerà i mondiali?",aperta,esempio_utente,Etichetta fornita dall'utente durante il gioco
+G95,"Hai chiuso la finestra?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G96,"La porta è rimasta aperta?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G97,"Ti serve una penna?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G98,"Possiamo cominciare?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G99,"Avete trovato parcheggio?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G100,"Il telefono sta caricando?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G101,"Hai salvato il documento?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G102,"Questa sedia è libera?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G103,"Vuoi sederti qui?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G104,"Ti porto un bicchiere d’acqua?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G105,"Hai ricevuto la mia email?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G106,"Ci sentiamo questa sera?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G107,"Ti va di fare una passeggiata?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G108,"Hai già prenotato?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G109,"Il biglietto è ancora valido?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G110,"Possiamo pagare con la carta?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G111,"Hai controllato l’indirizzo?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G112,"Il treno ferma a Bologna?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G113,"Siamo sul binario giusto?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G114,"Ci accompagni alla stazione?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G115,"Ti sei ricordato le chiavi?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G116,"Abbiamo abbastanza tempo?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G117,"Hai messo la sveglia?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G118,"Domattina ti alzerai presto?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G119,"La riunione è stata annullata?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G120,"Partecipi anche tu?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G121,"Possiamo rimandare a venerdì?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G122,"Hai letto le istruzioni?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G123,"Il programma funziona?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G124,"Hai provato a riavviarlo?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G125,"Ti manca qualche informazione?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G126,"Questo esempio è chiaro?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G127,"Hai capito la differenza?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G128,"Vuoi che lo ripeta?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G129,"Posso mostrarti un altro caso?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G130,"Ti sembra una buona soluzione?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G131,"Sei convinto della tua scelta?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G132,"Hai cambiato idea?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G133,"Ne abbiamo già parlato?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G134,"Ti ricordi di quella sera?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G135,"Mi stai ascoltando?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G136,"Ti ho interrotto?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G137,"Posso finire il discorso?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G138,"Hai qualcosa da aggiungere?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G139,"Sei ancora arrabbiato?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G140,"Ti sei divertito?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G141,"Ti è mancata casa?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G142,"Hai dormito bene?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G143,"Ti senti più tranquillo?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G144,"Posso esserti utile?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G145,"Il gatto ha mangiato?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G146,"Hai portato fuori il cane?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G147,"Le piante hanno bisogno d’acqua?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G148,"Hai spento il forno?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G149,"La torta è pronta?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G150,"Vuoi assaggiarla?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G151,"Ti basta questa porzione?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G152,"Hai qualche allergia?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G153,"Il caffè è troppo caldo?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G154,"Mettiamo via gli avanzi?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G155,"Domani pioverà?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G156,"Hai preso l’ombrello?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G157,"La strada è percorribile?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G158,"C’è ancora neve in montagna?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G159,"Possiamo attraversare qui?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G160,"Il museo è aperto la domenica?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G161,"Ci sarà molta gente?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G162,"Hai comprato i biglietti?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G163,"Restiamo fino alla fine?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G164,"Ti è piaciuto il concerto?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G165,"La squadra ha vinto?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G166,"Hai visto l’ultima puntata?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G167,"Il libro ti ha sorpreso?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G168,"Lo consiglieresti a un amico?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G169,"Hai riconosciuto l’attore?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G170,"Questa canzone ti ricorda qualcuno?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G171,"Sai se il negozio apre domani?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G172,"Ricordi quando parte l’autobus?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G173,"Hai capito perché il motore si è fermato?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G174,"Puoi spiegarmi come hai risolto il problema?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G175,"Ti ricordi chi ci ha presentati?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G176,"Hai deciso quale corso seguire?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G177,"Puoi verificare se il pagamento è arrivato?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G178,"Sai dove ho lasciato gli occhiali?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G179,"Hai scoperto quanto costa la riparazione?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G180,"Vorrei sapere se possiamo procedere.",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G181,"Mi interessa capire se hai bisogno di aiuto.",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G182,"Dopo aver letto il contratto, vorrei chiederti se sei d’accordo.",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G183,"Prima di partire, possiamo controllare di avere tutto?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G184,"Se arriviamo presto, troviamo posto?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G185,"Anche voi avete ricevuto l’avviso?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G186,"Più tardi mi richiami?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G187,"Alla fine avete trovato un accordo?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G188,"Hai finito, vero?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G189,"Questa è la tua giacca, giusto?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G190,"Rimani con noi oppure no?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G191,"Hai già risposto? Hai anche inviato l’allegato?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G192,"Ho controllato due volte. Vuoi verificare anche tu?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G193,"Che bella notizia! Sei contento?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G194,"È passato molto tempo. Ti ricordi ancora di me?",si_no,sintetico_approvato,Domanda generata e approvata dall'utente
+G195,"Partitina?",si_no,esempio_utente,Etichetta fornita dall'utente
+G196,"Aperitivo?",si_no,esempio_utente,Etichetta fornita dall'utente
+G197,"Proprio io?",si_no,esempio_utente,Etichetta fornita dall'utente
+G198,"Lui?",si_no,esempio_utente,Etichetta fornita dall'utente
+G199,"Marcolino?",si_no,esempio_utente,Etichetta fornita dall'utente
+G200,"E' stata lei?",si_no,esempio_utente,Etichetta fornita dall'utente
+G201,"Sono loro?",si_no,esempio_utente,Etichetta fornita dall'utente
+G202,"Rivincita?",si_no,esempio_utente,Etichetta fornita dall'utente
+"G203","Hai lasciato la luce accesa in corridoio?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G204","Il termosifone della camera funziona?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G205","Questa coperta ti tiene abbastanza caldo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G206","La lavatrice ha terminato il ciclo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G207","Hai steso gli asciugamani?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G208","Il frigorifero fa ancora quel rumore?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G209","Possiamo spostare il divano vicino alla finestra?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G210","Ti disturba il sole sullo schermo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G211","Hai trovato il telecomando sotto il cuscino?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G212","Questa mensola reggerà il peso dei libri?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G213","Dobbiamo cambiare la lampadina del bagno?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G214","Il rubinetto perde anche quando è chiuso?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G215","Hai lasciato una copia delle chiavi al vicino?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G216","La serratura si è bloccata?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G217","Riesci ad aprire questo barattolo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G218","Le lenzuola sono già asciutte?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G219","Ti sembra che qui faccia troppo freddo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G220","Possiamo arieggiare la stanza per qualche minuto?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G221","Hai ritirato il pacco dal portiere?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G222","Questa scatola entra nell’armadio?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G223","Il nostro autobus passa anche nei giorni festivi?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G224","Hai convalidato il biglietto prima di salire?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G225","Il volo partirà in orario?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G226","Possiamo portare questo zaino in cabina?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G227","La coincidenza ci lascia almeno mezz’ora?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G228","Hai scaricato la carta d’imbarco?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G229","Questo sentiero conduce al rifugio?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G230","La funivia è ancora in servizio?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G231","Ci fermeremo alla prossima area di sosta?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G232","Hai fatto il pieno prima di partire?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G233","Il navigatore sta evitando i pedaggi?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G234","Questa valigia pesa più del consentito?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G235","La camera dell’albergo ha un balcone?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G236","Possiamo lasciare i bagagli alla reception?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G237","Il passaporto è ancora valido per questo viaggio?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G238","Hai verificato la data della partenza?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G239","Ci aspetteranno davanti all’ingresso principale?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G240","Il parcheggio chiude durante la notte?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G241","Riusciamo a raggiungere il porto prima delle sei?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G242","Hai prenotato anche il viaggio di ritorno?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G243","La scadenza del progetto è stata prorogata?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G244","Hai condiviso il file con tutto il gruppo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G245","Questo preventivo comprende le spese di consegna?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G246","Possiamo discutere la proposta nel pomeriggio?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G247","Il cliente ha confermato l’appuntamento?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G248","Hai allegato la versione definitiva?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G249","Il contratto prevede un periodo di prova?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G250","Ci hanno assegnato una sala per la riunione?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G251","Hai annotato le osservazioni del revisore?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G252","Possiamo dividere il lavoro in tre parti?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G253","Questa modifica richiede un nuovo controllo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G254","Hai ricevuto l’autorizzazione a procedere?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G255","Il documento contiene ancora dati provvisori?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G256","Riuscirai a consegnare la relazione entro lunedì?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G257","Dobbiamo coinvolgere anche il reparto tecnico?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G258","Hai confrontato i due preventivi?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G259","Il pagamento risulta registrato?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G260","Questa copia deve essere firmata?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G261","Possiamo recuperare la versione precedente?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G262","Hai aggiornato il calendario delle attività?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G263","Ti farebbe piacere incontrarci nel fine settimana?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G264","Hai avvisato Elena del cambiamento?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G265","Luca si unirà a noi dopo cena?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G266","Possiamo invitare anche i tuoi vicini?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G267","Ti senti a tuo agio con queste persone?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G268","Hai mantenuto i contatti con i compagni di scuola?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G269","Mi accompagneresti alla festa?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G270","Ti dispiace se arrivo qualche minuto dopo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G271","Hai già raccontato la notizia a tua sorella?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G272","Ci riconosceranno dopo tutti questi anni?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G273","Ti ha fatto piacere ricevere quel messaggio?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G274","Possiamo parlarne con calma domani?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G275","Hai bisogno di stare un po’ da solo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G276","Ti sei sentito escluso dalla conversazione?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G277","Preferisci che ti lasci qualche giorno per pensarci?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G278","Ti fidi ancora del mio giudizio?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G279","Ho frainteso quello che volevi dire?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G280","Possiamo ricominciare da questo punto?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G281","Ti sembra che ci siamo chiariti?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G282","Mi perdoneresti per quel ritardo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G283","Questa zuppa contiene panna?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G284","Hai lavato le verdure prima di tagliarle?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G285","Il pane è stato cotto questa mattina?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G286","Possiamo preparare il sugo in anticipo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G287","Ti piace il sapore dello zenzero?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G288","Hai lasciato riposare l’impasto?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G289","Questa pentola può andare in forno?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G290","Le patate sono cotte anche al centro?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G291","Ti sembra che manchi un po’ di sale?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G292","Abbiamo abbastanza farina per due torte?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G293","Il riso si è attaccato sul fondo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G294","Possiamo congelare questa salsa?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G295","Hai controllato la data sulla confezione?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G296","Questa bottiglia era già stata aperta?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G297","Vuoi provare una porzione più piccola?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G298","Il tavolo è apparecchiato per tutti?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G299","Ti porto un altro tovagliolo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G300","Hai prenotato un posto anche per Matteo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G301","Possiamo chiedere il conto insieme?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G302","Il servizio è compreso nel prezzo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G303","Hai ripassato il capitolo sulle probabilità?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G304","Questa dimostrazione usa tutte le ipotesi?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G305","Il risultato rimane valido nel caso limite?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G306","Hai controllato il segno dell’ultima espressione?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G307","Possiamo risolvere il problema con un altro metodo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G308","Ti è chiaro il significato di questa definizione?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G309","Questa conclusione segue davvero dal lemma?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G310","Hai distinto i dati dalle supposizioni?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G311","Il grafico rappresenta anche i valori negativi?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G312","Hai citato la fonte del passaggio?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G313","Possiamo verificare il conto con un esempio?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G314","Questa formula vale anche per zero?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G315","Hai considerato il caso in cui il denominatore si annulla?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G316","Il professore ha pubblicato i risultati?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G317","Ti sei iscritto alla sessione di giugno?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G318","Possiamo studiare insieme in biblioteca?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G319","Hai trovato un controesempio?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G320","Questa traduzione conserva il significato originale?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G321","Ti sembra che l’argomento sia completo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G322","Hai riletto il testo prima di consegnarlo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G323","Il computer riconosce la stampante?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G324","Hai attivato il salvataggio automatico?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G325","Questa applicazione funziona senza connessione?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G326","Il browser ha bloccato la finestra?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G327","Possiamo esportare i dati in un formato aperto?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G328","Hai cancellato soltanto la copia temporanea?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G329","Il microfono registra anche i rumori esterni?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G330","Questa password è stata cambiata di recente?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G331","Hai conservato una copia di sicurezza?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G332","La batteria durerà fino a sera?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G333","Possiamo collegare un secondo monitor?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G334","Hai disattivato le notifiche durante la registrazione?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G335","Il sito si apre correttamente sul telefono?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G336","Questo collegamento porta alla pagina giusta?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G337","Hai controllato i permessi della cartella?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G338","La sincronizzazione è terminata?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G339","Possiamo ripristinare il file eliminato?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G340","Il sistema ha installato l’aggiornamento?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G341","Hai scollegato il dispositivo prima di spegnere tutto?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G342","Questa procedura conserva le impostazioni?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G343","Le rondini sono già tornate?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G344","Il terreno è abbastanza umido?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G345","Hai potato il ramo danneggiato?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G346","Questo albero perderà le foglie in autunno?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G347","Possiamo piantare i semi in questo vaso?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G348","Le api trovano fiori anche in questa stagione?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G349","Il torrente è salito dopo la pioggia?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G350","Hai visto tracce di animali lungo il sentiero?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G351","Questa zona resta all’ombra nel pomeriggio?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G352","Il vento potrebbe spezzare quei rami?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G353","Possiamo raggiungere il lago senza attraversare il fiume?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G354","Hai raccolto tutti i rifiuti del picnic?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G355","Il cancello del parco è ancora aperto?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G356","Questa specie vive anche in Italia?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G357","Hai riconosciuto il canto dell’uccello?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G358","Il cielo si sta schiarendo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G359","Ci sarà una gelata durante la notte?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G360","La neve ha coperto anche la strada principale?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G361","Possiamo osservare le stelle da qui?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G362","Hai visto la luna sorgere dietro la collina?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G363","Sai se la biblioteca accetta nuove iscrizioni?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G364","Ricordi dove abbiamo lasciato le biciclette?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G365","Hai capito come si regola questa manopola?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G366","Puoi dirmi quanto tempo manca?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G367","Ti ricordi quale strada abbiamo percorso?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G368","Hai verificato chi deve firmare il modulo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G369","Sai perché il cancello è chiuso?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G370","Puoi spiegarmi dove ho sbagliato?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G371","Hai deciso quando cominciare il corso?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G372","Mi sai dire a chi devo consegnare la busta?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G373","Vorrei sapere se hai ricevuto entrambe le copie.","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G374","Mi interessa capire se il problema si ripresenta.","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G375","Dopo questa spiegazione, vorrei chiederti se sei convinto.","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G376","Prima di confermare, vorrei sapere se il posto è disponibile.","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G377","Mi piacerebbe chiederti se tornerai a trovarci.","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G378","Alla luce dei nuovi dati, possiamo mantenere la stessa conclusione?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G379","Se il negozio fosse aperto, riusciresti a passare?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G380","Anche dopo aver letto tutto, pensi che manchi qualcosa?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G381","Nonostante il ritardo, possiamo ancora partecipare?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G382","Prima che arrivino gli ospiti, riusciamo a sistemare il salotto?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G383","Un’altra partita?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G384","Una pausa?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G385","Un giro in centro?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G386","Un ultimo tentativo?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G387","Anche noi?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G388","Proprio adesso?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G389","Di nuovo lui?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G390","Tutto qui?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G391","Ancora un minuto?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G392","Una fetta anche per te?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G393","Questa borsa è tua, vero?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G394","Ci rivedremo presto, giusto?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G395","Il numero è corretto, no?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G396","Hai concluso oppure no?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G397","Sei disponibile oppure no?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G398","Hai letto il messaggio? Hai controllato anche l’allegato?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G399","Possiamo entrare? Ci aspettano già?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G400","Non me l’aspettavo! Hai organizzato tutto tu?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G401","Mi ero preoccupato. Sei arrivato senza problemi?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G402","Ne abbiamo discusso a lungo. Ti sembra ancora una buona idea?","si_no","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G403","Che fai questo pomeriggio?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G404","Che cerchi in quel cassetto?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G405","Che cosa ti ha sorpreso della visita?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G406","Cosa prepareremo per la festa?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G407","Chi accompagnerà gli ospiti?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G408","Chi ha lasciato questo cappotto?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G409","Quando inizieranno i lavori?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G410","Quando tornerà disponibile la sala?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G411","Dove sistemiamo le biciclette?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G412","Dove hai comprato questa lampada?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G413","Perché il computer si spegne da solo?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G414","Perché hai cambiato percorso?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G415","Come hai imparato a cucinare quel piatto?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G416","Come raggiungeremo il rifugio?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G417","Quanto manca alla chiusura?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G418","Quanto pesa questa valigia?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G419","Quante persone hanno confermato?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G420","Quanti giorni resterete in montagna?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G421","Quale passaggio non ti convince?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G422","Qual è il titolo del libro?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G423","Da che parte arriva il vento?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G424","Da che parte dobbiamo girare?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G425","A che ora chiude la piscina?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G426","A che punto siamo con il progetto?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G427","Con che criterio hai ordinato i documenti?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G428","In che occasione vi siete conosciuti?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G429","Per quale motivo la consegna è stata rinviata?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G430","Di quale materiale è fatto questo tavolo?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G431","A quale indirizzo devo spedire il pacco?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G432","Da quale ingresso accedono i visitatori?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G433","Con quali strumenti avete effettuato la misura?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G434","Su quale argomento verte la relazione?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G435","Tra quali alternative possiamo scegliere?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G436","Fino a quale fermata arriva questa linea?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G437","Entro quando dobbiamo rispondere?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G438","Da quanto tempo vivi qui?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G439","Per quanto tempo conserveranno i documenti?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G440","Di chi sono questi appunti?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G441","A chi hai affidato le chiavi?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G442","Con chi vorresti collaborare?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G443","Ho letto la tua proposta, che cosa cambieresti?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G444","Abbiamo poco tempo, da dove cominciamo?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G445","Mi hai fatto aspettare, perché non mi hai avvisato?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G446","Ti vedo pensieroso, a cosa stai pensando?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G447","La strada è chiusa, quale percorso prendiamo?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G448","Il treno è stato cancellato, come raggiungiamo Torino?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G449","È rimasto un solo posto, chi parteciperà?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G450","Hai esposto la conclusione, quali sono le premesse?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G451","Ci siamo quasi, quanto manca ancora?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G452","Ho perso il conto, quante copie dobbiamo stampare?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G453","Prima di uscire, dove hai messo il cappello?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G454","Dopo tutte queste prove, quale soluzione preferisci?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G455","Alla fine della riunione, che cosa avete deciso?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G456","Più tardi, quando sarai libero?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G457","Domattina, dove ci incontriamo?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G458","Anche questa volta, perché hai rinunciato?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G459","Senti, come posso raggiungerti?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G460","Allora, chi si occupa della prenotazione?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G461","Bene, da quale esercizio iniziamo?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G462","Dunque, che cosa manca alla dimostrazione?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G463","Vorrei sapere quando sarà pronto il documento.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G464","Vorrei capire perché il risultato cambia.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G465","Mi interessa sapere dove verrà pubblicato il programma.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G466","Mi piacerebbe chiederti come hai scelto il tema.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G467","Vorrei conoscere il motivo del rinvio.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G468","Vorrei chiederti quale esperienza ti ha segnato di più.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G469","Mi interessa capire chi prenderà la decisione.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G470","Vorrei sapere quanto costa il servizio completo.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G471","Mi piacerebbe capire da dove nasce questa abitudine.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G472","Vorrei chiederti con chi hai lavorato.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G473","Dopo aver letto il testo, vorrei sapere che cosa ne pensi.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G474","Prima di prenotare, vorrei sapere quali camere sono disponibili.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G475","Per organizzarmi, vorrei capire quando rientrerai.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G476","Dopo questa osservazione, vorrei chiederti come correggeresti il conto.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G477","Mi interessa sapere a quale pubblico si rivolge il corso.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G478","Vorrei capire in che modo le due ipotesi differiscono.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G479","Mi piacerebbe chiederti da quanto tempo studi musica.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G480","Prima di procedere, vorrei sapere quanti partecipanti sono previsti.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G481","Mi interessa capire quale passaggio richiede più tempo.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G482","Vorrei chiederti perché hai preferito quella strada.","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G483","Prendiamo il traghetto o il treno?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G484","Preferisci il tavolo vicino alla finestra o quello in fondo?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G485","Ci incontriamo alle dieci o alle undici?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G486","Iniziamo dalla teoria o dagli esercizi?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G487","Per il soggiorno scegli il verde o il beige?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G488","Organizziamo la visita sabato o domenica?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G489","Quale vuoi tenere, la copia stampata o quella digitale?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G490","In quale sala ci mettiamo, nella prima o nella seconda?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G491","Chi viene con me e chi rimane qui?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G492","Quando parti e dove dormirai?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G493","Dove ci incontriamo e a che ora?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G494","Chi ha preparato il documento? Quando lo ha inviato?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G495","Vieni alla conferenza? Quale intervento vuoi seguire?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G496","Hai prenotato la visita? Per quando?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G497","Ci accompagni? Dove possiamo aspettarti?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G498","Hai cambiato idea? Per quale motivo?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G499","Dopo tanto lavoro, che senso avrebbe rinunciare?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G500","Come potremmo ignorare una conseguenza del genere?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G501","Chi potrebbe dimenticare quella serata?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"
+"G502","Perché continuare a ripetere lo stesso errore?","aperta","sintetico_approvato","Batch di 300 domande generato e approvato dall'utente"

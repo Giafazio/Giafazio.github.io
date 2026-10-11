@@ -152,4 +152,13 @@ export const artifactSchema =
     projects: z
       .array(projectRelation)
       .default([]),
-  });
+  }).refine(
+    (artifact) =>
+      artifact.draft ||
+      artifact.artifactKind !== "audio" ||
+      Boolean(artifact.primaryAsset),
+    {
+      path: ["primaryAsset"],
+      message: "A public audio artifact must specify its audio file.",
+    },
+  );

@@ -69,6 +69,55 @@ The build command performs three operations:
 2. static site generation;
 3. validation of internal links and required outputs.
 
+### Browser regression tests
+
+Install the test browser once after `npm install` (and again when Playwright is updated):
+
+```bash
+npx playwright install chromium
+npm run test:browser
+```
+
+`test:browser` builds the site and runs the tests against a dedicated preview server
+at `127.0.0.1:4392`, which stops when the suite finishes. Keep this port free.
+The development server on port 4321 is not used or restarted.
+The tests use isolated browser contexts at desktop and mobile sizes; mobile is
+emulated, not a substitute for testing a real phone.
+
+The suite covers Index inclusion/exclusion, empty results, resets and entry identities
+across views; project title bounds; experiment motion, pauses and reduced motion;
+the Welcome raven with delayed or failed GIF loading and language changes; and audio
+playback, seeking, errors and page navigation. It does not test development-only
+design previews. Motion checks sample rendered geometry, not rasterized video frames.
+The MiniCruci screenshot is for manual review, not an automated legibility guarantee.
+Existing `scripts/check-*.cjs` remain available as older, targeted diagnostics;
+the repeatable build-based suite lives in `tests/browser`.
+
+For a build that is already current, use `npm run test:browser:built`.
+Failures retain a screenshot and a trace; open the report with
+`npm run test:browser:report`. Reports are ignored by Git.
+The browser tests are local for now; the deployment workflow is unchanged.
+
+### Index classification
+
+`src/lib/index/taxonomy-rules.ts` defines the Index vocabulary, tag hierarchy,
+cross-cutting sections and allowed secondary types for each primary type.
+Both content validation and the browser filters use these rules.
+Approved editorial assignments live separately in `index-assignments.ts`;
+`index-taxonomy.ts` combines them with the existing content fields.
+
+Renderer and homepage metadata retain their original roles: for example,
+`artifactKind: audio` selects the audio renderer while the Index uses `composition`,
+and `home-table` controls Featured inclusion. They are not replaced by Index tags.
+
+Content loading validates classifications, assignment IDs and external works;
+the vocabulary validates missing parents, cycles and cross-cutting sections.
+Run the focused rule tests with `npm run test:taxonomy` (no browser required).
+
+`AtlasIndexPage.astro` renders the current Index with List, Titles, Cards and Wall;
+`src/lib/index/index-controller.ts` handles its filters, URL state and interactions.
+The earlier `/previews/index/*` design variants have been retired.
+
 ## Repository structure
 
 ```text
